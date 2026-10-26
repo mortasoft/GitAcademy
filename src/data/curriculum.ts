@@ -1672,6 +1672,78 @@ export const CURRICULUM: CurriculumLevel[] = [
           ],
         },
       },
+      {
+        id: 'github-actions-ci-runners',
+        levelId: 'nivel-6',
+        title: '6.6 Automatización con GitHub Actions y Runners (Hosted vs Self-Hosted)',
+        category: 'CI/CD y Automatización',
+        difficulty: 'Intermedio',
+        timeEstimate: '8 min',
+        summary: 'Aprende a crear workflows de integración continua en .github/workflows/, configurar eventos desencadenantes y entender la diferencia entre GitHub-hosted y Self-hosted runners.',
+        isGitHubGuide: true,
+        initialState: createBaseState(),
+        steps: [],
+        goalDescription: 'Comprende la estructura de un workflow de GitHub Actions, los tipos de runners y cómo conectar tu propio servidor con self-hosted runner.',
+        solutionCommands: [],
+        tips: [
+          'Los workflows de GitHub Actions se definen en formato YAML dentro de la carpeta obligatoria .github/workflows/.',
+          'Un runner es la máquina virtual o física que ejecuta los pasos de tu workflow.',
+          'Nunca configures self-hosted runners en repositorios públicos, ya que un Pull Request malicioso podría ejecutar comandos arbitrarios en tu red local.',
+        ],
+        whenToUse: [
+          {
+            title: 'GitHub-hosted runners para builds estándar',
+            scenario: 'Entornos de ejecución limpios y efímeros (ubuntu-latest, windows, macos) sin costos de mantenimiento de servidores.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Self-hosted runners para hardware a medida o redes privadas',
+            scenario: 'Cuando necesitas compilaciones pesadas con GPUs dedicadas, caché local de gigabytes o acceso directo a bases de datos dentro de tu VPC privada.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Limitar permisos del token en el workflow',
+            scenario: 'Configurar permissions: { contents: read } en el archivo YAML para evitar que scripts vulnerables escriban en el repositorio.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Self-hosted runners en repositorios públicos u open source',
+            scenario: 'Conectar un servidor corporativo a un repositorio público abierto a forks y PRs de usuarios desconocidos en internet.',
+            recommendation: 'evitar',
+          },
+        ],
+        gitHubGuideContent: {
+          overview: 'GitHub Actions es la plataforma de automatización nativa de GitHub para Integración y Despliegue Continuo (CI/CD). Permite compilar, testear y publicar código ante eventos como pushes o Pull Requests, ejecutando los jobs en servidores administrados por GitHub o en infraestructura propia (Self-Hosted).',
+          steps: [
+            {
+              action: '1. Estructura de un Workflow (.github/workflows/ci.yml)',
+              details: 'Los flujos de trabajo se guardan en archivos .yml dentro de .github/workflows/. Cada workflow define un nombre, eventos desencadenantes ("on: [push, pull_request]") y uno o varios "jobs" con pasos que ejecutan comandos con "run:" o reutilizan acciones de la comunidad con "uses:".',
+              commandOrUrl: '.github/workflows/ci.yml',
+              imageUrl: '/images/github-security/github-actions-runners.svg',
+              imageCaption: 'Workflow de GitHub Actions y comparativa entre GitHub-hosted y Self-hosted runners.',
+            },
+            {
+              action: '2. ¿Qué es un Runner y cómo funciona?',
+              details: 'Un runner es el sistema operativo que escucha los jobs asignados, ejecuta los pasos y reporta los logs en tiempo real. Se define mediante la directiva "runs-on:" en el job.',
+              tip: 'Por defecto, usar "runs-on: ubuntu-latest" te asigna una máquina virtual limpia de GitHub con Node, Python, Docker y herramientas ya preinstaladas.',
+            },
+            {
+              action: '3. GitHub-Hosted Runners vs Self-Hosted Runners',
+              details: 'GitHub-hosted son VMs en la nube gestionadas por GitHub: son desechables (se destruyen al terminar el job) y no requieren mantenimiento. Self-hosted son tus propios servidores (físicos, VMs en tu nube o clústeres de Kubernetes) que conectas a GitHub: ideales para evitar costos de minutos, aprovechar hardware potente (GPUs, 64 cores) o acceder a redes privadas.',
+            },
+            {
+              action: '4. Cómo conectar un Self-Hosted Runner en tu repositorio',
+              details: 'Ve a Settings > Actions > Runners > "New self-hosted runner". Selecciona tu sistema operativo (Linux, macOS, Windows). GitHub te entregará un script descargable y un token de autenticación. Al iniciarlo, tu servidor quedará en estado "Idle" esperando jobs.',
+              commandOrUrl: 'https://github.com',
+            },
+            {
+              action: '5. Reglas críticas de seguridad en GitHub Actions',
+              details: '1) NUNCA uses self-hosted runners en repositorios públicos por riesgo de ejecución remota de código en PRs. 2) Utiliza siempre el principio de menor privilegio con "permissions: read-all". 3) Fija las versiones de las acciones con SHA o etiquetas mayores (ej. actions/checkout@v4).',
+              tip: 'Puedes monitorear el progreso de cada compilación y descargar artefactos de build directamente desde la pestaña "Actions" en la barra superior de GitHub.',
+            },
+          ],
+        },
+      },
     ],
   },
 ];

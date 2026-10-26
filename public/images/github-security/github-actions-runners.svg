@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0d1117; }
+      .card { fill: #161b22; stroke: #30363d; stroke-width: 1; rx: 8; }
+      .header-bg { fill: #0d1117; stroke: #21262d; stroke-width: 1; }
+      .text-title { fill: #f0f6fc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 600; }
+      .text-desc { fill: #8b949e; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 12px; }
+      .text-code { fill: #58a6ff; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; }
+      .badge-green { fill: #238636; rx: 4; }
+      .badge-text { fill: #ffffff; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; font-weight: 700; }
+      .code-box { fill: #010409; stroke: #30363d; stroke-width: 1; rx: 6; }
+      .alert-box { fill: #1f120c; stroke: #d29922; stroke-width: 1; rx: 6; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="640" class="bg" rx="12"/>
+
+  <!-- Top GitHub Breadcrumb Bar -->
+  <rect x="0" y="0" width="1000" height="56" class="header-bg" rx="12"/>
+  <circle cx="30" cy="28" r="6" fill="#f85149"/>
+  <circle cx="50" cy="28" r="6" fill="#d29922"/>
+  <circle cx="70" cy="28" r="6" fill="#2ea043"/>
+
+  <text x="105" y="33" fill="#8b949e" font-family="-apple-system, sans-serif" font-size="13">mi-primer-proyecto</text>
+  <text x="245" y="33" fill="#6e7681" font-family="-apple-system, sans-serif" font-size="13">/</text>
+  <text x="260" y="33" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Actions</text>
+  <text x="320" y="33" fill="#6e7681" font-family="-apple-system, sans-serif" font-size="13">/</text>
+  <text x="335" y="33" fill="#58a6ff" font-family="-apple-system, sans-serif" font-size="13">Workflows &amp; Runners</text>
+
+  <!-- Title -->
+  <text x="40" y="95" class="text-title" font-size="20">GitHub Actions: Automatizacion CI/CD y Tipos de Runners</text>
+  <text x="40" y="118" class="text-desc">Ejecuta pruebas, linters y despliegues automaticos con cada push o PR utilizando maquinas administradas o infraestructura propia.</text>
+
+  <!-- Left: Workflow YAML -->
+  <rect x="40" y="140" width="460" height="470" class="code-box"/>
+  <g transform="translate(60, 165)">
+    <text x="0" y="10" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11"># .github/workflows/ci.yml</text>
+    <text x="0" y="32" fill="#ff7b72" font-family="ui-monospace, monospace" font-size="12">name<tspan fill="#c9d1d9">: CI Pipeline</tspan></text>
+    <text x="0" y="52" fill="#ff7b72" font-family="ui-monospace, monospace" font-size="12">on<tspan fill="#c9d1d9">:</tspan></text>
+    <text x="15" y="72" fill="#79c0ff" font-family="ui-monospace, monospace" font-size="12">push<tspan fill="#c9d1d9">: </tspan><tspan fill="#8b949e">branches: [main]</tspan></text>
+    <text x="15" y="92" fill="#79c0ff" font-family="ui-monospace, monospace" font-size="12">pull_request<tspan fill="#c9d1d9">: </tspan><tspan fill="#8b949e">branches: [main]</tspan></text>
+    <text x="0" y="116" fill="#ff7b72" font-family="ui-monospace, monospace" font-size="12">jobs<tspan fill="#c9d1d9">:</tspan></text>
+    <text x="15" y="136" fill="#79c0ff" font-family="ui-monospace, monospace" font-size="12">test-and-build<tspan fill="#c9d1d9">:</tspan></text>
+
+    <!-- runs-on highlights -->
+    <rect x="15" y="148" width="410" height="42" fill="#1f6feb" fill-opacity="0.15" stroke="#1f6feb" stroke-width="1" rx="4"/>
+    <text x="25" y="166" fill="#ffa657" font-family="ui-monospace, monospace" font-size="12">runs-on<tspan fill="#c9d1d9">: </tspan><tspan fill="#7ee787">ubuntu-latest</tspan>  <tspan fill="#8b949e"># Hosted</tspan></text>
+    <text x="25" y="182" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11"># runs-on: [self-hosted, linux, x64] # Tu servidor</text>
+
+    <text x="15" y="210" fill="#79c0ff" font-family="ui-monospace, monospace" font-size="12">steps<tspan fill="#c9d1d9">:</tspan></text>
+    <text x="30" y="230" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12">- <tspan fill="#79c0ff">uses</tspan>: actions/checkout@v4</text>
+    <text x="30" y="254" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12">- <tspan fill="#79c0ff">name</tspan>: Setup Node.js</text>
+    <text x="45" y="274" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12"><tspan fill="#79c0ff">uses</tspan>: actions/setup-node@v4</text>
+    <text x="45" y="294" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12"><tspan fill="#79c0ff">with</tspan>: { node-version: 20, cache: 'npm' }</text>
+    <text x="30" y="318" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12">- <tspan fill="#79c0ff">name</tspan>: Instalar dependencias</text>
+    <text x="45" y="338" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12"><tspan fill="#79c0ff">run</tspan>: npm ci</text>
+    <text x="30" y="362" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12">- <tspan fill="#79c0ff">name</tspan>: Ejecutar Tests y Linter</text>
+    <text x="45" y="382" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12"><tspan fill="#79c0ff">run</tspan>: npm test</text>
+    <text x="30" y="406" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12">- <tspan fill="#79c0ff">name</tspan>: Compilar Build</text>
+    <text x="45" y="426" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12"><tspan fill="#79c0ff">run</tspan>: npm run build</text>
+  </g>
+
+  <!-- Right: Runners Comparison -->
+  <g transform="translate(520, 140)">
+    <!-- Card 1: GitHub-hosted Runner -->
+    <rect x="0" y="0" width="440" height="155" class="card"/>
+    <g transform="translate(20, 20)">
+      <div style="display:flex;">
+        <rect x="0" y="0" width="130" height="22" fill="#1f6feb" rx="4"/>
+        <text x="10" y="15" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="11" font-weight="700">GITHUB-HOSTED</text>
+      </div>
+      <text x="0" y="42" class="text-title">ubuntu-latest / macos / windows</text>
+      <text x="0" y="64" class="text-desc">&#10003; VM limpia e hipersegura creada de cero para cada job.</text>
+      <text x="0" y="84" class="text-desc">&#10003; Cero mantenimiento de infraestructura ni parches de SO.</text>
+      <text x="0" y="104" class="text-desc">&#10003; 2,000 minutos gratis/mes en cuentas gratuitas.</text>
+      <text x="0" y="124" class="text-code">Ideal para: la inmensa mayoria de proyectos web y librerias.</text>
+    </g>
+
+    <!-- Card 2: Self-hosted Runner -->
+    <rect x="0" y="170" width="440" height="175" class="card" stroke="#3fb950"/>
+    <g transform="translate(20, 190)">
+      <div style="display:flex;">
+        <rect x="0" y="0" width="120" height="22" class="badge-green"/>
+        <text x="10" y="15" class="badge-text">SELF-HOSTED</text>
+        <circle cx="140" cy="11" r="5" fill="#3fb950"/>
+        <text x="152" y="15" class="text-desc" font-size="11">Status: Idle (Online)</text>
+      </div>
+      <text x="0" y="42" class="text-title">Servidor Propio (On-premise / AWS / GCP / Mac Mini)</text>
+      <text x="0" y="64" class="text-desc">&#10003; Sin limite de tiempo de compilacion ni costo por minuto.</text>
+      <text x="0" y="84" class="text-desc">&#10003; Hardware a medida: soporte de GPUs Nvidia, discos NVMe y RAM masiva.</text>
+      <text x="0" y="104" class="text-desc">&#10003; Acceso a redes privadas internas (VPC corporativa sin exponer IPs).</text>
+      <text x="0" y="124" class="text-desc">&#10003; Cache persistente: no vuelve a descargar gigas de dependencias.</text>
+    </g>
+
+    <!-- Card 3: Security Warning for Self-hosted -->
+    <rect x="0" y="360" width="440" height="110" class="alert-box"/>
+    <g transform="translate(20, 380)">
+      <text x="0" y="15" fill="#d29922" font-family="-apple-system, sans-serif" font-size="13" font-weight="700">&#9888; Regla de Oro de Seguridad en Self-Hosted Runners</text>
+      <text x="0" y="38" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="11.5" font-weight="600">NUNCA uses self-hosted runners en repositorios publicos.</text>
+      <text x="0" y="58" class="text-desc">Cualquier atacante podria abrir un Pull Request malicioso con codigo que se ejecutaria dentro de tu servidor y red interna.</text>
+      <text x="0" y="78" fill="#3fb950" font-family="-apple-system, sans-serif" font-size="11">Usa self-hosted unicamente en repositorios privados de la organizacion.</text>
+    </g>
+  </g>
+</svg>
