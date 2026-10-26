@@ -1993,6 +1993,87 @@ export const CURRICULUM: CurriculumLevel[] = [
           ],
         },
       },
+      {
+        id: 'oracle-apex-lifecycle',
+        levelId: 'nivel-6',
+        title: '6.8 Implementación y Despliegue de Oracle APEX con CI/CD',
+        category: 'DevOps y Bases de Datos',
+        difficulty: 'Avanzado',
+        timeEstimate: '8 min',
+        summary: 'Aprende la arquitectura empresarial para versionar y desplegar Oracle APEX: exportación modular con SQLcl, sustitución de Application ID entre ambientes y pipelines de GitHub Actions.',
+        isGitHubGuide: true,
+        initialState: createBaseState(),
+        steps: [],
+        goalDescription: 'Comprende el ciclo de vida ALM de Oracle APEX, la división de archivos con SQLcl y el pipeline de instalación automática en QA y Producción.',
+        solutionCommands: [],
+        tips: [
+          'En proyectos corporativos, nunca debes importar archivos .sql manualmente en el Page Designer de producción; todo cambio debe ejecutarse mediante pipelines auditados.',
+          'El comando "apex export -split" es fundamental para que múltiples desarrolladores trabajen en distintas páginas sin provocar conflictos en un archivo monolítico.',
+          'Usa apex.set_workspace y apex.set_application_id en el script de instalación para desacoplar el ID de la app de desarrollo del ID de producción.',
+          'Incluye siempre una tarea de recompilación (utl_recomp) en tu pipeline para verificar que ningún paquete o vista quede en estado INVALID tras el despliegue.',
+        ],
+        whenToUse: [
+          {
+            title: 'Despliegues automatizados de Oracle APEX entre ambientes DEV, QA, UAT y PROD',
+            scenario: 'Promover versiones de aplicaciones y esquemas de base de datos de forma desatendida y reproducible mediante pipelines de CI/CD.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Equipos con múltiples desarrolladores en distintas páginas',
+            scenario: 'Trabajar en paralelo sin pisarse el código gracias a la descomposición modular de páginas generada por SQLcl.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Auditorías de código y control estricto de cambios (SOX / ISO)',
+            scenario: 'Tener registro exacto en Git de qué línea de consulta SQL, botón o proceso fue alterado en cada versión de la aplicación.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Exportar la aplicación en un archivo monolítico sin el modificador -split',
+            scenario: 'Generar un único archivo SQL de 50 MB donde es imposible revisar un Pull Request ni resolver conflictos entre desarrolladores.',
+            recommendation: 'evitar',
+          },
+          {
+            title: 'Modificar aplicaciones directamente en el Page Designer de Producción',
+            scenario: 'Hacer cambios manuales en caliente que no quedan registrados en Git ni pueden ser replicados en otros ambientes.',
+            recommendation: 'evitar',
+          },
+        ],
+        gitHubGuideContent: {
+          overview: 'Tradicionalmente, las aplicaciones de Oracle APEX se transportaban exportando un archivo SQL monolítico e importándolo a mano a través de la interfaz web. En las organizaciones modernas, se implementa ALM (Application Lifecycle Management): el repositorio Git versiona los scripts de base de datos junto con la app dividida en componentes atómicos, y un pipeline de GitHub Actions compila los paquetes y realiza la importación de manera desatendida y auditable.',
+          steps: [
+            {
+              action: '1. Arquitectura del Repositorio para Proyectos Oracle APEX',
+              details: 'Separa claramente los artefactos de base de datos de los metadatos de la aplicación APEX y los flujos de CI/CD:\n• /db/tables/, /db/packages/, /db/views/: DDL y paquetes PL/SQL.\n• /apex/f100/: Exportación dividida con install.sql y páginas individuales (page_00001.sql, page_00010.sql).\n• .github/workflows/deploy.yml: Pipeline de despliegue automatizado.',
+              imageUrl: '/images/github-security/oracle-apex-lifecycle.svg',
+              imageCaption: 'Flujo de implementación de Oracle APEX: exportación modular con SQLcl, Pull Request en GitHub y despliegue continuo.',
+            },
+            {
+              action: '2. Exportación Modular con Oracle SQLcl (-split)',
+              details: 'En lugar de generar un archivo gigante, utiliza el comando apex export con los modificadores -split y -skipExportDate. Esto genera un archivo .sql por cada página y componente compartido:',
+              commandOrUrl: 'sql usuario/pass@db\nSQL> apex export -applicationid 100 -split -expData -skipExportDate -dir ./apex',
+              tip: 'El modificador -skipExportDate elimina la marca de tiempo de la exportación, impidiendo que Git detecte cambios falsos si no tocaste ninguna lógica.',
+            },
+            {
+              action: '3. Trabajo en Ramas y Revisión de Diff por Página',
+              details: 'Cuando un desarrollador crea o modifica la página 10 en el Page Designer de desarrollo, exporta nuevamente con SQLcl. En el Pull Request de GitHub, el equipo solo verá el diff exacto de /apex/f100/application/pages/page_00010.sql sin interferir con las páginas que sus compañeros estén creando en paralelo.',
+              commandOrUrl: 'git switch -c feature/apx-modulo-facturacion',
+            },
+            {
+              action: '4. Mapeo Dinámico de Workspace y Application ID en Despliegue',
+              details: 'En producción, el Workspace y el Application ID suelen ser distintos a los de desarrollo (ej: la app 100 de DEV se instala como 200 en PROD). En el paso de despliegue de GitHub Actions, invoca los comandos de la API de APEX antes de ejecutar install.sql:',
+              commandOrUrl: 'apex.set_workspace(\'PROD_WORKSPACE\');\napex.set_application_id(200);\n@apex/f100/install.sql;',
+              tip: 'Esto evita tener que editar los archivos fuente en Git para cada ambiente; la parametrización ocurre dinámicamente en el runner.',
+            },
+            {
+              action: '5. Verificación Post-Despliegue y Control de Objetos Inválidos',
+              details: 'Todo pipeline maduro debe verificar la integridad de la base de datos tras la instalación. Ejecuta la recompilación de objetos y valida que no existan errores en USER_OBJECTS:',
+              commandOrUrl: 'BEGIN utl_recomp.recomp_serial; END;\n/\nSELECT object_type, object_name FROM user_objects WHERE status = \'INVALID\';',
+              tip: 'Si la consulta de objetos inválidos arroja registros, el pipeline falla de inmediato y alerta al equipo en Slack o Teams antes de que los usuarios noten el problema.',
+            },
+          ],
+        },
+      },
     ],
   },
 ];

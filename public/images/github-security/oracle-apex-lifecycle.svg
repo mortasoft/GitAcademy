@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0d1117; }
+      .card { fill: #161b22; stroke: #30363d; stroke-width: 1; rx: 8; }
+      .card-oracle { fill: #111827; stroke: #ea580c; stroke-width: 1.5; rx: 8; }
+      .card-box { fill: #0d1117; stroke: #21262d; stroke-width: 1; rx: 6; }
+      .header-bg { fill: #0d1117; stroke: #21262d; stroke-width: 1; }
+      .text-title { fill: #f0f6fc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 600; }
+      .text-desc { fill: #8b949e; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 12px; }
+      .text-code { fill: #58a6ff; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; }
+      .text-sql { fill: #fb923c; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 11.5px; font-weight: 600; }
+      .terminal-box { fill: #010409; stroke: #30363d; stroke-width: 1; rx: 8; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="640" class="bg" rx="12"/>
+
+  <!-- Top Breadcrumb Bar -->
+  <rect x="0" y="0" width="1000" height="56" class="header-bg" rx="12"/>
+  <circle cx="30" cy="28" r="6" fill="#f85149"/>
+  <circle cx="50" cy="28" r="6" fill="#d29922"/>
+  <circle cx="70" cy="28" r="6" fill="#2ea043"/>
+
+  <text x="105" y="33" fill="#8b949e" font-family="-apple-system, sans-serif" font-size="13">Enterprise Architecture</text>
+  <text x="260" y="33" fill="#6e7681" font-family="-apple-system, sans-serif" font-size="13">/</text>
+  <text x="275" y="33" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Oracle APEX</text>
+  <text x="365" y="33" fill="#6e7681" font-family="-apple-system, sans-serif" font-size="13">/</text>
+  <text x="380" y="33" fill="#ea580c" font-family="-apple-system, sans-serif" font-size="13">Pipeline de Implementacion y Despliegue CI/CD</text>
+
+  <!-- Title Section -->
+  <text x="40" y="92" class="text-title" font-size="20">Ciclo de Implementación de Aplicaciones Oracle APEX con Git</text>
+  <text x="40" y="114" class="text-desc">De la base de datos de desarrollo a producción: exportación modular con SQLcl, control de versiones en GitHub y despliegue automatizado sin pasos manuales.</text>
+
+  <!-- Stage 1: Desarrollo y Exportación Modular (Width: 290) -->
+  <rect x="40" y="135" width="285" height="475" class="card"/>
+  <text x="55" y="165" class="text-title" font-size="14" fill="#fb923c">1. Entorno de Desarrollo (DEV)</text>
+  <text x="55" y="185" class="text-desc">Cambios en DB y Page Designer:</text>
+
+  <rect x="55" y="200" width="255" height="75" class="card-box" stroke="#ea580c"/>
+  <text x="68" y="222" class="text-sql">Oracle APEX DEV (App 100)</text>
+  <text x="68" y="242" class="text-desc">Desarrollo visual de páginas, componentes compartidos y procesos en la base de datos.</text>
+
+  <!-- SQLcl Command -->
+  <rect x="55" y="285" width="255" height="110" class="terminal-box" stroke="#fb923c"/>
+  <text x="68" y="307" class="text-code" fill="#388bfd">SQLcl: Exportacion Dividida</text>
+  <text x="68" y="327" class="text-sql">apex export -split \</text>
+  <text x="68" y="347" class="text-sql">  -applicationid 100 \</text>
+  <text x="68" y="367" class="text-sql">  -skipExportDate -dir ./apex</text>
+  <text x="68" y="387" class="text-desc">Descompone en archivos .sql atómicos.</text>
+
+  <rect x="55" y="405" width="255" height="190" class="card-box"/>
+  <text x="68" y="427" class="text-title" font-size="12">Estructura del Proyecto</text>
+  <text x="68" y="449" class="text-code" fill="#7ee787">&#128194; db/</text>
+  <text x="85" y="469" class="text-desc">tablas, paquetes, vistas</text>
+  <text x="68" y="492" class="text-code" fill="#7ee787">&#128194; apex/f100/</text>
+  <text x="85" y="512" class="text-desc">install.sql, application/pages/</text>
+  <text x="68" y="535" class="text-code" fill="#7ee787">&#128194; .github/workflows/</text>
+  <text x="85" y="555" class="text-desc">deploy-apex.yml</text>
+  <text x="68" y="580" class="text-desc" fill="#8b949e">Todo versionado bajo Conventional Commits.</text>
+
+  <!-- Stage 2: Repositorio y Pull Request (Width: 320) -->
+  <rect x="340" y="135" width="320" height="475" class="card"/>
+  <text x="355" y="165" class="text-title" font-size="14" fill="#58a6ff">2. GitHub: Auditoría y Pull Request</text>
+  <text x="355" y="185" class="text-desc">Validación por pares del equipo técnico:</text>
+
+  <rect x="355" y="200" width="290" height="85" class="card-box" stroke="#388bfd"/>
+  <text x="370" y="222" class="text-title" font-size="13">Diff Atómico por Página</text>
+  <text x="370" y="242" class="text-desc">Al usar <tspan class="text-code">-split</tspan>, GitHub solo marca los cambios exactos de <tspan class="text-code">page_00010.sql</tspan> sin tocar el resto de la aplicación.</text>
+  <text x="370" y="267" class="text-code" fill="#3fb950">&#10003; 0 conflictos con páginas de otros devs.</text>
+
+  <rect x="355" y="295" width="290" height="95" class="card-box" stroke="#8957e5"/>
+  <text x="370" y="317" class="text-title" font-size="13">GitHub Secrets &amp; Variables</text>
+  <text x="370" y="337" class="text-desc">&#8226; <tspan class="text-code">DB_USER</tspan> y <tspan class="text-code">DB_PASSWORD</tspan></text>
+  <text x="370" y="355" class="text-desc">&#8226; <tspan class="text-code">DB_CONNECT_STRING</tspan> (EZCONNECT / TNS)</text>
+  <text x="370" y="373" class="text-desc">&#8226; <tspan class="text-code">DB_WALLET_BASE64</tspan> (para Autonomous DB)</text>
+
+  <rect x="355" y="400" width="290" height="195" class="terminal-box" stroke="#238636"/>
+  <text x="370" y="424" class="text-title" font-size="13" fill="#3fb950">GitHub Actions Pipeline</text>
+  <text x="370" y="445" class="text-desc">1. Instala Java 17 + Oracle SQLcl.</text>
+  <text x="370" y="465" class="text-desc">2. Descifra el Wallet si es nube (ATP/ADW).</text>
+  <text x="370" y="485" class="text-desc">3. Ejecuta DDL y compila paquetes PL/SQL:</text>
+  <text x="370" y="505" class="text-code" fill="#a5d6ff">   @db/packages/pkg_ventas.pkb</text>
+  <text x="370" y="525" class="text-desc">4. Mapea Workspace y App ID destino.</text>
+  <text x="370" y="545" class="text-desc">5. Ejecuta <tspan class="text-code">@apex/f100/install.sql</tspan>.</text>
+  <text x="370" y="575" class="text-code" fill="#3fb950">&#10003; Despliegue 100% libre de intervención humana.</text>
+
+  <!-- Stage 3: QA y Producción (Width: 285) -->
+  <rect x="675" y="135" width="285" height="475" class="card-oracle"/>
+  <text x="690" y="165" class="text-title" font-size="14" fill="#fb923c">3. Ambientes QA / PROD</text>
+  <text x="690" y="185" class="text-desc">Instalación y Sustitución:</text>
+
+  <!-- Substitution block -->
+  <rect x="690" y="200" width="255" height="120" class="terminal-box" stroke="#ea580c"/>
+  <text x="703" y="222" class="text-sql">Mapeo de IDs Dinámicos:</text>
+  <text x="703" y="244" class="text-code" fill="#f0f6fc">apex.set_workspace('PROD');</text>
+  <text x="703" y="266" class="text-code" fill="#f0f6fc">apex.set_application_id(200);</text>
+  <text x="703" y="288" class="text-code" fill="#3fb950">@apex/f100/install.sql;</text>
+  <text x="703" y="308" class="text-desc">La app 100 de DEV se instala como 200 en PROD.</text>
+
+  <!-- Quality checks -->
+  <rect x="690" y="330" width="255" height="120" class="card-box" stroke="#238636"/>
+  <text x="703" y="352" class="text-title" font-size="12" fill="#3fb950">&#10003; Verificación Post-Install</text>
+  <text x="703" y="372" class="text-desc">&#8226; Recompilar objetos inválidos:</text>
+  <text x="703" y="390" class="text-code" fill="#a5d6ff">  utl_recomp.recomp_serial;</text>
+  <text x="703" y="410" class="text-desc">&#8226; Validar que status = 'VALID' en USER_OBJECTS.</text>
+  <text x="703" y="430" class="text-desc">&#8226; Notificación a Slack / Microsoft Teams.</text>
+
+  <!-- Summary of Benefits -->
+  <rect x="690" y="460" width="255" height="135" class="card-box"/>
+  <text x="703" y="482" class="text-title" font-size="12" fill="#ea580c">Beneficios Empresariales</text>
+  <text x="703" y="504" class="text-desc">&#10003; Cero importaciones manuales .sql.</text>
+  <text x="703" y="524" class="text-desc">&#10003; Trazabilidad histórica de cada página.</text>
+  <text x="703" y="544" class="text-desc">&#10003; Rollback seguro a tags estables.</text>
+  <text x="703" y="564" class="text-desc">&#10003; Cumplimiento de auditoría SOX e ISO.</text>
+</svg>
