@@ -133,10 +133,10 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
       </div>
 
       {/* Selector de Nivel Rápido */}
-      <div className="px-4 py-2 border-b border-slate-800/80 bg-slate-900/60 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-2 truncate">
+      <div className="px-4 py-2.5 border-b border-slate-800/80 bg-slate-900/60 flex items-center justify-between text-xs gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           <span className="w-2 h-2 rounded-full bg-orange-400 shrink-0" />
-          <span className="font-semibold text-slate-300 truncate">
+          <span className="font-semibold text-slate-300 leading-tight">
             {currentLevel?.title || 'GitAcademy'}
           </span>
         </div>
@@ -171,20 +171,24 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
               >
                 <button
                   onClick={() => toggleLevel(level.id)}
-                  className="w-full px-3.5 py-3 flex items-center justify-between text-left hover:bg-slate-800/40 transition"
+                  className="w-full px-3.5 py-3 flex items-center justify-between text-left hover:bg-slate-800/40 transition gap-2"
                 >
-                  <div className="flex items-center gap-2.5 truncate">
-                    {LEVEL_ICONS[level.icon] || <Terminal className="w-4 h-4 text-slate-400" />}
-                    <span className="text-xs font-semibold text-slate-200 truncate">{level.title}</span>
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="shrink-0">
+                      {LEVEL_ICONS[level.icon] || <Terminal className="w-4 h-4 text-slate-400" />}
+                    </span>
+                    <span className="text-xs font-semibold text-slate-200 leading-snug">
+                      {level.title}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0 ml-2">
+                  <div className="flex items-center gap-2 shrink-0 ml-1">
                     <span className="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md">
                       {completedInLevel}/{totalInLevel}
                     </span>
                     {isOpen ? (
-                      <ChevronDown className="w-4 h-4 text-slate-400" />
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     ) : (
-                      <ChevronRight className="w-4 h-4 text-slate-400" />
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     )}
                   </div>
                 </button>
@@ -208,21 +212,23 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
                             setShowTips(false);
                             setShowSolution(false);
                           }}
-                          className={`w-full px-3 py-2 rounded-lg flex items-center justify-between text-left text-xs transition ${
+                          className={`w-full px-3 py-2.5 rounded-lg flex items-start justify-between text-left text-xs transition gap-2 ${
                             isSelected
                               ? 'bg-orange-500/20 text-orange-300 font-semibold border border-orange-500/40'
                               : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                           }`}
                         >
-                          <div className="flex items-center gap-2.5 truncate">
+                          <div className="flex items-start gap-2.5 min-w-0">
                             {isDone ? (
-                              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                             ) : (
-                              <Circle className="w-4 h-4 text-slate-600 shrink-0" />
+                              <Circle className="w-4 h-4 text-slate-600 shrink-0 mt-0.5" />
                             )}
-                            <span className="truncate">{lesson.title}</span>
+                            <span className="leading-snug break-words">
+                              {lesson.title}
+                            </span>
                           </div>
-                          <span className="text-[10px] text-slate-500 font-mono shrink-0 ml-2">
+                          <span className="text-[10px] text-slate-500 font-mono shrink-0 ml-2 mt-0.5">
                             {lesson.timeEstimate}
                           </span>
                         </button>
