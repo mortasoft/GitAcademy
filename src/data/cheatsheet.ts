@@ -179,4 +179,13 @@ export const CHEATSHEET_DATABASE: CheatsheetItem[] = [
     explanation: 'Inserta badges SVG dinámicos provenientes del servicio shields.io para dar aspecto profesional.',
     tags: ['markdown', 'badge', 'shields', 'licencia', 'status', 'readme'],
   },
+  {
+    id: 'oracle-apex-split-export',
+    category: 'GitHub Real',
+    title: 'Exportación modular de Oracle APEX con SQLcl para Git',
+    problem: 'Quiero exportar mi aplicación APEX en archivos individuales por página para auditarla en Pull Requests sin generar diffs falsos.',
+    solutionCommand: 'apex export -applicationid 100 -split -expData -skipExportDate -dir ./apex',
+    explanation: 'El parámetro -split divide la aplicación en páginas individuales (.sql) y componentes compartidos, mientras que -skipExportDate suprime marcas de tiempo para mantener limpio el historial de Git.',
+    tags: ['oracle', 'apex', 'sqlcl', 'export', 'split', 'database', 'ci'],
+  },
 ];

@@ -17,7 +17,8 @@ import {
   FileCode,
   Terminal,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Database
 } from 'lucide-react';
 
 interface PracticesViewProps {
@@ -30,6 +31,7 @@ const ICONS_MAP: Record<string, React.ReactNode> = {
   ShieldAlert: <ShieldAlert className="w-5 h-5 text-rose-400" />,
   Server: <Server className="w-5 h-5 text-purple-400" />,
   GitFork: <GitFork className="w-5 h-5 text-orange-400" />,
+  Database: <Database className="w-5 h-5 text-cyan-400" />,
 };
 
 export const PracticesView: React.FC<PracticesViewProps> = ({

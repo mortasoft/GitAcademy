@@ -156,7 +156,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               Casos Reales de Aplicación
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Docs-as-Code, Hotfixes en Producción, GitOps y Open Source guiados paso a paso.
+              Docs-as-Code, Hotfixes en Producción, GitOps, Open Source y Oracle APEX CI/CD.
             </p>
           </button>
 

@@ -295,5 +295,73 @@ export const PRACTICES_DATABASE: PracticeWorkshop[] = [
       'La contribución se realizó en una rama separada y con commits atómicos.',
       'El Pull Request fue enviado hacia el repositorio original respetando los lineamientos de CONTRIBUTING.md.'
     ]
+  },
+  {
+    id: 'workshop-oracle-apex',
+    title: 'Taller 6: Integración y Despliegue Continuo de Oracle APEX con GitHub',
+    shortDescription: 'Aprende a descomponer aplicaciones APEX con SQLcl, versionar objetos de base de datos en Git y desplegar mediante pipelines automatizados de GitHub Actions.',
+    category: 'DevOps y Bases de Datos',
+    difficulty: 'Avanzado',
+    estimatedTime: '30 min',
+    iconName: 'Database',
+    realWorldContext: 'Por diseño, Oracle APEX almacena las definiciones de páginas y componentes en metadatos dentro de la base de datos, lo que tradicionalmente dificultaba el trabajo en equipo con Git. En entornos empresariales modernos, se utiliza Oracle SQLcl con exportación modular (-split): cada página, proceso y componente compartido se extrae en archivos .sql individuales. Esto permite comparar diferencias línea por línea en Pull Requests, auditar cambios y desplegar a QA o Producción de forma desatendida mediante GitHub Actions.',
+    learningObjectives: [
+      'Diseñar una estructura de repositorio para proyectos Oracle APEX (/db, /apex, /.github).',
+      'Exportar aplicaciones APEX en formato modular con SQLcl para obtener diffs limpios en Git.',
+      'Configurar ramas de trabajo y Conventional Commits para páginas y componentes de APEX.',
+      'Gestionar credenciales seguras (EZCONNECT y Oracle Cloud Wallet base64) en GitHub Secrets.',
+      'Construir un flujo de GitHub Actions que compile paquetes PL/SQL e importe la aplicación con mapeo de Workspace/App ID.'
+    ],
+    steps: [
+      {
+        title: 'Paso 1: Estructurar el repositorio del proyecto APEX y base de datos',
+        explanation: 'En proyectos empresariales de Oracle APEX, el repositorio debe alojar tanto los scripts de base de datos (tablas, paquetes, vistas) como la exportación dividida de la aplicación y la configuración de CI/CD:',
+        command: 'mkdir -p apex/f100 db/tables db/packages db/views .github/workflows\ntouch .gitignore README.md',
+        codeSnippet: {
+          filename: '.gitignore',
+          language: 'gitignore',
+          code: '# Oracle Database & APEX\n*.log\n*.dmp\n*.out\n\n# Oracle Cloud Wallets (seguridad y credenciales)\nwallet*.zip\ncwallet.sso\newallet.p12\ntnsnames.ora\nsqlnet.ora\nojdbc.properties\n\n# Archivos locales de entorno\n.env\n*.key\n*.secret'
+        },
+        tip: 'Nunca agregues archivos de Wallet (.zip, .sso, .p12) al repositorio Git; contienen claves criptográficas de acceso directo a la base de datos.'
+      },
+      {
+        title: 'Paso 2: Exportar la aplicación de forma dividida con SQLcl',
+        explanation: 'Utiliza el comando apex export de Oracle SQLcl con los modificadores -split y -skipExportDate. El parámetro -split descompone la app en archivos individuales por página y componente; -skipExportDate evita que se genere un diff en Git solo por la fecha y hora de exportación:',
+        command: '# Inicia la conexión con SQLcl:\nsql usuario/password@host:port/service\n\n# Dentro de SQLcl, exporta la aplicacion en modo dividido:\nSQL> apex export -applicationid 100 -split -expData -skipExportDate -dir ./apex',
+        tip: 'La exportación generará una carpeta "apex/f100" con un archivo "install.sql", carpetas para componentes compartidos y un archivo por cada página (ej: "f100_page_1.sql", "f100_page_10.sql").'
+      },
+      {
+        title: 'Paso 3: Flujo de trabajo con ramas y Pull Request para cambios en páginas',
+        explanation: 'Cuando modifiques una página en el Page Designer de APEX, crea una rama en Git y exporta nuevamente la aplicación. Gracias al formato modular, el diff de Git mostrará únicamente las líneas de la página modificada:',
+        command: 'git switch -c feature/apx-reporte-clientes\n# Tras modificar la página 10 en APEX y re-exportar con SQLcl:\ngit status\ngit diff apex/f100/application/pages/page_00010.sql\ngit add apex/f100/\ngit commit -m "feat(apex): agregar reporte interactivo y filtros en pagina 10"\ngit push -u origin feature/apx-reporte-clientes',
+        tip: 'En el Pull Request en GitHub, los revisores podrán auditar qué consultas SQL, condiciones o botones fueron agregados en la página sin tener que revisar un archivo monolítico de 100.000 líneas.'
+      },
+      {
+        title: 'Paso 4: Configurar secretos y credenciales en GitHub',
+        explanation: 'En tu repositorio de GitHub, ve a Settings -> Secrets and variables -> Actions y crea los siguientes secretos según el tipo de base de datos:',
+        codeSnippet: {
+          filename: 'github-secrets.md',
+          language: 'markdown',
+          code: '### Variables Requeridas en GitHub Secrets:\n\n1. `DB_USER`: Usuario del esquema de despliegue (ej: `APEX_DEPLOYER`).\n2. `DB_PASSWORD`: Contraseña del usuario.\n3. `DB_CONNECT_STRING`: Cadena de conexión EZCONNECT (ej: `dbhost.empresa.com:1521/ORCLPDB1`).\n\n### Para Oracle Cloud Autonomous Database (ATP / ADW):\nSi tu base de datos utiliza Wallet, convierte el archivo zip a Base64 y guárdalo como secreto:\n```bash\n# En tu terminal local:\nbase64 -w 0 Wallet_PROD.zip > wallet_base64.txt\n```\nGuarda el contenido en el secreto: `DB_WALLET_BASE64` y usa `DB_CONNECT_STRING` con el alias TNS (ej: `miadb_high`).'
+        }
+      },
+      {
+        title: 'Paso 5: Pipeline CI/CD con GitHub Actions para despliegue automatizado',
+        explanation: 'Crea el archivo `.github/workflows/deploy-apex.yml`. El flujo descarga el repositorio, instala SQLcl, configura el Wallet si existe, ejecuta los scripts de base de datos e importa la aplicación APEX mapeando el Workspace y Application ID correspondientes al ambiente destino:',
+        codeSnippet: {
+          filename: '.github/workflows/deploy-apex.yml',
+          language: 'yaml',
+          code: 'name: Deploy Oracle APEX & Database\n\non:\n  push:\n    branches: [ main ]\n    paths:\n      - "apex/**"\n      - "db/**"\n\njobs:\n  deploy:\n    name: Despliegue en Ambiente Destino\n    runs-on: ubuntu-latest\n\n    steps:\n      - name: Descargar codigo fuente\n        uses: actions/checkout@v4\n\n      - name: Configurar Java 17\n        uses: actions/setup-java@v4\n        with:\n          distribution: "temurin"\n          java-version: "17"\n\n      - name: Instalar Oracle SQLcl\n        run: |\n          curl -s https://download.oracle.com/otn_software/java/sqldev/sqlcl-latest.zip -o sqlcl.zip\n          unzip -q sqlcl.zip -d /opt\n          echo "/opt/sqlcl/bin" >> $GITHUB_PATH\n\n      - name: Extraer Wallet de Oracle Cloud (Opcional si usa Autonomous DB)\n        if: env.HAS_WALLET == \'true\'\n        env:\n          HAS_WALLET: ${{ secrets.DB_WALLET_BASE64 != \'\' }}\n          DB_WALLET_BASE64: ${{ secrets.DB_WALLET_BASE64 }}\n        run: |\n          mkdir -p $HOME/wallet\n          echo "$DB_WALLET_BASE64" | base64 -d > $HOME/wallet/wallet.zip\n          unzip -q $HOME/wallet/wallet.zip -d $HOME/wallet\n          echo "TNS_ADMIN=$HOME/wallet" >> $GITHUB_ENV\n\n      - name: Compilar Objetos de Base de Datos\n        env:\n          DB_USER: ${{ secrets.DB_USER }}\n          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}\n          DB_CONNECT_STRING: ${{ secrets.DB_CONNECT_STRING }}\n        run: |\n          sql -s $DB_USER/$DB_PASSWORD@$DB_CONNECT_STRING <<EOF\n          WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK;\n          prompt Compilando paquetes y objetos...\n          @db/packages/pkg_clientes.pks\n          @db/packages/pkg_clientes.pkb\n          exit;\n          EOF\n\n      - name: Importar Aplicacion APEX con Mapeo de Ambiente\n        env:\n          DB_USER: ${{ secrets.DB_USER }}\n          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}\n          DB_CONNECT_STRING: ${{ secrets.DB_CONNECT_STRING }}\n          TARGET_WORKSPACE: "PROD_WORKSPACE"\n          TARGET_APP_ID: "200"\n        run: |\n          sql -s $DB_USER/$DB_PASSWORD@$DB_CONNECT_STRING <<EOF\n          WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK;\n          prompt Configurando Workspace y App ID destino...\n          apex.set_workspace(\'$TARGET_WORKSPACE\');\n          apex.set_application_id($TARGET_APP_ID);\n          prompt Instalando componentes y paginas...\n          @apex/f100/install.sql\n          exit;\n          EOF'
+        },
+        tip: 'El uso de apex.set_workspace y apex.set_application_id permite que la aplicación f100 de desarrollo se instale automáticamente como la app 200 en el workspace del entorno de QA o Producción sin alterar los archivos fuente en Git.'
+      }
+    ],
+    verificationChecklist: [
+      'El repositorio cuenta con la estructura dividida /apex/f100/ y /db/ con .gitignore configurado.',
+      'La exportación modular con SQLcl genera archivos .sql independientes por página en lugar de un único archivo monolítico.',
+      'El diff del Pull Request refleja de manera aislada los cambios realizados en páginas específicas.',
+      'Las credenciales y Wallets están almacenados de forma segura en GitHub Secrets sin exposición en código.',
+      'El workflow de GitHub Actions ejecuta SQLcl e instala la aplicación con sustitución de Workspace y App ID.'
+    ]
   }
 ];
