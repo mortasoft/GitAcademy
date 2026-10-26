@@ -18,7 +18,8 @@ import {
   Github,
   Play,
   ListTree,
-  BookOpen
+  BookOpen,
+  Check
 } from 'lucide-react';
 
 interface LessonSidebarProps {
@@ -53,6 +54,15 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
   const [showTips, setShowTips] = useState<boolean>(false);
   const [showSolution, setShowSolution] = useState<boolean>(false);
   const [goalVerified, setGoalVerified] = useState<boolean | null>(null);
+  const [insertedCmd, setInsertedCmd] = useState<string | null>(null);
+
+  const handleInsert = (cmd: string) => {
+    setInsertedCmd(cmd);
+    onApplySolutionCommand(cmd);
+    setTimeout(() => {
+      setInsertedCmd(null);
+    }, 1200);
+  };
 
   const toggleLevel = (id: string) => {
     setOpenLevelId((prev) => (prev === id ? '' : id));
@@ -284,12 +294,20 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
                     <div className="flex items-center justify-between bg-slate-900 px-2.5 py-1.5 rounded-lg border border-slate-800 mt-1 font-mono text-[11px]">
                       <code className="text-orange-400 font-semibold">{step.commandSuggestion}</code>
                       <button
-                        onClick={() => onApplySolutionCommand(step.commandSuggestion!)}
-                        className="text-slate-400 hover:text-white flex items-center gap-1 text-[10px] transition bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded"
-                        title="Copiar a la terminal"
+                        onClick={() => handleInsert(step.commandSuggestion!)}
+                        className={`flex items-center gap-1 text-[10px] transition px-2 py-0.5 rounded font-medium ${
+                          insertedCmd === step.commandSuggestion
+                            ? 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/40'
+                            : 'text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700'
+                        }`}
+                        title="Insertar comando en la terminal"
                       >
-                        <Play className="w-3 h-3 text-emerald-400" />
-                        <span>Insertar</span>
+                        {insertedCmd === step.commandSuggestion ? (
+                          <Check className="w-3 h-3 text-emerald-400" />
+                        ) : (
+                          <Play className="w-3 h-3 text-emerald-400" />
+                        )}
+                        <span>{insertedCmd === step.commandSuggestion ? 'Insertado' : 'Insertar'}</span>
                       </button>
                     </div>
                   )}
@@ -382,10 +400,20 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
                       <div key={idx} className="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
                         <code className="text-emerald-400">{cmd}</code>
                         <button
-                          onClick={() => onApplySolutionCommand(cmd)}
-                          className="text-[10px] text-slate-400 hover:text-white px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700"
+                          onClick={() => handleInsert(cmd)}
+                          className={`flex items-center gap-1 text-[10px] transition px-2 py-0.5 rounded font-medium ${
+                            insertedCmd === cmd
+                              ? 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/40'
+                              : 'text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700'
+                          }`}
+                          title="Insertar comando en la terminal"
                         >
-                          Insertar
+                          {insertedCmd === cmd ? (
+                            <Check className="w-3 h-3 text-emerald-400" />
+                          ) : (
+                            <Play className="w-3 h-3 text-emerald-400" />
+                          )}
+                          <span>{insertedCmd === cmd ? 'Insertado' : 'Insertar'}</span>
                         </button>
                       </div>
                     ))}

@@ -14,12 +14,14 @@ interface TerminalProps {
   state: GitState;
   onStateChange: (newState: GitState, result: CommandResult) => void;
   suggestedCommand?: string;
+  commandToInsert?: { text: string; id: number } | null;
 }
 
 export const Terminal: React.FC<TerminalProps> = ({
   state,
   onStateChange,
   suggestedCommand,
+  commandToInsert,
 }) => {
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<string[]>([]);
@@ -41,6 +43,20 @@ export const Terminal: React.FC<TerminalProps> = ({
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [lines]);
+
+  // Insertar comando dinámicamente desde el sidebar o atajos
+  useEffect(() => {
+    if (commandToInsert?.text !== undefined) {
+      setInput(commandToInsert.text);
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+          const len = commandToInsert.text.length;
+          inputRef.current.setSelectionRange(len, len);
+        }
+      }, 50);
+    }
+  }, [commandToInsert]);
 
   const handleExecute = (cmdToRun?: string) => {
     const commandToExec = cmdToRun !== undefined ? cmdToRun : input;
@@ -151,7 +167,13 @@ export const Terminal: React.FC<TerminalProps> = ({
               onClick={(e) => {
                 e.stopPropagation();
                 setInput(suggestedCommand);
-                inputRef.current?.focus();
+                setTimeout(() => {
+                  if (inputRef.current) {
+                    inputRef.current.focus();
+                    const len = suggestedCommand.length;
+                    inputRef.current.setSelectionRange(len, len);
+                  }
+                }, 50);
               }}
               className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 px-2 py-0.5 rounded text-[11px] transition"
               title="Cargar comando de la lección en la terminal"

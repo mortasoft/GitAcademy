@@ -24,6 +24,7 @@ export const App: React.FC = () => {
   const [suggestedCommand, setSuggestedCommand] = useState<string | undefined>(
     CURRICULUM[0].lessons[0].steps[0]?.commandSuggestion
   );
+  const [commandToInsert, setCommandToInsert] = useState<{ text: string; id: number } | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const switchMode = (newMode: 'dashboard' | 'student' | 'workshop' | 'sandbox') => {
@@ -86,7 +87,9 @@ export const App: React.FC = () => {
   };
 
   const handleApplySolutionCommand = (cmd: string) => {
+    setCommandToInsert({ text: cmd, id: Date.now() + Math.random() });
     setSuggestedCommand(cmd);
+    showToast(`Comando "${cmd}" insertado en la terminal.`);
   };
 
   const allLessons = CURRICULUM.flatMap((l) => l.lessons);
@@ -159,6 +162,7 @@ export const App: React.FC = () => {
                   state={gitState}
                   onStateChange={handleStateChange}
                   suggestedCommand={suggestedCommand}
+                  commandToInsert={commandToInsert}
                 />
               </div>
             </div>
@@ -172,7 +176,7 @@ export const App: React.FC = () => {
         onClose={() => setMode(prevMode)}
         lesson={currentLesson}
         state={gitState}
-        onExecuteSolution={(cmd) => setSuggestedCommand(cmd)}
+        onExecuteSolution={(cmd) => handleApplySolutionCommand(cmd)}
       />
 
       {/* Centro de Referencia / Command Palette */}
@@ -180,6 +184,12 @@ export const App: React.FC = () => {
         isOpen={isCommandPaletteOpen}
         onClose={() => setIsCommandPaletteOpen(false)}
         onLoadScenario={handleLoadScenario}
+        onInsertCommand={(cmd) => {
+          handleApplySolutionCommand(cmd);
+          if (mode === 'dashboard') {
+            switchMode('student');
+          }
+        }}
       />
     </div>
   );

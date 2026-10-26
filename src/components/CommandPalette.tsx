@@ -7,12 +7,14 @@ interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
   onLoadScenario: (state: GitState, description: string) => void;
+  onInsertCommand?: (cmd: string) => void;
 }
 
 export const CommandPalette: React.FC<CommandPaletteProps> = ({
   isOpen,
   onClose,
   onLoadScenario,
+  onInsertCommand,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Todos');
@@ -140,17 +142,32 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                 {/* Comando de solución */}
                 <div className="flex items-center justify-between bg-slate-900 px-3 py-2 rounded-lg border border-slate-800 font-mono text-xs">
                   <code className="text-emerald-400 font-bold">{item.solutionCommand}</code>
-                  <button
-                    onClick={() => handleCopy(item.id, item.solutionCommand)}
-                    className="p-1 text-slate-400 hover:text-white transition"
-                    title="Copiar comando"
-                  >
-                    {copiedId === item.id ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
+                  <div className="flex items-center gap-1">
+                    {onInsertCommand && (
+                      <button
+                        onClick={() => {
+                          onInsertCommand(item.solutionCommand);
+                          onClose();
+                        }}
+                        className="flex items-center gap-1 text-[11px] text-slate-300 hover:text-white px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 transition"
+                        title="Insertar en la terminal y cerrar"
+                      >
+                        <Play className="w-3 h-3 text-emerald-400" />
+                        <span>Insertar</span>
+                      </button>
                     )}
-                  </button>
+                    <button
+                      onClick={() => handleCopy(item.id, item.solutionCommand)}
+                      className="p-1 text-slate-400 hover:text-white transition"
+                      title="Copiar comando"
+                    >
+                      {copiedId === item.id ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 <p className="text-[11.5px] text-slate-300 leading-relaxed font-sans">
