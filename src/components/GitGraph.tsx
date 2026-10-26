@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { GitState, GitCommit } from '../types/git';
 import { computeGraphLayout } from '../core/graphLayout';
 import { getCommitHash } from '../core/gitEngine';
-import { ZoomIn, ZoomOut, Maximize2, GitBranch as GitBranchIcon } from 'lucide-react';
+import { ZoomIn, ZoomOut, Maximize2, GitBranch as GitBranchIcon, CloudDownload, Play } from 'lucide-react';
 
 interface GitGraphProps {
   state: GitState;
   onSelectCommit?: (commitId: string) => void;
   onSelectBranch?: (branchName: string) => void;
+  onExecuteCommand?: (cmd: string) => void;
 }
 
 const getCommitDisplayInfo = (commit: GitCommit | string, fallbackIndex: number) => {
@@ -23,7 +24,7 @@ const getCommitDisplayInfo = (commit: GitCommit | string, fallbackIndex: number)
   };
 };
 
-export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSelectBranch }) => {
+export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSelectBranch, onExecuteCommand }) => {
   const [zoom, setZoom] = useState<number>(1);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
 
@@ -76,18 +77,51 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSel
         </div>
       </div>
 
-      {/* Área del Grafo SVG */}
-      <div className="flex-1 overflow-auto relative p-6 cursor-grab active:cursor-grabbing">
-        <div
-          style={{
-            transform: `scale(${zoom})`,
-            transformOrigin: 'top left',
-            transition: 'transform 0.15s ease-out',
-            width: `${layout.width}px`,
-            height: `${layout.height}px`,
-          }}
-          className="relative"
-        >
+      {/* Área del Grafo SVG o Estado Vacío */}
+      <div className={`flex-1 overflow-auto relative p-6 ${layout.nodes.length === 0 ? 'flex items-center justify-center' : 'cursor-grab active:cursor-grabbing'}`}>
+        {layout.nodes.length === 0 ? (
+          <div className="max-w-md w-full p-6 rounded-2xl bg-slate-900/90 border border-slate-800 text-center space-y-4 shadow-xl backdrop-blur-sm animate-in fade-in zoom-in-95">
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+              <CloudDownload className="w-7 h-7" />
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-base font-bold text-white">
+                Sin repositorio local detectado
+              </h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                Tu carpeta de trabajo local aún no contiene un repositorio Git inicializado ni clonado. Ejecuta <code className="text-orange-400 font-mono">git clone &lt;url&gt;</code> en la terminal para descargar el proyecto y construir su árbol de ramas y commits.
+              </p>
+            </div>
+
+            <div className="pt-2 flex flex-col gap-2">
+              <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 break-all text-left flex items-center justify-between gap-2">
+                <span className="text-emerald-400 font-bold">$</span>
+                <span className="flex-1">git clone https://github.com/empresa/proyecto-web.git</span>
+              </div>
+
+              {onExecuteCommand && (
+                <button
+                  onClick={() => onExecuteCommand('git clone https://github.com/empresa/proyecto-web.git')}
+                  className="w-full py-2 px-3 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-medium text-xs flex items-center justify-center gap-2 transition shadow-md shadow-orange-950"
+                >
+                  <Play className="w-3.5 h-3.5" />
+                  <span>Insertar comando de clonación</span>
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div
+            style={{
+              transform: `scale(${zoom})`,
+              transformOrigin: 'top left',
+              transition: 'transform 0.15s ease-out',
+              width: `${layout.width}px`,
+              height: `${layout.height}px`,
+            }}
+            className="relative"
+          >
           <svg
             width={layout.width}
             height={layout.height}
@@ -705,6 +739,7 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSel
             })}
           </svg>
         </div>
+        )}
       </div>
 
       {/* Drawer / Tarjeta de detalles del commit seleccionado */}

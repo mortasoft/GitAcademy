@@ -85,6 +85,8 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
       success = Object.keys(gitState.commits).length >= 2;
     } else if (currentLesson.id === 'intro-history') {
       success = true;
+    } else if (currentLesson.id === 'clone-remote') {
+      success = Object.keys(gitState.commits).length >= 2 && Boolean(gitState.branches['origin/main']);
     } else if (currentLesson.id === 'branches-create') {
       success = Boolean(gitState.branches['feature-login']);
     } else if (currentLesson.id === 'branches-detached') {
@@ -100,6 +102,10 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
       success = Boolean(mainCommit?.message.includes('Fix'));
     } else if (currentLesson.id === 'reset-revert') {
       success = gitState.branches.main?.commitId !== 'c2';
+    } else if (currentLesson.id === 'push-pull-sync') {
+      success = Boolean(gitState.branches['origin/main'] && gitState.branches.main && gitState.branches['origin/main'].commitId === gitState.branches.main.commitId);
+    } else if (currentLesson.id === 'teamwork-github-flow') {
+      success = Boolean(gitState.branches['feature/nueva-pantalla']);
     } else if (currentLesson.id === 'git-stash' || currentLesson.isGitHubGuide) {
       success = true;
     }

@@ -779,6 +779,7 @@ export class GitEngine {
 
     const c1Id = 'c1';
     const c2Id = 'c2';
+    const c3Id = 'c3';
 
     const commits: Record<string, GitCommit> = {
       [c1Id]: {
@@ -793,15 +794,23 @@ export class GitEngine {
         id: c2Id,
         hash: '37d1a4e',
         parentIds: [c1Id],
-        message: 'feat: setup initial architecture',
-        author: 'Lead Developer <lead@empresa.com>',
+        message: 'feat: add core components and design tokens',
+        author: 'Frontend Dev <frontend@empresa.com>',
         timestamp: Date.now() - 3600000,
+      },
+      [c3Id]: {
+        id: c3Id,
+        hash: '9bfa8f3',
+        parentIds: [c2Id],
+        message: 'feat: setup api client & router',
+        author: 'Fullstack Dev <fullstack@empresa.com>',
+        timestamp: Date.now() - 1800000,
       },
     };
 
     const branches: Record<string, GitBranch> = {
-      main: { name: 'main', commitId: c2Id },
-      'origin/main': { name: 'origin/main', commitId: c2Id, isRemote: true },
+      main: { name: 'main', commitId: c3Id },
+      'origin/main': { name: 'origin/main', commitId: c3Id, isRemote: true },
     };
 
     const newState: GitState = {

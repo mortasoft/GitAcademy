@@ -278,16 +278,14 @@ export const CURRICULUM: CurriculumLevel[] = [
         timeEstimate: '5 min',
         summary: 'Aprende a clonar repositorios existentes a tu máquina, comprender qué es "origin" y verificar la conexión con git remote.',
         initialState: {
-          commits: {
-            c1: { id: 'c1', parentIds: [], message: 'Initial commit (README.md)', author: 'Lead <lead@empresa.com>', timestamp: Date.now() - 7200000 },
-          },
-          branches: { main: { name: 'main', commitId: 'c1' } },
+          commits: {},
+          branches: {},
           tags: {},
           head: { type: 'branch', target: 'main' },
           staging: [],
           workingDir: [],
           stash: [],
-          remotes: { origin: 'https://github.com/empresa/proyecto-web.git' },
+          remotes: {},
         },
         steps: [
           {

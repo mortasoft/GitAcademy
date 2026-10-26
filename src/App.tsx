@@ -155,6 +155,7 @@ export const App: React.FC = () => {
               <div className="flex-1 min-h-0">
                 <GitGraph
                   state={gitState}
+                  onExecuteCommand={handleApplySolutionCommand}
                   onSelectBranch={(branchName) => {
                     if (gitState.head.type === 'branch' && gitState.head.target === branchName) {
                       showToast(`Ya te encuentras en la rama "${branchName}".`);
