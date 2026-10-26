@@ -148,7 +148,7 @@ export const CHEATSHEET_DATABASE: CheatsheetItem[] = [
     category: 'GitHub Markdown (GFM)',
     title: 'Secciones desplegables / Colapsables (<details>)',
     problem: 'Quiero ocultar logs largos, tablas extensas o instrucciones secundarias para no saturar el README.',
-    solutionCommand: '<details>\n  <summary>🔍 Haz clic para ver los registros detallados de instalación</summary>\n\n```bash\nnpm install mi-libreria\nnpm run build\n```\n</details>',
+    solutionCommand: '<details>\n  <summary>Haz clic para ver los registros detallados de instalación</summary>\n\n```bash\nnpm install mi-libreria\nnpm run build\n```\n</details>',
     explanation: 'Permite desplegar y contraer contenido largo haciendo clic en el título del summary.',
     tags: ['markdown', 'details', 'colapsable', 'acordeon', 'logs'],
   },

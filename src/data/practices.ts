@@ -37,7 +37,7 @@ export const PRACTICES_DATABASE: PracticeWorkshop[] = [
         codeSnippet: {
           filename: 'index.js',
           language: 'javascript',
-          code: '// Archivo principal del proyecto\nconsole.log("¡Proyecto colaborativo inicializado con Git y GitHub!");\nmodule.exports = { status: "online" };'
+          code: '// Archivo principal del proyecto\nconsole.log("Servicio inicializado en el puerto 3000");\nmodule.exports = { status: "online" };'
         }
       },
       {
@@ -93,7 +93,7 @@ export const PRACTICES_DATABASE: PracticeWorkshop[] = [
         codeSnippet: {
           filename: 'CONTRIBUTING.md',
           language: 'markdown',
-          code: '# Guía de Contribución al Proyecto\n\n¡Gracias por tu interés en mejorar este proyecto!\n\n## Proceso de Trabajo\n1. Crea una rama descriptiva: `docs/nombre-mejora` o `feat/nueva-funcion`.\n2. Escribe commits atómicos siguiendo Conventional Commits (`docs:`, `feat:`, `fix:`).\n3. Abre un Pull Request describiendo el propósito de tus cambios.\n4. Al menos 1 miembro del equipo debe aprobar el PR antes del merge.'
+          code: '# Guía de Contribución\n\nDirectrices para colaborar en la documentación y código de este repositorio.\n\n## Proceso de Trabajo\n1. Crea una rama descriptiva: `docs/nombre-mejora` o `feat/nueva-funcion`.\n2. Escribe commits atómicos siguiendo Conventional Commits (`docs:`, `feat:`, `fix:`).\n3. Abre un Pull Request describiendo el propósito de tus cambios.\n4. Al menos 1 miembro del equipo debe aprobar el PR antes del merge.'
         }
       },
       {
@@ -166,7 +166,7 @@ export const PRACTICES_DATABASE: PracticeWorkshop[] = [
       },
       {
         title: 'Paso 4: Propagar la solución a develop para evitar regresiones',
-        explanation: '¡El paso que muchos olvidan! Si no fusionas el hotfix en develop, en la próxima versión v1.1.0 el bug volverá a aparecer:',
+        explanation: 'Propagación a la rama de desarrollo: si no integras el hotfix en develop, en la próxima versión de release el bug reaparecerá:',
         command: 'git checkout develop\ngit pull origin develop\ngit merge --no-ff hotfix/v1.0.1-fix-pago -m "merge: integrar fix de pagos v1.0.1 en develop"\ngit push origin develop',
         tip: 'Si hay conflictos con código nuevo en develop, resuélvelos manteniendo la lógica del hotfix.'
       },
@@ -251,7 +251,7 @@ export const PRACTICES_DATABASE: PracticeWorkshop[] = [
     iconName: 'GitFork',
     realWorldContext: 'En proyectos de código abierto (o en repositorios corporativos con modelo InnerSource), no tienes permisos de escritura directa en el repositorio oficial. El flujo estándar de la industria exige hacer un "Fork" a tu cuenta, mantener sincronizada tu rama local con el repositorio original (upstream) y enviar tus propuestas mediante Pull Requests respetando las guías de contribución.',
     learningObjectives: [
-      'Comprender el modelo Fork & Pull utilizado en el 100% de proyectos de código abierto.',
+      'Comprender el modelo Fork & Pull utilizado en proyectos de código abierto y modelos corporativos InnerSource.',
       'Crear un Fork de un repositorio y clonarlo a tu entorno local.',
       'Configurar el remoto "upstream" para recibir actualizaciones de los autores originales.',
       'Sincronizar tu rama local main con upstream antes de comenzar cualquier tarea.',

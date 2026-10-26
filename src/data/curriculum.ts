@@ -373,7 +373,7 @@ export const CURRICULUM: CurriculumLevel[] = [
             {
               action: '3. Descartar cambios locales no deseados (Discard changes)',
               details: 'Si estás editando y deseas borrar los cambios de un archivo para devolverlo a su estado anterior, haz clic derecho sobre él en la lista "Changes" y selecciona "Discard changes...".',
-              tip: '¡Cuidado! Descartar cambios sin commitear es irreversible ya que no han sido guardados en el historial de Git.',
+              tip: 'Acción irreversible: descartar cambios en el árbol de trabajo elimina las modificaciones de forma definitiva ya que no han sido registradas en un commit.',
             },
             {
               action: '4. Revertir un commit previo con "Revert changes in commit"',
@@ -430,7 +430,7 @@ export const CURRICULUM: CurriculumLevel[] = [
           },
         ],
         gitHubGuideContent: {
-          overview: 'Integrar ramas es el momento culmine del desarrollo. GitHub Desktop previene accidentes avisándote antes de confirmar y guiándote paso a paso en caso de conflictos.',
+          overview: 'La integración de ramas consolida los cambios en la rama receptora. GitHub Desktop ofrece una vista previa de los commits a integrar y asiste visualmente en caso de conflictos.',
           steps: [
             {
               action: '1. Sitúate en la rama receptora (main)',
@@ -1207,12 +1207,12 @@ export const CURRICULUM: CurriculumLevel[] = [
         steps: [
           {
             title: '1. Comprueba el desfase con el remoto',
-            explanation: 'Ejecuta `git status`. Observa que te indica: "Tu rama está adelantada a \'origin/main\' por 1 commit". En el grafo, verás el badge `☁ origin/main` un commit atrás.',
+            explanation: 'Ejecuta `git status`. Observa que te indica: "Tu rama está adelantada a \'origin/main\' por 1 commit". En el grafo, verás el badge `origin/main` un commit atrás.',
             commandSuggestion: 'git status',
           },
           {
             title: '2. Publica tus cambios con git push',
-            explanation: 'Ejecuta `git push origin main` (o simplemente `git push`). Mira cómo el badge `☁ origin/main` viaja hacia adelante hasta alinearse con tu rama local.',
+            explanation: 'Ejecuta `git push origin main` (o simplemente `git push`). Mira cómo el badge `origin/main` viaja hacia adelante hasta alinearse con tu rama local.',
             commandSuggestion: 'git push origin main',
           },
           {
@@ -1479,7 +1479,7 @@ export const CURRICULUM: CurriculumLevel[] = [
             },
             {
               action: '5. Guarda los cambios con "Create"',
-              details: 'Haz clic en el botón verde "Create" al final de la página. A partir de este instante, la rama main queda 100% blindada contra accidentes.',
+              details: 'Haz clic en el botón "Create" al final de la página. A partir de este momento, la rama main queda protegida por las reglas de validación configuradas.',
             },
           ],
         },
@@ -1491,7 +1491,7 @@ export const CURRICULUM: CurriculumLevel[] = [
         category: 'Seguridad y Configuración',
         difficulty: 'Principiante',
         timeEstimate: '6 min',
-        summary: 'Evita fugas de seguridad catastróficas: activa Secret Scanning para auditar tokens y Push Protection para bloquear commits con claves en tiempo real.',
+        summary: 'Prevención de exposición de credenciales: activa Secret Scanning para auditar tokens y Push Protection para bloquear commits con claves en tiempo real.',
         isGitHubGuide: true,
         initialState: createBaseState(),
         steps: [],

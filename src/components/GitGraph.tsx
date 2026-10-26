@@ -289,7 +289,7 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSel
                       fontWeight="bold"
                       fontFamily="monospace"
                     >
-                      🍒 cherry-pick
+                      cherry-pick
                     </text>
                   </g>
                 </g>
@@ -434,7 +434,7 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSel
 
                     node.branches.forEach((bName) => {
                       const isRemote = bName.startsWith('origin/') || bName.includes('/');
-                      const displayLabel = isRemote ? `☁ ${bName}` : bName;
+                      const displayLabel = bName;
                       const w = Math.max(displayLabel.length * 7.5 + 16, 48);
 
                       badges.push(
@@ -489,7 +489,7 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSel
                             fontWeight="bold"
                             fontFamily="monospace"
                           >
-                            🍒 {originHash}
+                            cp: {originHash}
                           </text>
                         </g>
                       );
@@ -762,7 +762,7 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSel
                 )}
                 {selectedNode.commit.cherryPickFrom && (
                   <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono text-[10px] border border-rose-500/30 flex items-center gap-1">
-                    <span>🍒 Copiado de:</span>
+                    <span>Copiado de:</span>
                     <button
                       onClick={() => setSelectedNodeId(selectedNode.commit.cherryPickFrom!)}
                       className="underline font-bold hover:text-white"

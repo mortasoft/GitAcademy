@@ -12,7 +12,7 @@ import {
   Copy, 
   Check, 
   ArrowLeft, 
-  Sparkles, 
+  Compass, 
   Lightbulb, 
   FileCode,
   Terminal,
@@ -155,7 +155,7 @@ export const PracticesView: React.FC<PracticesViewProps> = ({
             {/* Contexto del Mundo Real */}
             <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
               <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 font-mono uppercase">
-                <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                <Compass className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>¿Por qué y en qué momento se usa en la industria?</span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed font-sans">

@@ -80,7 +80,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/40 flex flex-col items-center sm:items-start text-center sm:text-left gap-2 shadow-sm">
                   <div className="flex items-center gap-2 text-emerald-400 font-semibold text-sm">
                     <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />
-                    <span>¡Curso completado!</span>
+                    <span>Curso completado</span>
                   </div>
                   <p className="text-xs text-slate-300">
                     Has finalizado con éxito todas las lecciones y ejercicios del programa.
@@ -124,7 +124,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 />
               </div>
               <div className="text-[11px] text-slate-400">
-                {completedCount} de {totalLessons} lecciones completadas {isCourseCompleted && '🎉'}
+                {completedCount} de {totalLessons} lecciones completadas
               </div>
             </div>
 

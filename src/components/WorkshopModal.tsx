@@ -343,7 +343,7 @@ export const WorkshopModal: React.FC<WorkshopModalProps> = ({
         <div className="w-full lg:w-1/2 p-6 flex flex-col bg-slate-900/40">
           <div className="flex items-center justify-between text-xs font-mono uppercase text-slate-400 mb-2">
             <div className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${effectiveView === 'image' ? 'bg-blue-400' : 'bg-emerald-400 animate-pulse'}`} />
+              <span className={`w-2 h-2 rounded-full ${effectiveView === 'image' ? 'bg-blue-400' : 'bg-emerald-400'}`} />
               <span>
                 {effectiveView === 'image' ? 'Diagrama / Captura Oficial' : 'Grafo del Repositorio en Proyección'}
               </span>
