@@ -1,5 +1,5 @@
 import { GitState, CommandResult } from '../types/git';
-import { GitEngine, getHeadCommitId, getCommitHistory } from './gitEngine';
+import { GitEngine, getHeadCommitId, getCommitHistory, getCommitHash } from './gitEngine';
 
 export class CommandParser {
   static execute(rawCommand: string, currentState: GitState): CommandResult {
@@ -140,9 +140,10 @@ export class CommandParser {
     // git status
     if (subCommand === 'status') {
       const headCommit = getHeadCommitId(currentState);
+      const headHash = headCommit ? getCommitHash(headCommit) : '';
       const branchName = currentState.head.type === 'branch'
         ? `En la rama ${currentState.head.target}`
-        : `HEAD desacoplado en ${headCommit}`;
+        : `HEAD desacoplado en ${headHash}`;
 
       let body = `${branchName}\n`;
       if (currentState.staging.length > 0) {
@@ -463,11 +464,13 @@ export class CommandParser {
         const allRefs = [...refLabels, ...tagLabels];
         const refStr = allRefs.length > 0 ? ` (${allRefs.join(', ')})` : '';
 
+        const commitHash = getCommitHash(c);
+
         if (oneline) {
-          return `${c.id}${refStr} ${c.message}`;
+          return `\x1b[33m${commitHash}\x1b[0m${refStr ? ` \x1b[36m${refStr}\x1b[0m` : ''} ${c.message}`;
         }
 
-        return `commit ${c.id}${refStr}\nAutor: ${c.author}\nFecha: ${new Date(c.timestamp).toLocaleString()}\n\n    ${c.message}\n`;
+        return `\x1b[33mcommit ${commitHash}\x1b[0m${refStr ? ` \x1b[36m${refStr}\x1b[0m` : ''}\nAutor: ${c.author}\nFecha: ${new Date(c.timestamp).toLocaleString()}\n\n    ${c.message}\n`;
       });
 
       return {

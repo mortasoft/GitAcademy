@@ -108,11 +108,12 @@ export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
     }
   });
 
-  const NODE_HALF_WIDTH = 63;
-  const X_SPACING = 180;
-  const Y_SPACING = 95;
-  const PADDING_X = 100;
-  const PADDING_Y = 85;
+  // Parámetros de disposición vertical del grafo (carriles de ramas en columnas X, progreso en filas Y)
+  const CAPSULE_HALF_HEIGHT = 14;
+  const LANE_SPACING = 240; // Espaciado horizontal entre carriles/ramas
+  const ROW_SPACING = 85;   // Espaciado vertical entre commits sucesivos
+  const PADDING_X = 110;
+  const PADDING_Y = 55;
 
   const headCommitId = getHeadCommitId(state);
 
@@ -121,8 +122,9 @@ export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
     const lane = laneMap[id] || 0;
     const depth = depthMap[id] || 0;
 
-    const x = PADDING_X + depth * X_SPACING;
-    const y = PADDING_Y + lane * Y_SPACING;
+    // Disposición vertical: X es el carril de la rama, Y es la profundidad en el tiempo
+    const x = PADDING_X + lane * LANE_SPACING;
+    const y = PADDING_Y + depth * ROW_SPACING;
     const color = BRANCH_COLORS[lane % BRANCH_COLORS.length];
 
     const branchesOnCommit = Object.values(state.branches)
@@ -150,15 +152,15 @@ export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
   const nodePosMap = new Map<string, { x: number; y: number }>();
   nodes.forEach((n) => nodePosMap.set(n.commit.id, { x: n.x, y: n.y }));
 
-  // Generar aristas entre padres e hijos conectando los bordes de las cápsulas
+  // Generar aristas verticales conectando el extremo inferior del padre con el superior del hijo
   const edges: GraphLayoutResult['edges'] = [];
   nodes.forEach((node) => {
     node.commit.parentIds.forEach((parentId, pIndex) => {
       const parentPos = nodePosMap.get(parentId);
       if (parentPos) {
         edges.push({
-          from: { x: parentPos.x + NODE_HALF_WIDTH, y: parentPos.y, id: parentId },
-          to: { x: node.x - NODE_HALF_WIDTH, y: node.y, id: node.commit.id },
+          from: { x: parentPos.x, y: parentPos.y + CAPSULE_HALF_HEIGHT, id: parentId },
+          to: { x: node.x, y: node.y - CAPSULE_HALF_HEIGHT, id: node.commit.id },
           isMerge: pIndex > 0,
           color: node.color,
         });
@@ -172,8 +174,8 @@ export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
   if (hasChanges && headCommitId && nodePosMap.has(headCommitId)) {
     const headPos = nodePosMap.get(headCommitId)!;
     ghostNode = {
-      x: headPos.x + X_SPACING,
-      y: headPos.y,
+      x: headPos.x, // Mismo carril vertical que HEAD
+      y: headPos.y + ROW_SPACING, // Fila siguiente hacia abajo
       headCommitId,
       hasStaged: state.staging.length > 0,
       hasWorking: state.workingDir.length > 0,
@@ -183,10 +185,11 @@ export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
   }
 
   const allX = nodes.map((n) => n.x);
-  if (ghostNode) allX.push(ghostNode.x + 140);
+  const maxX = Math.max(...allX, 350) + 260; // Espacio suficiente para las etiquetas de ramas a la derecha
 
-  const maxX = Math.max(...allX, 500) + PADDING_X;
-  const maxY = Math.max(...nodes.map((n) => n.y), 200) + PADDING_Y + 40;
+  const allY = nodes.map((n) => n.y);
+  if (ghostNode) allY.push(ghostNode.y + 40);
+  const maxY = Math.max(...allY, 200) + PADDING_Y + 40;
 
   return {
     nodes,

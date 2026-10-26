@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { GitState } from '../types/git';
+import { GitState, GitCommit } from '../types/git';
 import { computeGraphLayout } from '../core/graphLayout';
+import { getCommitHash } from '../core/gitEngine';
 import { ZoomIn, ZoomOut, Maximize2, GitBranch as GitBranchIcon } from 'lucide-react';
 
 interface GitGraphProps {
@@ -8,13 +9,16 @@ interface GitGraphProps {
   onSelectCommit?: (commitId: string) => void;
 }
 
-const getCommitDisplayInfo = (commitId: string, fallbackIndex: number) => {
+const getCommitDisplayInfo = (commit: GitCommit | string, fallbackIndex: number) => {
+  const commitId = typeof commit === 'string' ? commit : commit.id;
+  const hash = getCommitHash(commit, fallbackIndex);
   const match = commitId.match(/^c(\d+)$/i);
   const num = match ? match[1] : (fallbackIndex + 1);
   return {
     title: `Commit #${num}`,
     id: commitId,
-    full: `Commit #${num} (${commitId})`,
+    hash,
+    full: `Commit #${num} (${hash})`,
   };
 };
 
@@ -95,11 +99,13 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
               </linearGradient>
             </defs>
 
-            {/* Dibujar Conexiones / Aristas */}
+            {/* Dibujar Conexiones / Aristas Verticales */}
             {layout.edges.map((edge, index) => {
-              // Curva suave cúbica Bezier
-              const dx = edge.to.x - edge.from.x;
-              const pathD = `M ${edge.from.x} ${edge.from.y} C ${edge.from.x + dx * 0.5} ${edge.from.y}, ${edge.to.x - dx * 0.5} ${edge.to.y}, ${edge.to.x} ${edge.to.y}`;
+              const isStraight = edge.from.x === edge.to.x;
+              const dy = edge.to.y - edge.from.y;
+              const pathD = isStraight
+                ? `M ${edge.from.x} ${edge.from.y} L ${edge.to.x} ${edge.to.y}`
+                : `M ${edge.from.x} ${edge.from.y} C ${edge.from.x} ${edge.from.y + dy * 0.5}, ${edge.to.x} ${edge.to.y - dy * 0.5}, ${edge.to.x} ${edge.to.y}`;
 
               return (
                 <path
@@ -118,10 +124,15 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
             {layout.ghostNode && (() => {
               const headNode = layout.nodes.find((n) => n.commit.id === layout.ghostNode?.headCommitId);
               if (!headNode) return null;
-              const startX = headNode.x + 63;
-              const endX = layout.ghostNode.x - 63;
-              const dx = endX - startX;
-              const ghostPath = `M ${startX} ${headNode.y} C ${startX + dx * 0.5} ${headNode.y}, ${endX - dx * 0.5} ${layout.ghostNode.y}, ${endX} ${layout.ghostNode.y}`;
+              const startX = headNode.x;
+              const startY = headNode.y + 14;
+              const endX = layout.ghostNode.x;
+              const endY = layout.ghostNode.y - 14;
+              const isStraight = startX === endX;
+              const dy = endY - startY;
+              const ghostPath = isStraight
+                ? `M ${startX} ${startY} L ${endX} ${endY}`
+                : `M ${startX} ${startY} C ${startX} ${startY + dy * 0.5}, ${endX} ${endY - dy * 0.5}, ${endX} ${endY}`;
               const strokeColor = layout.ghostNode.hasStaged ? '#10b981' : '#f59e0b';
 
               return (
@@ -139,7 +150,7 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
             {/* Nodos de Commits */}
             {layout.nodes.map((node, nodeIdx) => {
               const isSelected = selectedNodeId === node.commit.id;
-              const info = getCommitDisplayInfo(node.commit.id, nodeIdx);
+              const info = getCommitDisplayInfo(node.commit, nodeIdx);
 
               return (
                 <g
@@ -153,11 +164,11 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                   {/* Halo de enfoque en HEAD */}
                   {node.isHead && (
                     <rect
-                      x={node.x - 67}
-                      y={node.y - 17}
-                      width={134}
-                      height={34}
-                      rx={17}
+                      x={node.x - 84}
+                      y={node.y - 18}
+                      width={168}
+                      height={36}
+                      rx={18}
                       fill="none"
                       stroke="#ea580c"
                       strokeWidth={1.5}
@@ -165,13 +176,13 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                     />
                   )}
 
-                  {/* Cápsula Principal del Commit */}
+                  {/* Cápsula Principal del Commit: 160x28 */}
                   <rect
-                    x={node.x - 63}
-                    y={node.y - 13}
-                    width={126}
-                    height={26}
-                    rx={13}
+                    x={node.x - 80}
+                    y={node.y - 14}
+                    width={160}
+                    height={28}
+                    rx={14}
                     fill={isSelected ? '#1e293b' : '#0f172a'}
                     stroke={isSelected ? '#ffffff' : node.color}
                     strokeWidth={isSelected ? 2.5 : 1.5}
@@ -180,16 +191,16 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
 
                   {/* Punto indicador del carril / color de rama */}
                   <circle
-                    cx={node.x - 47}
+                    cx={node.x - 66}
                     cy={node.y}
                     r={5}
                     fill={node.color}
                   />
 
-                  {/* Texto: Commit #1 (c1) */}
+                  {/* Texto: Commit #1 (6b4550a) */}
                   <text
-                    x={node.x - 34}
-                    y={node.y + 3.5}
+                    x={node.x - 52}
+                    y={node.y + 4}
                     fill="#ffffff"
                     fontSize={10.5}
                     fontWeight="bold"
@@ -197,55 +208,43 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                     className="pointer-events-none select-none"
                   >
                     {info.title}
-                    <tspan fill="#94a3b8" fontWeight="normal"> ({info.id})</tspan>
+                    <tspan fill="#94a3b8" fontWeight="normal"> ({info.hash})</tspan>
                   </text>
 
-                  {/* Etiquetas de Ramas y HEAD (Arriba) */}
-                  <g transform={`translate(${node.x}, ${node.y - 28})`}>
-                    <g className="flex flex-col items-center">
-                      {/* Badge HEAD */}
-                      {node.isHead && (
-                        <g transform="translate(0, -22)">
-                          <rect
-                            x={-24}
-                            y={-9}
-                            width={48}
-                            height={17}
-                            rx={3}
-                            fill="#ea580c"
-                            stroke="#fdba74"
-                            strokeWidth={1}
-                          />
+                  {/* Badges horizontales de HEAD, Ramas y Tags a la derecha del commit */}
+                  {(() => {
+                    let badgeOffset = 88;
+                    const badges: React.ReactNode[] = [];
+
+                    if (node.isHead) {
+                      const w = 44;
+                      badges.push(
+                        <g key="head" transform={`translate(${node.x + badgeOffset}, ${node.y - 10})`}>
+                          <rect width={w} height={20} rx={4} fill="#ea580c" stroke="#fdba74" strokeWidth={1} />
                           <text
-                            x={0}
-                            y={3}
+                            x={w / 2}
+                            y={13.5}
                             textAnchor="middle"
                             fill="#ffffff"
-                            fontSize={9}
+                            fontSize={9.5}
                             fontWeight="bold"
                             fontFamily="monospace"
                           >
                             HEAD
                           </text>
                         </g>
-                      )}
+                      );
+                      badgeOffset += w + 6;
+                    }
 
-                      {/* Badges de Ramas */}
-                      {node.branches.map((bName, bIdx) => (
-                        <g key={bName} transform={`translate(0, ${-bIdx * 20})`}>
-                          <rect
-                            x={-(bName.length * 4.2 + 10)}
-                            y={-9}
-                            width={bName.length * 8.4 + 20}
-                            height={18}
-                            rx={4}
-                            fill="#1e293b"
-                            stroke={node.color}
-                            strokeWidth={1.5}
-                          />
+                    node.branches.forEach((bName) => {
+                      const w = Math.max(bName.length * 7.5 + 16, 44);
+                      badges.push(
+                        <g key={`branch-${bName}`} transform={`translate(${node.x + badgeOffset}, ${node.y - 10})`}>
+                          <rect width={w} height={20} rx={4} fill="#0f172a" stroke={node.color} strokeWidth={1.5} />
                           <text
-                            x={0}
-                            y={3}
+                            x={w / 2}
+                            y={13.5}
                             textAnchor="middle"
                             fill="#e2e8f0"
                             fontSize={9.5}
@@ -255,36 +254,33 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                             {bName}
                           </text>
                         </g>
-                      ))}
-                    </g>
-                  </g>
+                      );
+                      badgeOffset += w + 6;
+                    });
 
-                  {/* Etiquetas de Tags (Abajo) */}
-                  {node.tags.map((tName, tIdx) => (
-                    <g key={tName} transform={`translate(${node.x}, ${node.y + 30 + tIdx * 20})`}>
-                      <rect
-                        x={-(tName.length * 4.2 + 8)}
-                        y={-8}
-                        width={tName.length * 8.4 + 16}
-                        height={16}
-                        rx={3}
-                        fill="#064e3b"
-                        stroke="#10b981"
-                        strokeWidth={1}
-                      />
-                      <text
-                        x={0}
-                        y={3}
-                        textAnchor="middle"
-                        fill="#6ee7b7"
-                        fontSize={9}
-                        fontWeight="600"
-                        fontFamily="monospace"
-                      >
-                        {tName}
-                      </text>
-                    </g>
-                  ))}
+                    node.tags.forEach((tName) => {
+                      const w = Math.max(tName.length * 7.5 + 16, 40);
+                      badges.push(
+                        <g key={`tag-${tName}`} transform={`translate(${node.x + badgeOffset}, ${node.y - 9})`}>
+                          <rect width={w} height={18} rx={3} fill="#064e3b" stroke="#10b981" strokeWidth={1} />
+                          <text
+                            x={w / 2}
+                            y={12.5}
+                            textAnchor="middle"
+                            fill="#6ee7b7"
+                            fontSize={9}
+                            fontWeight="600"
+                            fontFamily="monospace"
+                          >
+                            {tName}
+                          </text>
+                        </g>
+                      );
+                      badgeOffset += w + 6;
+                    });
+
+                    return badges;
+                  })()}
                 </g>
               );
             })}
@@ -302,39 +298,13 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
 
               return (
                 <g key="ghost-node" className="select-none">
-                  {/* Badge superior de estado */}
-                  <g transform={`translate(${g.x}, ${g.y - 28})`}>
-                    <rect
-                      x={-45}
-                      y={-9}
-                      width={90}
-                      height={18}
-                      rx={4}
-                      fill={bgColor}
-                      stroke={mainColor}
-                      strokeWidth={1.5}
-                      strokeDasharray="2 2"
-                    />
-                    <text
-                      x={0}
-                      y={3.5}
-                      textAnchor="middle"
-                      fill={badgeTextColor}
-                      fontSize={8.5}
-                      fontWeight="bold"
-                      fontFamily="monospace"
-                    >
-                      {badgeText}
-                    </text>
-                  </g>
-
-                  {/* Cápsula punteada del nodo fantasma */}
+                  {/* Cápsula punteada del nodo fantasma: 160x28 */}
                   <rect
-                    x={g.x - 63}
-                    y={g.y - 13}
-                    width={126}
-                    height={26}
-                    rx={13}
+                    x={g.x - 80}
+                    y={g.y - 14}
+                    width={160}
+                    height={28}
+                    rx={14}
                     fill={bgColor}
                     fillOpacity={0.6}
                     stroke={mainColor}
@@ -342,14 +312,14 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                     strokeDasharray="4 3"
                   />
                   <circle
-                    cx={g.x - 47}
+                    cx={g.x - 66}
                     cy={g.y}
                     r={4.5}
                     fill={mainColor}
                   />
                   <text
-                    x={g.x - 34}
-                    y={g.y + 3.5}
+                    x={g.x - 52}
+                    y={g.y + 4}
                     fill={mainColor}
                     fontSize={10}
                     fontWeight="bold"
@@ -358,31 +328,62 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                     {isStaged ? '✓ Staged' : '... Modificado'}
                   </text>
 
-                  {/* Etiquetas flotantes con los nombres de los archivos */}
-                  <g transform={`translate(${g.x}, ${g.y + 28})`}>
-                    {allChangedFiles.map((file, fIdx) => {
+                  {/* Badges de estado y archivos a la derecha del nodo fantasma */}
+                  {(() => {
+                    let ghostOffset = 88;
+                    const badges: React.ReactNode[] = [];
+
+                    // Badge de estado (STAGED o MODIFICADO)
+                    const statusW = 84;
+                    badges.push(
+                      <g key="ghost-status" transform={`translate(${g.x + ghostOffset}, ${g.y - 10})`}>
+                        <rect
+                          width={statusW}
+                          height={20}
+                          rx={4}
+                          fill={bgColor}
+                          stroke={mainColor}
+                          strokeWidth={1.5}
+                          strokeDasharray="2 2"
+                        />
+                        <text
+                          x={statusW / 2}
+                          y={13.5}
+                          textAnchor="middle"
+                          fill={badgeTextColor}
+                          fontSize={9}
+                          fontWeight="bold"
+                          fontFamily="monospace"
+                        >
+                          {badgeText}
+                        </text>
+                      </g>
+                    );
+                    ghostOffset += statusW + 6;
+
+                    // Etiquetas con los nombres de los archivos modificados
+                    allChangedFiles.forEach((file) => {
                       const fileIsStaged = g.stagedFiles.includes(file);
                       const fileColor = fileIsStaged ? '#10b981' : '#f59e0b';
-                      const labelWidth = file.length * 7 + 24;
-                      return (
-                        <g key={file} transform={`translate(0, ${fIdx * 20})`}>
+                      const labelWidth = file.length * 7 + 22;
+
+                      badges.push(
+                        <g key={`ghost-file-${file}`} transform={`translate(${g.x + ghostOffset}, ${g.y - 9})`}>
                           <rect
-                            x={-labelWidth / 2}
-                            y={-8}
                             width={labelWidth}
-                            height={17}
+                            height={18}
                             rx={4}
                             fill="#0f172a"
                             stroke={fileColor}
                             strokeWidth={1}
                           />
-                          <circle cx={-labelWidth / 2 + 8} cy={0.5} r={2.5} fill={fileColor} />
+                          <circle cx={7} cy={9} r={2.5} fill={fileColor} />
                           <text
-                            x={4}
-                            y={3.5}
+                            x={14 + (labelWidth - 14) / 2}
+                            y={12.5}
                             textAnchor="middle"
                             fill="#f1f5f9"
-                            fontSize={9.5}
+                            fontSize={9}
                             fontWeight="bold"
                             fontFamily="monospace"
                           >
@@ -390,8 +391,11 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                           </text>
                         </g>
                       );
-                    })}
-                  </g>
+                      ghostOffset += labelWidth + 6;
+                    });
+
+                    return badges;
+                  })()}
                 </g>
               );
             })()}
@@ -407,7 +411,7 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
               className="px-2.5 py-1 rounded-lg flex items-center justify-center font-mono font-bold text-xs text-white shadow shrink-0"
               style={{ backgroundColor: selectedNode.color }}
             >
-              {getCommitDisplayInfo(selectedNode.commit.id, 0).full}
+              {getCommitDisplayInfo(selectedNode.commit, 0).full}
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -421,7 +425,7 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
               <div className="text-slate-400 text-[11px] flex items-center gap-3 mt-0.5">
                 <span>{selectedNode.commit.author}</span>
                 <span>•</span>
-                <span>Padres: {selectedNode.commit.parentIds.join(', ') || '(ninguno / root)'}</span>
+                <span>Padres: {selectedNode.commit.parentIds.map((pId) => getCommitDisplayInfo(pId, 0).hash).join(', ') || '(ninguno / root)'}</span>
               </div>
             </div>
           </div>

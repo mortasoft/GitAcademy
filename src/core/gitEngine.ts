@@ -1,10 +1,42 @@
 import { GitState, GitCommit, GitBranch, GitTag } from '../types/git';
 
+// Mapeo determinista de hashes de 7 caracteres para commits didácticos
+export const COMMIT_HASH_TABLE: Record<string, string> = {
+  c1: '6b4550a',
+  c2: '37d1a4e',
+  c3: '9bfa8f3',
+  c4: 'a699327',
+  c5: '28fd4a8',
+  c6: '75278aa',
+  c7: 'd7b539d',
+  c8: 'f1e04cb',
+  c9: 'e39a512',
+  c10: '5ca28df',
+};
+
+export const getCommitHash = (commitOrId: GitCommit | string, fallbackIndex: number = 0): string => {
+  if (typeof commitOrId === 'string') {
+    if (COMMIT_HASH_TABLE[commitOrId]) return COMMIT_HASH_TABLE[commitOrId];
+    if (/^[0-9a-f]{7}$/i.test(commitOrId)) return commitOrId.toLowerCase();
+    let h = 0;
+    for (let i = 0; i < commitOrId.length; i++) {
+      h = (h << 5) - h + commitOrId.charCodeAt(i);
+      h |= 0;
+    }
+    return Math.abs(h).toString(16).padStart(7, 'a').slice(0, 7);
+  }
+  if (commitOrId.hash) return commitOrId.hash;
+  if (COMMIT_HASH_TABLE[commitOrId.id]) return COMMIT_HASH_TABLE[commitOrId.id];
+  if (/^[0-9a-f]{7}$/i.test(commitOrId.id)) return commitOrId.id.toLowerCase();
+  return getCommitHash(commitOrId.id, fallbackIndex);
+};
+
 export const createInitialGitState = (): GitState => {
   return {
     commits: {
       c1: {
         id: 'c1',
+        hash: '6b4550a',
         parentIds: [],
         message: 'Initial commit (README.md)',
         author: 'Estudiante <estudiante@gitacademy.dev>',
@@ -23,20 +55,30 @@ export const createInitialGitState = (): GitState => {
       target: 'main',
     },
     staging: [],
-    workingDir: ['index.html'],
+    workingDir: [],
     stash: [],
   };
 };
 
-let commitCounter = 2;
+const HEX_POOL = ['37d1a4e', '9bfa8f3', 'a699327', '28fd4a8', '75278aa', 'd7b539d', 'f1e04cb', 'e39a512', '5ca28df'];
+let poolIndex = 0;
+
 export const generateCommitId = (): string => {
-  const id = `c${commitCounter}`;
-  commitCounter++;
-  return id;
+  if (poolIndex < HEX_POOL.length) {
+    const id = HEX_POOL[poolIndex];
+    poolIndex++;
+    return id;
+  }
+  const chars = '0123456789abcdef';
+  let hash = '';
+  for (let i = 0; i < 7; i++) {
+    hash += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return hash;
 };
 
-export const resetCommitCounter = (startFrom: number = 2) => {
-  commitCounter = startFrom;
+export const resetCommitCounter = (startFrom: number = 0) => {
+  poolIndex = Math.max(0, startFrom - 1);
 };
 
 // Obtiene el commit ID actual apuntado por HEAD
@@ -211,6 +253,33 @@ export class GitEngine {
     };
   }
 
+  // Busca un commit por ID exacto, hash completo, prefijo de hash o alias didáctico (c1, c2, etc.)
+  static findCommit(state: GitState, query: string): GitCommit | undefined {
+    if (!query) return undefined;
+    const q = query.trim().toLowerCase();
+
+    // 1. Coincidencia directa por clave
+    if (state.commits[q]) return state.commits[q];
+    if (state.commits[query]) return state.commits[query];
+
+    // 2. Coincidencia por hash o prefijo de hash
+    for (const c of Object.values(state.commits)) {
+      const h = getCommitHash(c);
+      if (h.toLowerCase() === q || h.toLowerCase().startsWith(q)) return c;
+      if (c.id.toLowerCase() === q || c.id.toLowerCase().startsWith(q)) return c;
+    }
+
+    // 3. Coincidencia por alias didáctico c1, c2, c3...
+    const match = q.match(/^c(\d+)$/i);
+    if (match) {
+      const idx = parseInt(match[1], 10) - 1;
+      const all = Object.values(state.commits);
+      if (all[idx]) return all[idx];
+    }
+
+    return undefined;
+  }
+
   // git checkout <target> / git switch <target>
   static checkout(state: GitState, target: string, createNewBranch: boolean = false): { newState: GitState; output: string; success: boolean } {
     if (createNewBranch) {
@@ -268,16 +337,18 @@ export class GitEngine {
     }
 
     // Checkout commit (HEAD desacoplado)
-    if (state.commits[target]) {
+    const commitMatch = GitEngine.findCommit(state, target);
+    if (commitMatch) {
+      const displayHash = getCommitHash(commitMatch);
       return {
         newState: {
           ...state,
           head: {
             type: 'detached',
-            target,
+            target: commitMatch.id,
           },
         },
-        output: `Nota: cambiando a '${target}'.\nEstás en estado de 'HEAD desacoplado'. Puedes examinar y experimentar aquí.`,
+        output: `Nota: cambiando a '${displayHash}'.\nEstás en estado de 'HEAD desacoplado'. Puedes examinar y experimentar aquí.`,
         success: true,
       };
     }
@@ -473,7 +544,7 @@ export class GitEngine {
 
   // git cherry-pick <commitId>
   static cherryPick(state: GitState, commitId: string): { newState: GitState; output: string; success: boolean } {
-    const sourceCommit = state.commits[commitId];
+    const sourceCommit = GitEngine.findCommit(state, commitId);
     if (!sourceCommit) {
       return {
         newState: state,
@@ -535,6 +606,11 @@ export class GitEngine {
         }
       }
       if (curr) actualTarget = curr;
+    } else {
+      const matched = GitEngine.findCommit(state, targetCommitId);
+      if (matched) {
+        actualTarget = matched.id;
+      }
     }
 
     if (!state.commits[actualTarget]) {
@@ -586,7 +662,7 @@ export class GitEngine {
 
   // git revert <commitId>
   static revert(state: GitState, commitId: string): { newState: GitState; output: string; success: boolean } {
-    const targetCommit = state.commits[commitId];
+    const targetCommit = GitEngine.findCommit(state, commitId);
     if (!targetCommit) {
       return {
         newState: state,

@@ -1,5 +1,6 @@
 export interface GitCommit {
-  id: string; // short hash, e.g. 'c1', 'a8f3'
+  id: string; // short hash o id didáctico, ej. 'c1', '6b4550a'
+  hash?: string; // hash hexadecimal SHA de 7 caracteres (ej. '6b4550a')
   parentIds: string[]; // parents (2 for merge commits)
   message: string;
   author: string;
