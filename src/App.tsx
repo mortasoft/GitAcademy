@@ -121,11 +121,7 @@ export const App: React.FC = () => {
         {/* Panel Central/Derecho: Si es una guía de GitHub real, renderiza la guía; si no, el Grafo + Terminal */}
         {currentLesson.isGitHubGuide && mode === 'student' ? (
           <div className="flex-1 min-w-0 min-h-0 flex flex-col overflow-hidden bg-slate-950">
-            <GitHubGuideModal
-              lesson={currentLesson}
-              onComplete={() => handleCompleteLesson(currentLesson.id)}
-              isCompleted={completedLessonIds.includes(currentLesson.id)}
-            />
+            <GitHubGuideModal lesson={currentLesson} />
           </div>
         ) : (
           <div className="flex-1 min-w-0 min-h-0 flex flex-col p-3 lg:p-4 gap-3 lg:gap-4 overflow-hidden bg-slate-950">

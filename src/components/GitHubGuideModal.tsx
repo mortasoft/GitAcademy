@@ -6,7 +6,6 @@ import {
   CheckSquare, 
   Copy, 
   Check, 
-  Sparkles, 
   Monitor,
   ImageIcon,
   Maximize2,
@@ -15,14 +14,10 @@ import {
 
 interface GitHubGuideModalProps {
   lesson: Lesson;
-  onComplete: () => void;
-  isCompleted: boolean;
 }
 
 export const GitHubGuideModal: React.FC<GitHubGuideModalProps> = ({
   lesson,
-  onComplete,
-  isCompleted,
 }) => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [previewImage, setPreviewImage] = useState<{ url: string; caption?: string } | null>(null);
@@ -156,24 +151,6 @@ export const GitHubGuideModal: React.FC<GitHubGuideModalProps> = ({
               )}
             </div>
           ))}
-        </div>
-
-        {/* Botón de Confirmación de Ejercicio */}
-        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
-          <div className="text-xs text-slate-400 font-sans">
-            ¿Completaste los pasos indicados en esta lección?
-          </div>
-          <button
-            onClick={onComplete}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
-              isCompleted
-                ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                : 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20'
-            }`}
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>{isCompleted ? '✓ Práctica Completada' : 'Marcar como Completada'}</span>
-          </button>
         </div>
       </div>
 
