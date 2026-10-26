@@ -93,6 +93,7 @@ export const Terminal: React.FC<TerminalProps> = ({
     },
   ]);
   const [copied, setCopied] = useState(false);
+  const [copiedCmdId, setCopiedCmdId] = useState<string | null>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -198,6 +199,14 @@ export const Terminal: React.FC<TerminalProps> = ({
     setLines([]);
   };
 
+  const handleCopyCommand = (cmdText: string, lineId: string) => {
+    navigator.clipboard.writeText(cmdText);
+    setCopiedCmdId(lineId);
+    setTimeout(() => {
+      setCopiedCmdId((current) => (current === lineId ? null : current));
+    }, 1800);
+  };
+
   const handleCopyHistory = () => {
     const textToCopy = lines
       .map((l) => (l.type === 'command' ? `$ ${l.text}` : l.text))
@@ -210,8 +219,18 @@ export const Terminal: React.FC<TerminalProps> = ({
 
   return (
     <div 
-      className="flex flex-col h-full bg-slate-950 font-mono text-xs border border-slate-800 rounded-xl overflow-hidden shadow-sm"
-      onClick={() => inputRef.current?.focus()}
+      className="flex flex-col h-full bg-slate-950 font-mono text-xs border border-slate-800 rounded-xl overflow-hidden shadow-sm selection:bg-cyan-500/30 selection:text-cyan-50"
+      onClick={(e) => {
+        // No robar el foco si el usuario está seleccionando texto en la terminal
+        const selection = window.getSelection();
+        if (selection && selection.toString().length > 0) {
+          return;
+        }
+        if ((e.target as HTMLElement).closest('button')) {
+          return;
+        }
+        inputRef.current?.focus();
+      }}
     >
       {/* Barra superior de la ventana de la terminal */}
       <div className="h-9 bg-slate-900 border-b border-slate-800 px-3.5 flex items-center justify-between select-none">
@@ -249,7 +268,7 @@ export const Terminal: React.FC<TerminalProps> = ({
               handleCopyHistory();
             }}
             className="p-1 text-slate-400 hover:text-slate-200 transition"
-            title="Copiar historial"
+            title="Copiar historial completo"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
@@ -268,23 +287,49 @@ export const Terminal: React.FC<TerminalProps> = ({
       </div>
 
       {/* Salida de la Terminal */}
-      <div className="flex-1 p-3.5 overflow-y-auto space-y-2 selection:bg-slate-800">
+      <div className="flex-1 p-3.5 overflow-y-auto space-y-2 select-text selection:bg-cyan-500/30 selection:text-cyan-50">
         {lines.map((line) => {
           if (line.type === 'command') {
+            const isCopied = copiedCmdId === line.id;
             return (
-              <div key={line.id} className="flex items-start gap-2">
-                <span className="text-emerald-400 font-medium select-none">$</span>
-                <span className="text-slate-400 text-[11px] select-none font-sans bg-slate-900 px-1.5 py-0.2 rounded text-cyan-300 border border-slate-800">
-                  {line.branchName || 'main'}
-                </span>
-                <span className="text-white font-medium">{line.text}</span>
+              <div
+                key={line.id}
+                className="group/cmd flex items-center justify-between gap-2 py-0.5 px-1 rounded hover:bg-slate-900/60 transition select-text"
+              >
+                <div className="flex items-start gap-2 min-w-0 flex-1">
+                  <span className="text-emerald-400 font-medium select-none shrink-0">$</span>
+                  <span className="text-slate-400 text-[11px] select-none font-sans bg-slate-900 px-1.5 py-0.2 rounded text-cyan-300 border border-slate-800 shrink-0">
+                    {line.branchName || 'main'}
+                  </span>
+                  <span className="text-white font-medium select-text font-mono break-all">{line.text}</span>
+                </div>
+
+                {/* Botón para copiar comando individual */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopyCommand(line.text, line.id);
+                  }}
+                  className="opacity-0 group-hover/cmd:opacity-100 focus:opacity-100 p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition shrink-0"
+                  title="Copiar este comando"
+                  aria-label="Copiar este comando"
+                >
+                  {isCopied ? (
+                    <span className="flex items-center gap-1 text-[10px] text-emerald-400 font-sans">
+                      <Check className="w-3 h-3 text-emerald-400" />
+                      <span>Copiado</span>
+                    </span>
+                  ) : (
+                    <Copy className="w-3 h-3 text-slate-400 hover:text-slate-200" />
+                  )}
+                </button>
               </div>
             );
           }
 
           if (line.type === 'error') {
             return (
-              <div key={line.id} className="text-rose-400 whitespace-pre-wrap pl-2 border-l-2 border-rose-500/50 bg-rose-500/5 py-0.5">
+              <div key={line.id} className="text-rose-400 whitespace-pre-wrap pl-2 border-l-2 border-rose-500/50 bg-rose-500/5 py-0.5 select-text">
                 {renderAnsi(line.text)}
               </div>
             );
@@ -292,7 +337,7 @@ export const Terminal: React.FC<TerminalProps> = ({
 
           if (line.type === 'system') {
             return (
-              <div key={line.id} className="text-slate-400 whitespace-pre-wrap pl-2 border-l-2 border-slate-700 bg-slate-900/40 py-0.5">
+              <div key={line.id} className="text-slate-400 whitespace-pre-wrap pl-2 border-l-2 border-slate-700 bg-slate-900/40 py-0.5 select-text">
                 {renderAnsi(line.text)}
               </div>
             );
@@ -300,7 +345,7 @@ export const Terminal: React.FC<TerminalProps> = ({
 
           // output normal
           return (
-            <div key={line.id} className="text-slate-300 whitespace-pre-wrap pl-2 font-mono">
+            <div key={line.id} className="text-slate-300 whitespace-pre-wrap pl-2 font-mono select-text">
               {renderAnsi(line.text)}
             </div>
           );
