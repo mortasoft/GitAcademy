@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0d1117; }
+      .card { fill: #161b22; stroke: #30363d; stroke-width: 1; rx: 8; }
+      .header-bg { fill: #0d1117; stroke: #21262d; stroke-width: 1; }
+      .text-title { fill: #f0f6fc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 600; }
+      .text-desc { fill: #8b949e; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 12px; }
+      .text-code { fill: #58a6ff; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; }
+      .badge-high { fill: #d29922; rx: 4; }
+      .badge-text { fill: #ffffff; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; font-weight: 700; }
+      .badge-bot { fill: #1f6feb; rx: 4; }
+      .code-box { fill: #010409; stroke: #30363d; stroke-width: 1; rx: 6; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="620" class="bg" rx="12"/>
+
+  <!-- Top GitHub Breadcrumb Bar -->
+  <rect x="0" y="0" width="1000" height="56" class="header-bg" rx="12"/>
+  <circle cx="30" cy="28" r="6" fill="#f85149"/>
+  <circle cx="50" cy="28" r="6" fill="#d29922"/>
+  <circle cx="70" cy="28" r="6" fill="#2ea043"/>
+
+  <text x="105" y="33" fill="#8b949e" font-family="-apple-system, sans-serif" font-size="13">mi-primer-proyecto</text>
+  <text x="245" y="33" fill="#6e7681" font-family="-apple-system, sans-serif" font-size="13">/</text>
+  <text x="260" y="33" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Security</text>
+  <text x="320" y="33" fill="#6e7681" font-family="-apple-system, sans-serif" font-size="13">/</text>
+  <text x="335" y="33" fill="#58a6ff" font-family="-apple-system, sans-serif" font-size="13">Dependabot alerts</text>
+
+  <!-- Title -->
+  <text x="40" y="95" class="text-title" font-size="20">Dependabot: Deteccion y Actualizacion Automatica de CVEs</text>
+  <text x="40" y="118" class="text-desc">Monitorea el arbol de dependencias del proyecto (npm, pip, maven, nuget) y abre Pull Requests automaticos con parches de seguridad.</text>
+
+  <!-- Card 1: Active Alert -->
+  <rect x="40" y="140" width="920" height="110" class="card" stroke="#d29922"/>
+  <g transform="translate(60, 160)">
+    <div style="display:flex;">
+      <rect x="0" y="2" width="46" height="18" class="badge-high"/>
+      <text x="8" y="15" class="badge-text">HIGH</text>
+      <text x="56" y="16" class="text-title">Vulnerabilidad de SSRF (Server-Side Request Forgery) en axios</text>
+    </div>
+    <text x="0" y="42" class="text-desc">Paquete afectado: <tspan class="text-code">axios &lt; 0.21.2</tspan> en package-lock.json • CVE-2021-3749</text>
+    <text x="0" y="64" class="text-desc">Solucion recomendada: Actualizar a <tspan class="text-code">axios &gt;= 1.6.0</tspan></text>
+    <rect x="740" y="22" width="140" height="32" fill="#238636" rx="6"/>
+    <text x="760" y="42" fill="#ffffff" font-family="-apple-system, sans-serif" font-size="12" font-weight="600">Ver Resolucion</text>
+  </g>
+
+  <!-- Card 2: Automated Dependabot PR -->
+  <rect x="40" y="265" width="920" height="140" class="card" stroke="#238636"/>
+  <g transform="translate(60, 285)">
+    <circle cx="12" cy="12" r="10" fill="#238636"/>
+    <path d="M7 12 L10 15 L17 8" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <text x="32" y="17" class="text-title">Pull Request Generado por Dependabot:</text>
+    <text x="330" y="17" class="text-code" font-size="14">Bump axios from 0.21.1 to 1.6.0 #42</text>
+    <rect x="800" y="5" width="80" height="22" fill="#238636" rx="11"/>
+    <text x="825" y="20" class="badge-text">OPEN</text>
+
+    <text x="32" y="45" class="text-desc">Creado por <tspan fill="#58a6ff">app/dependabot</tspan> • 1 archivo modificado (+1, -1 en package.json) • CI Checks: <tspan fill="#3fb950">&#10003; All checks passed</tspan></text>
+    <text x="32" y="68" class="text-desc">Basta con revisar el changelog adjunto y pulsar <tspan class="text-title" font-size="12">"Merge pull request"</tspan> para cerrar la vulnerabilidad sin tocar una sola linea de codigo a mano.</text>
+
+    <rect x="32" y="85" width="160" height="28" fill="#21262d" stroke="#30363d" stroke-width="1" rx="6"/>
+    <text x="45" y="103" class="text-code" font-size="11">merge when checks pass</text>
+  </g>
+
+  <!-- Card 3: dependabot.yml configuration -->
+  <rect x="40" y="420" width="920" height="175" class="code-box"/>
+  <g transform="translate(60, 445)">
+    <text x="0" y="0" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11"># Archivo recomendado de configuracion: .github/dependabot.yml</text>
+    <text x="0" y="22" fill="#ff7b72" font-family="ui-monospace, monospace" font-size="12">version<tspan fill="#c9d1d9">: 2</tspan></text>
+    <text x="0" y="42" fill="#ff7b72" font-family="ui-monospace, monospace" font-size="12">updates<tspan fill="#c9d1d9">:</tspan></text>
+    <text x="20" y="62" fill="#79c0ff" font-family="ui-monospace, monospace" font-size="12">- package-ecosystem<tspan fill="#c9d1d9">: </tspan><tspan fill="#a5d6ff">"npm"</tspan></text>
+    <text x="35" y="82" fill="#79c0ff" font-family="ui-monospace, monospace" font-size="12">directory<tspan fill="#c9d1d9">: </tspan><tspan fill="#a5d6ff">"/"</tspan></text>
+    <text x="35" y="102" fill="#79c0ff" font-family="ui-monospace, monospace" font-size="12">schedule<tspan fill="#c9d1d9">:</tspan></text>
+    <text x="50" y="122" fill="#79c0ff" font-family="ui-monospace, monospace" font-size="12">interval<tspan fill="#c9d1d9">: </tspan><tspan fill="#a5d6ff">"weekly"</tspan> <tspan fill="#8b949e"># Revision y PRs automaticos cada lunes</tspan></text>
+  </g>
+</svg>

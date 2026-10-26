@@ -20,7 +20,8 @@ import {
   Lightbulb,
   Code2,
   RefreshCw,
-  FolderGit2
+  FolderGit2,
+  ShieldCheck
 } from 'lucide-react';
 
 interface GitHubGuideModalProps {
@@ -306,6 +307,8 @@ export const GitHubGuideModal: React.FC<GitHubGuideModalProps> = ({
             <div className="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center shadow-md">
               {lesson.id.includes('desktop') ? (
                 <Monitor className="w-7 h-7 text-purple-400" />
+              ) : lesson.levelId === 'nivel-6' || lesson.category.includes('Seguridad') ? (
+                <ShieldCheck className="w-7 h-7 text-emerald-400" />
               ) : (
                 <Github className="w-7 h-7 text-white" />
               )}

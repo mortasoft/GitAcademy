@@ -5,6 +5,7 @@ import {
   GitBranch, 
   GitMerge, 
   ShieldAlert, 
+  ShieldCheck,
   Github, 
   CheckCircle2, 
   Circle, 
@@ -31,6 +32,7 @@ const LEVEL_ICONS: Record<string, React.ReactNode> = {
   GitBranch: <GitBranch className="w-5 h-5 text-blue-400" />,
   GitMerge: <GitMerge className="w-5 h-5 text-purple-400" />,
   ShieldAlert: <ShieldAlert className="w-5 h-5 text-amber-400" />,
+  ShieldCheck: <ShieldCheck className="w-5 h-5 text-emerald-400" />,
 };
 
 export const Dashboard: React.FC<DashboardProps> = ({
@@ -196,7 +198,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <p className="text-xs text-slate-400 mt-0.5">Explora el temario completo y accede a cualquier lección.</p>
             </div>
             <span className="text-xs font-mono text-slate-400 bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">
-              5 Módulos
+              {curriculum.length} Módulos
             </span>
           </div>
 

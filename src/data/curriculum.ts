@@ -1335,4 +1335,343 @@ export const CURRICULUM: CurriculumLevel[] = [
       },
     ],
   },
+  {
+    id: 'nivel-6',
+    title: 'Nivel 6: Configuración Recomendada y Seguridad en GitHub',
+    description: 'Blindaje de ramas, análisis continuo de vulnerabilidades con Dependabot, prevención de filtración de secretos y gobernanza profesional.',
+    icon: 'ShieldCheck',
+    lessons: [
+      {
+        id: 'github-security-branch-rulesets',
+        levelId: 'nivel-6',
+        title: '6.1 Protección de Ramas y Rulesets en GitHub',
+        category: 'Seguridad y Configuración',
+        difficulty: 'Principiante',
+        timeEstimate: '7 min',
+        summary: 'Aprende a proteger la rama main mediante Branch Rulesets: bloqueo de push directo, revisiones obligatorias de código y prevención de force-push.',
+        isGitHubGuide: true,
+        initialState: createBaseState(),
+        steps: [],
+        goalDescription: 'Configura un Ruleset o Branch Protection Rule en GitHub para impedir commits directos a main y exigir Pull Requests.',
+        solutionCommands: [],
+        tips: [
+          'En repositorios profesionales nadie debería hacer push directo a main; todo cambio debe pasar por un Pull Request.',
+          'GitHub Rulesets es la evolución moderna de Branch Protection Rules, permitiendo aplicar reglas a múltiples ramas a la vez.',
+        ],
+        whenToUse: [
+          {
+            title: 'Proteger la rama de producción (main)',
+            scenario: 'Cuando trabajas en equipo y necesitas garantizar que ningún error llegue a producción sin una revisión formal previa.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Bloquear force pushes destructivos',
+            scenario: 'Impedir que comandos como git push --force sobreescriban commits de otros colaboradores o borren ramas críticas.',
+            recommendation: 'recomendado',
+            command: 'git push --force-with-lease',
+          },
+          {
+            title: 'Exigir aprobaciones obligatorias en Pull Requests',
+            scenario: 'Establecer que al menos 1 o 2 compañeros deban auditar y dar el visto bueno (Approve) antes de autorizar el merge.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Restricciones excesivas en repositorios individuales',
+            scenario: 'Forzarse a uno mismo a abrir y aprobar PRs en un repositorio personal donde solo tú programas sin necesidad de auditoría externa.',
+            recommendation: 'evitar',
+          },
+        ],
+        gitHubGuideContent: {
+          overview: 'La rama principal (main) representa el código en producción o listo para desplegar. Sin protección, cualquier integrante podría ejecutar un push con errores o borrarla accidentalmente con `git push origin :main`. Los Rulesets garantizan que el código siempre sea auditado antes de integrarse.',
+          steps: [
+            {
+              action: '1. Ve a Settings > Branches o Rulesets en tu repositorio',
+              details: 'En la barra superior de tu repositorio en GitHub.com, haz clic en la pestaña "Settings". En el menú lateral izquierdo, haz clic en "Rules" -> "Rulesets" (o "Branches").',
+              commandOrUrl: 'https://github.com',
+              imageUrl: '/images/github-security/branch-rulesets.svg',
+              imageCaption: 'Panel oficial de configuración de Branch Rulesets en GitHub.',
+            },
+            {
+              action: '2. Crea un nuevo Ruleset para la rama main',
+              details: 'Haz clic en el botón verde "New ruleset" -> "New branch ruleset". Asigna el nombre "Protección de main" y deja el estado en "Active". En "Target branches", selecciona "Add target" -> "Include default branch" para apuntar automáticamente a main.',
+              tip: 'Puedes excluir a administradores del bypass o forzar que ni los administradores puedan saltarse las reglas de aprobación.',
+            },
+            {
+              action: '3. Activa "Require a pull request before merging"',
+              details: 'Marca la casilla obligatoria de Pull Request. Configura "Required approvals" en 1 (o 2 en equipos grandes) y marca "Dismiss stale pull request approvals when new commits are pushed" para que nuevos commits requieran re-aprobación.',
+            },
+            {
+              action: '4. Bloquea borrados y force-pushes',
+              details: 'Marca "Restrict deletions" y "Block force pushes". Esto garantiza que nadie pueda sobreescribir el historial de la rama ni borrarla por error.',
+            },
+            {
+              action: '5. Guarda los cambios con "Create"',
+              details: 'Haz clic en el botón verde "Create" al final de la página. A partir de este instante, la rama main queda 100% blindada contra accidentes.',
+            },
+          ],
+        },
+      },
+      {
+        id: 'github-security-secret-scanning',
+        levelId: 'nivel-6',
+        title: '6.2 Secret Scanning y Push Protection',
+        category: 'Seguridad y Configuración',
+        difficulty: 'Principiante',
+        timeEstimate: '6 min',
+        summary: 'Evita fugas de seguridad catastróficas: activa Secret Scanning para auditar tokens y Push Protection para bloquear commits con claves en tiempo real.',
+        isGitHubGuide: true,
+        initialState: createBaseState(),
+        steps: [],
+        goalDescription: 'Activa Secret Scanning y Push Protection en GitHub para impedir que se suban API keys y credenciales.',
+        solutionCommands: [],
+        tips: [
+          'GitHub detecta patrones de más de 200 proveedores, incluyendo AWS, OpenAI, Stripe, Slack, Google Cloud y GitHub PATs.',
+          'Push Protection actúa antes de que el commit entre al repositorio; si no lo activas, el secreto entra al historial de Git y debe ser revocado inmediatamente.',
+        ],
+        whenToUse: [
+          {
+            title: 'Activar en todos los repositorios públicos y privados',
+            scenario: 'Proteger el código contra filtraciones accidentales de credenciales que puedan causar costos millonarios en facturas de nube.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Manejar secretos mediante variables de entorno',
+            scenario: 'Almacenar credenciales en archivos .env locales (añadidos a .gitignore) o en servicios de gestión de secretos como AWS Secrets Manager.',
+            recommendation: 'recomendado',
+            command: 'echo ".env" >> .gitignore',
+          },
+          {
+            title: 'Remediación inmediata tras bloqueo de Push Protection',
+            scenario: 'Si el push fue rechazado, quitar la clave del archivo, guardar en .env y corregir el último commit con git commit --amend.',
+            recommendation: 'recomendado',
+            command: 'git commit --amend',
+          },
+          {
+            title: 'Hacer bypass del bloqueo de Push Protection',
+            scenario: 'Presionar "Bypass secret protection" para permitir subir un token real a un repositorio público creyendo que "nadie lo verá".',
+            recommendation: 'evitar',
+          },
+        ],
+        gitHubGuideContent: {
+          overview: 'Filtrar una clave de AWS o una API key de OpenAI en GitHub puede costar miles de dólares en minutos debido a bots automatizados que rastrean la web constantemente. GitHub Secret Scanning y Push Protection analizan cada commit y rechazan la subida si detectan secretos en texto plano.',
+          steps: [
+            {
+              action: '1. Abre Settings > Code security and analysis',
+              details: 'En tu repositorio de GitHub, haz clic en "Settings" en la barra de pestañas y luego en "Code security and analysis" en el menú lateral izquierdo.',
+              imageUrl: '/images/github-security/secret-scanning-push-protection.svg',
+              imageCaption: 'Interruptores de Secret scanning y Push protection en GitHub Settings.',
+            },
+            {
+              action: '2. Habilita Secret Scanning',
+              details: 'Localiza la sección "Secret scanning" y haz clic en el botón "Enable". GitHub escaneará de inmediato todo el historial existente del repositorio en busca de credenciales expuestas.',
+            },
+            {
+              action: '3. Activa Push Protection',
+              details: 'Justo debajo, activa la opción "Push protection". Esta es la barrera más importante: si alguien ejecuta git push con un archivo que contiene un secreto, el servidor de GitHub rechazará el push en el acto.',
+              tip: 'En repositorios públicos de cuentas gratuitas, Secret Scanning y Push Protection son 100% gratuitos y vienen listos para activarse.',
+            },
+            {
+              action: '4. Qué hacer si Push Protection bloquea tu commit',
+              details: 'Si ves el error de rechazo en tu terminal, no intentes forzarlo. Elimina la clave del archivo, guárdala en un archivo .env (asegurándote de que .env esté en .gitignore) y reescribe el commit con "git commit --amend".',
+              commandOrUrl: 'git commit --amend',
+            },
+          ],
+        },
+      },
+      {
+        id: 'github-security-dependabot',
+        levelId: 'nivel-6',
+        title: '6.3 Dependabot y Análisis de Vulnerabilidades',
+        category: 'Seguridad y Configuración',
+        difficulty: 'Intermedio',
+        timeEstimate: '7 min',
+        summary: 'Aprende a configurar Dependabot alerts y security updates para recibir avisos automáticos de CVEs y Pull Requests con parches listos para fusionar.',
+        isGitHubGuide: true,
+        initialState: createBaseState(),
+        steps: [],
+        goalDescription: 'Habilita Dependabot alerts y crea el archivo .github/dependabot.yml para auditorías automáticas de librerías.',
+        solutionCommands: [],
+        tips: [
+          'El 80% de las brechas de seguridad en software provienen de vulnerabilidades en dependencias de terceros desactualizadas.',
+          'Dependabot abre Pull Requests con las pruebas de CI ejecutadas, permitiéndote actualizar con un solo clic.',
+        ],
+        whenToUse: [
+          {
+            title: 'Proyectos con gestores de paquetes (npm, pip, maven, nuget)',
+            scenario: 'Monitorear automáticamente el árbol de dependencias para detectar CVEs públicos sin tener que hacer auditorías manuales.',
+            recommendation: 'recomendado',
+            command: 'npm audit',
+          },
+          {
+            title: 'Automatizar revisiones programadas semanales',
+            scenario: 'Configurar .github/dependabot.yml con intervalo semanal para recibir las actualizaciones de dependencias los lunes por la mañana.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Fusionar parches de Dependabot con CI verde',
+            scenario: 'Cuando el Pull Request generado por Dependabot pasa todos los tests automáticos, hacer merge inmediato para cerrar la vulnerabilidad.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Ignorar alertas de severidad Critical o High',
+            scenario: 'Dejar pasar semanas con alertas críticas de inyección o ejecución remota de código en librerías de producción.',
+            recommendation: 'evitar',
+          },
+        ],
+        gitHubGuideContent: {
+          overview: 'Las aplicaciones modernas dependen de cientos de paquetes open source. Cuando se descubre una vulnerabilidad pública (CVE), Dependabot alerta inmediatamente al equipo y genera un Pull Request con el parche exacto para resolver el problema sin esfuerzo manual.',
+          steps: [
+            {
+              action: '1. Activa Dependabot alerts y Dependabot security updates',
+              details: 'En Settings > Code security and analysis, asegúrate de que "Dependabot alerts" y "Dependabot security updates" estén en estado "Enabled".',
+              imageUrl: '/images/github-security/dependabot-security.svg',
+              imageCaption: 'Dashboard de Dependabot alerts y generación automática de Pull Requests.',
+            },
+            {
+              action: '2. Revisa la pestaña "Security" del repositorio',
+              details: 'Haz clic en la pestaña "Security" en la barra superior del repositorio y luego en "Dependabot" en el menú izquierdo. Verás la lista de alertas clasificadas por severidad: Critical, High, Moderate o Low.',
+            },
+            {
+              action: '3. Revisa y fusiona los Pull Requests creados por Dependabot',
+              details: 'Dependabot creará Pull Requests automáticos con títulos como "Bump axios from 0.21.1 to 1.6.0". Revisa el registro de cambios (changelog), verifica que las pruebas pasen y presiona "Merge pull request".',
+            },
+            {
+              action: '4. Crea el archivo de automatización .github/dependabot.yml',
+              details: 'Para programar actualizaciones periódicas, crea el archivo .github/dependabot.yml en la raíz de tu proyecto:',
+              commandOrUrl: '.github/dependabot.yml',
+              tip: 'Configurar "interval: weekly" programa la revisión para todos los lunes a primera hora sin interrumpir el trabajo diario.',
+            },
+          ],
+        },
+      },
+      {
+        id: 'github-security-secrets-access',
+        levelId: 'nivel-6',
+        title: '6.4 Gestión de Secretos y Permisos (Secrets & Variables)',
+        category: 'Seguridad y Configuración',
+        difficulty: 'Intermedio',
+        timeEstimate: '7 min',
+        summary: 'Almacena credenciales cifradas para GitHub Actions y aplica el principio de menor privilegio con los roles de colaboradores.',
+        isGitHubGuide: true,
+        initialState: createBaseState(),
+        steps: [],
+        goalDescription: 'Configura Repository Secrets en GitHub y aprende la matriz de roles y permisos para colaboradores.',
+        solutionCommands: [],
+        tips: [
+          'Los Repository Secrets son de solo escritura: una vez guardados, nadie (ni siquiera el creador) puede ver el texto plano en GitHub.',
+          'Nunca otorgues permisos de Admin a todo el equipo; utiliza el rol Write para desarrollo y Maintain para tech leads.',
+        ],
+        whenToUse: [
+          {
+            title: 'Inyectar credenciales seguras en flujos de CI/CD',
+            scenario: 'Permitir que GitHub Actions despliegue a producción en AWS, Vercel o Docker Hub sin guardar contraseñas en el repositorio.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Asignar permisos según el rol real de cada persona',
+            scenario: 'Aplicar el principio de menor privilegio: rol Read para auditores/clientes, Write para programadores y Admin solo para responsables de infra.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Rotar secretos periódicamente',
+            scenario: 'Actualizar las claves de API cada 90 días o inmediatamente si un colaborador abandona la organización.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Hardcodear tokens en archivos de workflow (.github/workflows)',
+            scenario: 'Escribir claves de API directamente en texto plano dentro de archivos YAML de GitHub Actions.',
+            recommendation: 'evitar',
+          },
+        ],
+        gitHubGuideContent: {
+          overview: 'El despliegue continuo (CI/CD) necesita conectarse a bases de datos y servicios en la nube. GitHub Secrets permite inyectar estas credenciales en tiempo de ejecución de manera 100% cifrada, complementado con un control de accesos estricto para colaboradores.',
+          steps: [
+            {
+              action: '1. Ve a Settings > Secrets and variables > Actions',
+              details: 'En tu repositorio, accede a "Settings" -> en el menú lateral busca "Secrets and variables" y selecciona "Actions".',
+              imageUrl: '/images/github-security/repository-secrets-access.svg',
+              imageCaption: 'Creación de secretos de repositorio y matriz de roles de colaboradores.',
+            },
+            {
+              action: '2. Agrega un nuevo Secreto de Repositorio',
+              details: 'Haz clic en el botón verde "New repository secret". Asigna un nombre en mayúsculas como "DATABASE_URL" o "OPENAI_API_KEY" y pega el valor confidencial en el campo Secret.',
+            },
+            {
+              action: '3. Utiliza el secreto en tus workflows de GitHub Actions',
+              details: 'En tus pipelines automatizados, puedes acceder al secreto con la sintaxis: ${{ secrets.OPENAI_API_KEY }}. GitHub enmascara automáticamente el valor en los registros de salida reemplazándolo por ***.',
+              commandOrUrl: '${{ secrets.OPENAI_API_KEY }}',
+            },
+            {
+              action: '4. Aplica el principio de menor privilegio en Collaborators',
+              details: 'En Settings > Collaborators, invita a los miembros asignando el rol estrictamente necesario: "Read" para revisión o lectura, "Write" para programar y hacer push a ramas de features, y reserva "Admin" solo para responsables de infraestructura.',
+            },
+          ],
+        },
+      },
+      {
+        id: 'github-security-governance',
+        levelId: 'nivel-6',
+        title: '6.5 Archivos Esenciales de Gobernanza (SECURITY.md, CODEOWNERS y Plantillas)',
+        category: 'Seguridad y Configuración',
+        difficulty: 'Principiante',
+        timeEstimate: '6 min',
+        summary: 'Estandariza tu repositorio creando SECURITY.md, asignando revisores automáticos con CODEOWNERS y configurando plantillas de PR e Issue.',
+        isGitHubGuide: true,
+        initialState: createBaseState(),
+        steps: [],
+        goalDescription: 'Aprende a estructurar la carpeta .github/ con CODEOWNERS, SECURITY.md y plantillas de colaboración.',
+        solutionCommands: [],
+        tips: [
+          'GitHub busca automáticamente archivos de configuración especial dentro de la carpeta oculta .github/.',
+          'Tener un SECURITY.md indica a la comunidad internacional cómo reportarte vulnerabilidades de forma privada sin exponer a tus usuarios.',
+        ],
+        whenToUse: [
+          {
+            title: 'Asignar revisores automáticos por módulo con CODEOWNERS',
+            scenario: 'Cuando el equipo frontend debe aprobar automáticamente cambios en /src/components/ y el equipo DBA en /database/.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Publicar política de seguridad con SECURITY.md',
+            scenario: 'Proveer un canal protegido y privado para recibir reportes de vulnerabilidades antes de que sean publicadas en internet.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Estandarizar Pull Requests con una plantilla checklist',
+            scenario: 'Obligar a que cada desarrollador verifique pruebas, linters y documentación antes de solicitar revisión a sus pares.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Reportar fallos de seguridad en Issues públicos de GitHub',
+            scenario: 'Crear un issue público detallando una vulnerabilidad que permita a atacantes explotar sistemas en producción antes de tener el fix.',
+            recommendation: 'evitar',
+          },
+        ],
+        gitHubGuideContent: {
+          overview: 'La gobernanza de un repositorio define las reglas del juego: cómo se reportan fallos sin exponer a los usuarios, quién debe revisar cada línea de código y qué información es obligatoria al abrir un Pull Request o Issue.',
+          steps: [
+            {
+              action: '1. Crea el archivo de política de seguridad SECURITY.md',
+              details: 'Crea un archivo llamado SECURITY.md en la raíz del repositorio. Explica qué versiones tienen soporte y solicita explícitamente reportar fallos de seguridad mediante la función privada de "Security Advisories" de GitHub en lugar de un issue público.',
+              imageUrl: '/images/github-security/governance-codeowners.svg',
+              imageCaption: 'Estructura estándar de gobernanza en la carpeta .github/ y archivo CODEOWNERS.',
+            },
+            {
+              action: '2. Configura revisores automáticos con .github/CODEOWNERS',
+              details: 'Crea el archivo .github/CODEOWNERS. Define reglas como: "* @tech-lead" para todo el proyecto, o "/src/components/ @equipo-frontend" para asignar automáticamente revisores cada vez que alguien abra una PR que toque esos archivos.',
+              commandOrUrl: '.github/CODEOWNERS',
+            },
+            {
+              action: '3. Agrega una plantilla de Pull Request (.github/PULL_REQUEST_TEMPLATE.md)',
+              details: 'Crea .github/PULL_REQUEST_TEMPLATE.md con secciones como: "## ¿Qué cambios introduce este PR?", "## ¿Cómo se probó?" y un checklist con casillas [ ] para asegurar que las pruebas y la documentación fueron actualizadas.',
+            },
+            {
+              action: '4. Agrega plantillas de Issues en .github/ISSUE_TEMPLATE/',
+              details: 'Crea la carpeta .github/ISSUE_TEMPLATE/ con plantillas para reportes de bugs (bug_report.md) y solicitudes de nuevas funciones (feature_request.md). GitHub mostrará un selector organizado a cualquier usuario que intente reportar un problema.',
+            },
+          ],
+        },
+      },
+    ],
+  },
 ];
