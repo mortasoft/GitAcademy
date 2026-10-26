@@ -19,7 +19,8 @@ import {
   Play,
   ListTree,
   BookOpen,
-  Check
+  Check,
+  Lightbulb
 } from 'lucide-react';
 
 interface LessonSidebarProps {
@@ -313,6 +314,69 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
                   )}
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Sección de Casos de Uso Reales: ¿En qué momento se debe usar? */}
+          {currentLesson.whenToUse && currentLesson.whenToUse.length > 0 && (
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-2">
+                <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+                  ¿En qué momento usarlo? (Casos Reales)
+                </h3>
+              </div>
+
+              <div className="space-y-2">
+                {currentLesson.whenToUse.map((item, idx) => {
+                  const isGood = item.recommendation === 'recomendado';
+                  return (
+                    <div
+                      key={idx}
+                      className={`p-3 rounded-xl border text-xs space-y-1.5 ${
+                        isGood
+                          ? 'bg-emerald-950/20 border-emerald-800/40'
+                          : 'bg-rose-950/20 border-rose-800/40'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-semibold text-slate-200">{item.title}</span>
+                        <span
+                          className={`text-[9px] font-mono uppercase px-1.5 py-0.5 rounded shrink-0 font-bold ${
+                            isGood
+                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                              : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                          }`}
+                        >
+                          {isGood ? '✓ Cuándo SÍ' : '⚠ Cuándo NO'}
+                        </span>
+                      </div>
+
+                      <p className="text-slate-300 text-[11.5px] leading-relaxed">
+                        {item.scenario}
+                      </p>
+
+                      {item.command && (
+                        <div className="flex items-center justify-between bg-slate-900/90 px-2.5 py-1.5 rounded-lg border border-slate-800 mt-1 font-mono text-[11px]">
+                          <code className={isGood ? 'text-emerald-400 font-semibold' : 'text-slate-400'}>
+                            {item.command}
+                          </code>
+                          {isGood && (
+                            <button
+                              onClick={() => handleInsert(item.command!)}
+                              className="flex items-center gap-1 text-[10px] text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded font-medium transition"
+                              title="Insertar comando de ejemplo en la terminal"
+                            >
+                              <Play className="w-2.5 h-2.5 text-emerald-400" />
+                              <span>Insertar</span>
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 

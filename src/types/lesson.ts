@@ -14,6 +14,13 @@ export interface LessonStep {
   codeBlock?: string;
 }
 
+export interface WhenToUseExample {
+  title: string;
+  scenario: string;
+  recommendation: 'recomendado' | 'evitar';
+  command?: string;
+}
+
 export interface Lesson {
   id: string;
   levelId: string;
@@ -27,6 +34,7 @@ export interface Lesson {
   goalDescription: string;
   solutionCommands: string[];
   tips: string[];
+  whenToUse?: WhenToUseExample[];
   isGitHubGuide?: boolean; // For real GitHub workflow lessons
   gitHubGuideContent?: {
     overview: string;

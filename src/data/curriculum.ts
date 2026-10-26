@@ -323,6 +323,26 @@ export const CURRICULUM: CurriculumLevel[] = [
         tips: [
           'Atajo pro: Puedes crear y cambiar en un solo paso con `git checkout -b feature-login` o `git switch -c feature-login`.',
         ],
+        whenToUse: [
+          {
+            title: 'Desarrollar cualquier nueva funcionalidad o corrección de forma aislada',
+            scenario: 'Cada nueva pantalla, endpoint o corrección debe vivir en su propia rama para no afectar la estabilidad de main ni bloquear el despliegue del equipo.',
+            recommendation: 'recomendado',
+            command: 'git switch -c feature-login',
+          },
+          {
+            title: 'Experimentar con ideas o tecnologías sin miedo a romper nada',
+            scenario: 'Crea una rama para probar una librería. Si la prueba falla, simplemente borras la rama con git branch -D y tu proyecto sigue 100% limpio.',
+            recommendation: 'recomendado',
+            command: 'git switch -c spike-react-query',
+          },
+          {
+            title: 'Programar directamente en la rama principal (main/master)',
+            scenario: 'Hacer commits directos en "main" en proyectos profesionales impide la revisión de código por pares (Pull Requests) y arriesga subir errores directamente a producción.',
+            recommendation: 'evitar',
+            command: 'git switch -c feature-nueva-rama',
+          },
+        ],
       },
       {
         id: 'branches-detached',
@@ -366,6 +386,20 @@ export const CURRICULUM: CurriculumLevel[] = [
         solutionCommands: ['git checkout c1', 'git checkout main'],
         tips: [
           'HEAD es simplemente un puntero simbólico que indica en qué commit estás trabajando en este instante.',
+        ],
+        whenToUse: [
+          {
+            title: 'Inspeccionar o depurar una versión anterior o tag de release',
+            scenario: 'Un usuario reporta un fallo que no ocurría en la versión v1.0.0. Haces checkout a ese hash o tag para probar la aplicación exactamente como estaba en ese momento histórico.',
+            recommendation: 'recomendado',
+            command: 'git checkout 6b4550a',
+          },
+          {
+            title: 'Desarrollar trabajo permanente sin una rama asignada',
+            scenario: 'No hagas trabajo productivo definitivo mientras HEAD esté desacoplado; si cambias de rama más tarde, tus commits quedarán huérfanos y podrán perderse.',
+            recommendation: 'evitar',
+            command: 'git switch -c nueva-rama (asigna rama antes de continuar)',
+          },
         ],
       },
     ],
@@ -414,6 +448,20 @@ export const CURRICULUM: CurriculumLevel[] = [
         goalDescription: 'Aplica `git merge feature` mientras te encuentras en `main` para hacer un Fast-forward.',
         solutionCommands: ['git merge feature'],
         tips: ['Un merge fast-forward no crea un nuevo commit de unión.'],
+        whenToUse: [
+          {
+            title: 'Ramas lineales donde la rama base no ha recibido nuevos commits',
+            scenario: 'Creaste una rama para una tarea, la completaste y nadie hizo cambios en "main" mientras trabajabas. El puntero simplemente avanza de forma limpia y directa.',
+            recommendation: 'recomendado',
+            command: 'git merge feature',
+          },
+          {
+            title: 'Equipos que requieren trazabilidad explícita de fusiones',
+            scenario: 'Si las políticas de tu equipo o empresa exigen registrar siempre cuándo se unió una rama (incluso si era lineal), debes forzar un commit de unión con la opción --no-ff.',
+            recommendation: 'evitar',
+            command: 'git merge --no-ff feature',
+          },
+        ],
       },
       {
         id: 'merge-3way',
@@ -453,6 +501,26 @@ export const CURRICULUM: CurriculumLevel[] = [
         goalDescription: 'Crea un commit de merge fusionando `feature` en `main`.',
         solutionCommands: ['git merge feature'],
         tips: ['El commit de fusión tiene dos padres: el commit previo de main y el último de feature.'],
+        whenToUse: [
+          {
+            title: 'Integrar ramas terminadas en main / producción conservando la historia',
+            scenario: 'Finalizaste una funcionalidad aprobada en Pull Request. El 3-way merge crea un commit conmemorativo que documenta exactamente cuándo y qué rama se integró al código principal.',
+            recommendation: 'recomendado',
+            command: 'git switch main && git merge feature',
+          },
+          {
+            title: 'Colaboración en ramas públicas compartidas',
+            scenario: 'Al sincronizar ramas remotas compartidas entre varios ingenieros, el merge une los cambios sin reescribir hashes ni perjudicar el trabajo de los demás.',
+            recommendation: 'recomendado',
+            command: 'git merge origin/main',
+          },
+          {
+            title: 'Actualizar tu rama personal local repetidamente',
+            scenario: 'Hacer merge de main hacia tu rama cada pocas horas genera múltiples commits repetitivos tipo "Merge branch main into feature" que ensucian el historial de tu Pull Request.',
+            recommendation: 'evitar',
+            command: 'git rebase main (preferible para actualizar ramas personales)',
+          },
+        ],
       },
       {
         id: 'rebase-intro',
@@ -493,6 +561,26 @@ export const CURRICULUM: CurriculumLevel[] = [
         solutionCommands: ['git rebase main'],
         tips: [
           'Regla de oro: Nunca hagas rebase en ramas públicas compartidas (como main en un equipo grande).',
+        ],
+        whenToUse: [
+          {
+            title: 'Actualizar tu rama de trabajo antes de abrir un Pull Request',
+            scenario: 'Llevas días trabajando en tu rama y otros desarrolladores han fusionado cambios en "main". Con rebase traes los últimos cambios de main colocándolos por debajo de tus commits, evitando commits de merge innecesarios.',
+            recommendation: 'recomendado',
+            command: 'git switch mi-rama && git rebase main',
+          },
+          {
+            title: 'Limpiar y organizar commits locales antes de compartirlos (Rebase Interactivo)',
+            scenario: 'Creaste varios commits rápidos de prueba ("wip", "fix typo", "ajuste"). Con git rebase interactivo los compactas (squash) en un único commit descriptivo y profesional antes de hacer push.',
+            recommendation: 'recomendado',
+            command: 'git rebase -i HEAD~3',
+          },
+          {
+            title: 'En ramas públicas o compartidas con otros desarrolladores',
+            scenario: 'NUNCA hagas rebase sobre "main", "develop" o cualquier rama donde otros compañeros estén basando su trabajo. Rebase reescribe los hashes de los commits y provocará graves conflictos a tus compañeros.',
+            recommendation: 'evitar',
+            command: 'git merge main',
+          },
         ],
       },
     ],
@@ -542,6 +630,26 @@ export const CURRICULUM: CurriculumLevel[] = [
         goalDescription: 'Copia el commit c4 en main mediante `git cherry-pick c4`.',
         solutionCommands: ['git cherry-pick c4'],
         tips: ['Cherry-pick genera un nuevo commit con contenido idéntico pero diferente hash y fecha.'],
+        whenToUse: [
+          {
+            title: 'Aplicar un bugfix urgente desde una rama experimental a producción',
+            scenario: 'Corregiste un fallo de seguridad crítico en medio de una rama con trabajo a medias. Con cherry-pick extraes exclusivamente el commit del fix y lo llevas a main sin fusionar el código experimental.',
+            recommendation: 'recomendado',
+            command: 'git switch main && git cherry-pick c4',
+          },
+          {
+            title: 'Portar correcciones entre versiones estables (Backporting)',
+            scenario: 'Arreglaste un bug en la versión actual (main) y necesitas aplicar exactamente ese mismo parche a una versión anterior en mantenimiento (ej. release-1.2).',
+            recommendation: 'recomendado',
+            command: 'git switch release-1.2 && git cherry-pick c4',
+          },
+          {
+            title: 'Como método habitual para fusionar ramas completas',
+            scenario: 'Evita usar cherry-pick para integrar ramas enteras. Cherry-pick duplica los commits con nuevos identificadores y generará conflictos en futuros merges.',
+            recommendation: 'evitar',
+            command: 'git merge feature (usa merge para ramas completas)',
+          },
+        ],
       },
       {
         id: 'reset-revert',
@@ -580,6 +688,26 @@ export const CURRICULUM: CurriculumLevel[] = [
         tips: [
           'Usa `git revert` siempre que el código ya esté publicado en GitHub.',
           'Usa `git reset` solo para commits locales privados antes de hacer push.',
+        ],
+        whenToUse: [
+          {
+            title: '`git reset` para commits locales privados (antes de hacer push)',
+            scenario: 'Hiciste un commit en tu máquina pero olvidaste incluir un archivo o te diste cuenta de un error. Como nadie más tiene este commit, puedes resetearlo limpiamente.',
+            recommendation: 'recomendado',
+            command: 'git reset --soft HEAD~1',
+          },
+          {
+            title: '`git revert` para cambios ya subidos a GitHub o ramas compartidas',
+            scenario: 'Un commit publicado en "main" causó un error en producción. Revert genera un nuevo commit que revierte los cambios sin reescribir la historia ni romper el repositorio de tu equipo.',
+            recommendation: 'recomendado',
+            command: 'git revert c2',
+          },
+          {
+            title: '`git reset --hard` en ramas remotas públicas',
+            scenario: 'NUNCA ejecutes reset --hard y luego git push --force en ramas compartidas. Borrarás el historial de tus colegas de equipo y provocarás pérdida de trabajo.',
+            recommendation: 'evitar',
+            command: 'git revert <hash> (siempre en ramas públicas)',
+          },
         ],
       },
       {
@@ -621,6 +749,26 @@ export const CURRICULUM: CurriculumLevel[] = [
         goalDescription: 'Guarda tus cambios temporales con `git stash` y luego recupéralos con `git stash pop`.',
         solutionCommands: ['git stash', 'git stash pop'],
         tips: ['Puedes tener múltiples elementos en el stash usando `git stash list`.'],
+        whenToUse: [
+          {
+            title: 'Interrupción urgente: Cambiar de rama sin comitear código roto',
+            scenario: 'Estás a mitad de refactorizar un formulario con errores de compilación y surge una emergencia en producción. Guardas en stash, cambias de rama, corriges la emergencia y al volver recuperas todo intacto.',
+            recommendation: 'recomendado',
+            command: 'git stash && git switch main',
+          },
+          {
+            title: 'Hacer git pull cuando tus cambios locales chocan',
+            scenario: 'Git te impide actualizar con pull porque tus archivos modificados se sobreescribirían. Guardas temporalmente en stash, actualizas con pull y reincorporas tus cambios con pop.',
+            recommendation: 'recomendado',
+            command: 'git stash && git pull && git stash pop',
+          },
+          {
+            title: 'Almacenar trabajo durante semanas o meses',
+            scenario: 'El stash es una pila temporal volátil pensada para horas. Si vas a pausar una tarea por varios días, crea una rama específica con commit en lugar de confiar en el stash.',
+            recommendation: 'evitar',
+            command: 'git switch -c wip-mi-tarea',
+          },
+        ],
       },
       {
         id: 'github-pull-requests',

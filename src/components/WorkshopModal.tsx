@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Lesson } from '../types/lesson';
+import { Lesson, WhenToUseExample } from '../types/lesson';
 import { GitState } from '../types/git';
 import { GitGraph } from './GitGraph';
 import { 
@@ -22,6 +22,7 @@ interface Slide {
   content?: string;
   command?: string;
   tips?: string[];
+  whenToUse?: WhenToUseExample[];
   type: string;
 }
 
@@ -59,6 +60,12 @@ export const WorkshopModal: React.FC<WorkshopModalProps> = ({
       command: s.commandSuggestion,
       type: 'step',
     })),
+    ...(lesson.whenToUse && lesson.whenToUse.length > 0 ? [{
+      title: '¿En qué momento usar este comando?',
+      subtitle: 'Casos reales de uso práctico y cuándo evitarlo',
+      whenToUse: lesson.whenToUse,
+      type: 'whenToUse',
+    }] : []),
     {
       title: 'Objetivo del Ejercicio Práctico',
       subtitle: lesson.goalDescription,
@@ -191,6 +198,43 @@ export const WorkshopModal: React.FC<WorkshopModalProps> = ({
                 <div className="font-mono text-xl text-emerald-400 font-bold bg-slate-950 p-3 rounded-lg border border-slate-800">
                   $ {currentSlide.command}
                 </div>
+              </div>
+            )}
+
+            {currentSlide.whenToUse && (
+              <div className="space-y-3 pt-2">
+                {currentSlide.whenToUse.map((item: any, idx: number) => {
+                  const isGood = item.recommendation === 'recomendado';
+                  return (
+                    <div
+                      key={idx}
+                      className={`p-4 rounded-xl border text-sm space-y-2 ${
+                        isGood
+                          ? 'bg-emerald-950/20 border-emerald-800/40'
+                          : 'bg-rose-950/20 border-rose-800/40'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-bold text-white text-base">{item.title}</span>
+                        <span
+                          className={`text-xs font-mono uppercase px-2 py-0.5 rounded font-bold ${
+                            isGood
+                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                              : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                          }`}
+                        >
+                          {isGood ? '✓ Cuándo SÍ' : '⚠ Cuándo NO'}
+                        </span>
+                      </div>
+                      <p className="text-slate-300 leading-relaxed text-xs">{item.scenario}</p>
+                      {item.command && (
+                        <div className="font-mono text-emerald-400 font-bold bg-slate-950 p-2.5 rounded border border-slate-800 text-xs">
+                          $ {item.command}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
 
