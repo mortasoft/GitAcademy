@@ -269,6 +269,68 @@ export const CURRICULUM: CurriculumLevel[] = [
         solutionCommands: ['git log --oneline'],
         tips: ['Las etiquetas como v1.0.0 señalan hitos importantes o releases de software.'],
       },
+      {
+        id: 'clone-remote',
+        levelId: 'nivel-2',
+        title: '2.3 Git Clone y Repositorios Remotos',
+        category: 'Fundamentos Terminal',
+        difficulty: 'Principiante',
+        timeEstimate: '5 min',
+        summary: 'Aprende a clonar repositorios existentes a tu máquina, comprender qué es "origin" y verificar la conexión con git remote.',
+        initialState: {
+          commits: {
+            c1: { id: 'c1', parentIds: [], message: 'Initial commit (README.md)', author: 'Lead <lead@empresa.com>', timestamp: Date.now() - 7200000 },
+          },
+          branches: { main: { name: 'main', commitId: 'c1' } },
+          tags: {},
+          head: { type: 'branch', target: 'main' },
+          staging: [],
+          workingDir: [],
+          stash: [],
+          remotes: { origin: 'https://github.com/empresa/proyecto-web.git' },
+        },
+        steps: [
+          {
+            title: '1. Clona un repositorio remoto',
+            explanation: '`git clone <url>` descarga toda la historia de commits y ramas desde GitHub a tu computadora en una sola instrucción.',
+            commandSuggestion: 'git clone https://github.com/empresa/proyecto-web.git',
+          },
+          {
+            title: '2. Inspecciona los remotos configurados',
+            explanation: 'Ejecuta `git remote -v` para ver las URLs de envío (push) y descarga (fetch) vinculadas bajo el nombre "origin".',
+            commandSuggestion: 'git remote -v',
+          },
+        ],
+        goalDescription: 'Ejecuta `git clone https://github.com/empresa/proyecto-web.git` o `git remote -v` para inspeccionar la conexión remota.',
+        solutionCommands: [
+          'git clone https://github.com/empresa/proyecto-web.git',
+          'git remote -v',
+        ],
+        tips: [
+          '"origin" es simplemente el nombre predeterminado que Git asigna al servidor remoto de donde clonaste el código.',
+          'Al clonar, Git configura automáticamente el seguimiento entre tu rama local "main" y la rama remota "origin/main".',
+        ],
+        whenToUse: [
+          {
+            title: 'Unirte a un proyecto existente en tu trabajo o equipo',
+            scenario: 'Tu primer día en una empresa o proyecto: en lugar de inicializar un repo vacío con git init, usas git clone para traer todo el código y ramas del equipo a tu máquina.',
+            recommendation: 'recomendado',
+            command: 'git clone https://github.com/empresa/proyecto.git',
+          },
+          {
+            title: 'Contribuir a proyectos Open Source en GitHub',
+            scenario: 'Quieres colaborar en una librería pública o probar localmente. Clonas el repositorio o tu propio fork para trabajar en tu editor.',
+            recommendation: 'recomendado',
+            command: 'git clone https://github.com/facebook/react.git',
+          },
+          {
+            title: 'Copiar proyectos descargando archivos ZIP manualmente',
+            scenario: 'Evita descargar archivos ZIP desde GitHub; el archivo comprimido no incluye el historial de Git (.git), ni las ramas ni la configuración para hacer push o pull.',
+            recommendation: 'evitar',
+            command: 'git clone <url> (siempre clona para conservar Git)',
+          },
+        ],
+      },
     ],
   },
   {
@@ -771,9 +833,147 @@ export const CURRICULUM: CurriculumLevel[] = [
         ],
       },
       {
+        id: 'push-pull-sync',
+        levelId: 'nivel-5',
+        title: '5.4 Sincronización Remota: Git Push y Git Pull',
+        category: 'Colaboración Remota',
+        difficulty: 'Intermedio',
+        timeEstimate: '6 min',
+        summary: 'Domina el envío y recepción de código entre tu máquina y GitHub: descubre cómo se mueven las ramas de seguimiento (origin/main) con push y pull.',
+        initialState: {
+          commits: {
+            c1: { id: 'c1', parentIds: [], message: 'Versión remota compartida', author: 'Team <team@test.com>', timestamp: Date.now() - 7200000 },
+            c2: { id: 'c2', parentIds: ['c1'], message: 'feat: nuevas mejoras locales', author: 'Estudiante <estudiante@test.com>', timestamp: Date.now() },
+          },
+          branches: {
+            main: { name: 'main', commitId: 'c2' },
+            'origin/main': { name: 'origin/main', commitId: 'c1', isRemote: true },
+          },
+          tags: {},
+          head: { type: 'branch', target: 'main' },
+          staging: [],
+          workingDir: [],
+          stash: [],
+          remotes: { origin: 'https://github.com/empresa/proyecto.git' },
+        },
+        steps: [
+          {
+            title: '1. Comprueba el desfase con el remoto',
+            explanation: 'Ejecuta `git status`. Observa que te indica: "Tu rama está adelantada a \'origin/main\' por 1 commit". En el grafo, verás el badge `☁ origin/main` un commit atrás.',
+            commandSuggestion: 'git status',
+          },
+          {
+            title: '2. Publica tus cambios con git push',
+            explanation: 'Ejecuta `git push origin main` (o simplemente `git push`). Mira cómo el badge `☁ origin/main` viaja hacia adelante hasta alinearse con tu rama local.',
+            commandSuggestion: 'git push origin main',
+          },
+          {
+            title: '3. Verifica la sincronización',
+            explanation: 'Ejecuta `git status` nuevamente para comprobar que tu rama ahora está completamente sincronizada con el servidor.',
+            commandSuggestion: 'git status',
+          },
+        ],
+        goalDescription: 'Sincroniza tus cambios locales con el repositorio remoto ejecutando `git push origin main`.',
+        solutionCommands: ['git push origin main'],
+        tips: [
+          'La primera vez que subas una rama nueva a GitHub, usa `git push -u origin <rama>` para establecer la relación de rastreo automático.',
+          '`git pull` es la operación inversa: descarga los commits nuevos subidos por tus compañeros y los fusiona en tu rama local.',
+        ],
+        whenToUse: [
+          {
+            title: 'Enviar tus commits completados al finalizar el día o tarea',
+            scenario: 'Hiciste commits atómicos en tu rama y quieres respaldar tu código en la nube o permitir que tus compañeros lo vean en GitHub.',
+            recommendation: 'recomendado',
+            command: 'git push origin mi-rama',
+          },
+          {
+            title: 'Actualizar tu rama al comenzar tu jornada laboral',
+            scenario: 'Al iniciar tu jornada, siempre haz git pull en main para comenzar tus tareas con el código más fresco del equipo.',
+            recommendation: 'recomendado',
+            command: 'git switch main && git pull',
+          },
+          {
+            title: 'Hacer `git push --force` sobre ramas compartidas',
+            scenario: 'NUNCA uses --force en ramas públicas como "main" o ramas de equipo; borrarás commits que otros hayan subido al servidor.',
+            recommendation: 'evitar',
+            command: 'git push (sin --force en ramas públicas)',
+          },
+        ],
+      },
+      {
+        id: 'teamwork-github-flow',
+        levelId: 'nivel-5',
+        title: '5.5 Trabajo en Equipo: El Flujo Profesional (GitHub Flow)',
+        category: 'Colaboración Remota',
+        difficulty: 'Intermedio',
+        timeEstimate: '7 min',
+        summary: 'Aprende el ciclo diario de trabajo en equipos reales: crear ramas de tarea, mantener sincronización y colaborar sin pisarse el código.',
+        initialState: {
+          commits: {
+            c1: { id: 'c1', parentIds: [], message: 'Base del proyecto del equipo', author: 'Team <team@test.com>', timestamp: Date.now() - 7200000 },
+          },
+          branches: {
+            main: { name: 'main', commitId: 'c1' },
+            'origin/main': { name: 'origin/main', commitId: 'c1', isRemote: true },
+          },
+          tags: {},
+          head: { type: 'branch', target: 'main' },
+          staging: [],
+          workingDir: [],
+          stash: [],
+          remotes: { origin: 'https://github.com/empresa/proyecto.git' },
+        },
+        steps: [
+          {
+            title: '1. Sincroniza main antes de empezar cualquier tarea',
+            explanation: 'En los equipos profesionales, la regla número 1 es traer siempre las últimas actualizaciones de tus compañeros antes de crear tu rama.',
+            commandSuggestion: 'git pull',
+          },
+          {
+            title: '2. Crea tu rama descriptiva de funcionalidad',
+            explanation: 'Crea y cambia a tu rama de trabajo personal aislada con `git switch -c feature/nueva-pantalla` (o `git checkout -b ...`).',
+            commandSuggestion: 'git switch -c feature/nueva-pantalla',
+          },
+          {
+            title: '3. Realiza tus commits de trabajo',
+            explanation: 'Crea tu archivo con `touch pantalla.html`, agrégalo y haz commit con un mensaje claro y descriptivo.',
+            commandSuggestion: 'git commit -m "feat: crear pantalla principal"',
+          },
+          {
+            title: '4. Publica tu rama en el remoto para revisión',
+            explanation: 'Sube tu rama al servidor con `git push -u origin feature/nueva-pantalla`. Ahora tus colegas pueden revisarla abriendo un Pull Request.',
+            commandSuggestion: 'git push -u origin feature/nueva-pantalla',
+          },
+        ],
+        goalDescription: 'Crea la rama "feature/nueva-pantalla", realiza un commit y publícala con `git push -u origin feature/nueva-pantalla`.',
+        solutionCommands: [
+          'git switch -c feature/nueva-pantalla',
+          'git commit -m "feat: crear pantalla principal"',
+          'git push -u origin feature/nueva-pantalla',
+        ],
+        tips: [
+          'GitHub Flow es el flujo estándar en empresas modernas: ramas cortas y específicas que se prueban, revisan y fusionan rápidamente a main.',
+          'Nunca trabajes durante semanas en una rama aislada; mientras más tiempo pase sin integrar con main, más difícil será resolver conflictos.',
+        ],
+        whenToUse: [
+          {
+            title: 'Desarrollar cualquier ticket, tarea o sprint en equipo',
+            scenario: 'Sigues el ciclo: 1. git pull -> 2. crear rama feature/... -> 3. commits -> 4. git push -> 5. abrir PR en GitHub -> 6. Code Review -> 7. Merge a main.',
+            recommendation: 'recomendado',
+            command: 'git switch -c feature/mi-ticket && git push -u origin feature/mi-ticket',
+          },
+          {
+            title: 'Commitear directamente en main en proyectos compartidos',
+            scenario: 'Subir código directo a main sin rama ni revisión salta las pruebas automatizadas (CI) y la aprobación del equipo, arriesgando romper la aplicación.',
+            recommendation: 'evitar',
+            command: 'git switch -c feature/mi-tarea (siempre usa ramas en equipo)',
+          },
+        ],
+      },
+      {
         id: 'github-pull-requests',
         levelId: 'nivel-5',
-        title: '5.4 El Flujo de Pull Requests (PRs)',
+        title: '5.6 El Flujo de Pull Requests (PRs)',
         category: 'GitHub en Equipo',
         difficulty: 'Intermedio',
         timeEstimate: '10 min',
@@ -819,7 +1019,7 @@ export const CURRICULUM: CurriculumLevel[] = [
       {
         id: 'github-forks-oss',
         levelId: 'nivel-5',
-        title: '5.5 Forks y Contribución Open Source',
+        title: '5.7 Forks y Contribución Open Source',
         category: 'GitHub en Equipo',
         difficulty: 'Avanzado',
         timeEstimate: '10 min',

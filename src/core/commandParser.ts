@@ -146,6 +146,36 @@ export class CommandParser {
         : `HEAD desacoplado en ${headHash}`;
 
       let body = `${branchName}\n`;
+
+      if (currentState.head.type === 'branch') {
+        const b = currentState.head.target;
+        const remoteB = currentState.branches[`origin/${b}`];
+        if (remoteB) {
+          const localCommitId = currentState.branches[b]?.commitId;
+          if (localCommitId === remoteB.commitId) {
+            body += `Tu rama está actualizada con 'origin/${b}'.\n`;
+          } else {
+            const historyFromLocal = localCommitId ? getCommitHistory(localCommitId, currentState.commits) : [];
+            const isAhead = historyFromLocal.some((c) => c.id === remoteB.commitId);
+
+            if (isAhead) {
+              const diff = historyFromLocal.findIndex((c) => c.id === remoteB.commitId);
+              const count = diff > 0 ? diff : 1;
+              body += `Tu rama está adelantada a 'origin/${b}' por ${count} ${count === 1 ? 'commit' : 'commits'}.\n  (usa "git push" para publicar tus commits locales)\n`;
+            } else {
+              const historyFromRemote = getCommitHistory(remoteB.commitId, currentState.commits);
+              const isBehind = historyFromRemote.some((c) => c.id === localCommitId);
+              if (isBehind) {
+                const diff = historyFromRemote.findIndex((c) => c.id === localCommitId);
+                const count = diff > 0 ? diff : 1;
+                body += `Tu rama está detrás de 'origin/${b}' por ${count} ${count === 1 ? 'commit' : 'commits'}, y puede ser adelantada rápidamente.\n  (usa "git pull" para actualizar tu rama local)\n`;
+              } else {
+                body += `Tu rama y 'origin/${b}' han divergido.\n  (usa "git pull" para fusionar la rama remota en la tuya)\n`;
+              }
+            }
+          }
+        }
+      }
       if (currentState.staging.length > 0) {
         body += `Cambios para hacer commit:\n  (usa "git restore --staged <archivo>..." para desmarcar)\n`;
         currentState.staging.forEach((file) => {
@@ -519,6 +549,26 @@ export class CommandParser {
           stash: [newStashItem, ...currentState.stash],
         },
       };
+    }
+
+    // git remote
+    if (subCommand === 'remote') {
+      return GitEngine.remote(currentState, args.slice(2));
+    }
+
+    // git clone <url>
+    if (subCommand === 'clone') {
+      return GitEngine.clone(currentState, args[2]);
+    }
+
+    // git push [remote] [branch]
+    if (subCommand === 'push') {
+      return GitEngine.push(currentState, args.slice(2));
+    }
+
+    // git pull [remote] [branch]
+    if (subCommand === 'pull') {
+      return GitEngine.pull(currentState, args.slice(2));
     }
 
     return {

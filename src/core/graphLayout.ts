@@ -49,8 +49,10 @@ export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
   const commitMap = state.commits;
   const commitIds = Object.keys(commitMap);
 
-  // 1. Obtener lista ordenada de ramas: main/master siempre primero
-  const branchNames = Object.keys(state.branches);
+  // 1. Obtener lista ordenada de ramas locales: main/master siempre primero
+  const branchNames = Object.keys(state.branches).filter(
+    (bName) => !state.branches[bName]?.isRemote && !bName.startsWith('origin/')
+  );
   if (branchNames.length === 0) {
     branchNames.push('main');
   }

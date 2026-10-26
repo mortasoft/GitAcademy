@@ -57,6 +57,9 @@ export const createInitialGitState = (): GitState => {
     staging: [],
     workingDir: [],
     stash: [],
+    remotes: {
+      origin: 'https://github.com/estudiante/proyecto.git',
+    },
   };
 };
 
@@ -712,6 +715,256 @@ export class GitEngine {
         tags: newTags,
       },
       output: `Etiqueta '${tagName}' creada en ${headCommitId}.`,
+      success: true,
+    };
+  }
+
+  // git remote [-v] / git remote add <name> <url>
+  static remote(state: GitState, args: string[]): { newState: GitState; output: string; success: boolean } {
+    const remotes = state.remotes || { origin: 'https://github.com/estudiante/proyecto.git' };
+    const isVerbose = args.includes('-v') || args.includes('--verbose');
+
+    if (args[0] === 'add') {
+      const name = args[1];
+      const url = args[2];
+      if (!name || !url) {
+        return {
+          newState: state,
+          output: 'Uso: git remote add <nombre> <url>',
+          success: false,
+        };
+      }
+      return {
+        newState: {
+          ...state,
+          remotes: {
+            ...remotes,
+            [name]: url,
+          },
+        },
+        output: '',
+        success: true,
+      };
+    }
+
+    if (isVerbose) {
+      const lines = Object.entries(remotes).map(([name, url]) => `${name}\t${url} (fetch)\n${name}\t${url} (push)`);
+      return {
+        newState: state,
+        output: lines.join('\n') || 'No hay remotos configurados.',
+        success: true,
+      };
+    }
+
+    return {
+      newState: state,
+      output: Object.keys(remotes).join('\n') || 'No hay remotos configurados.',
+      success: true,
+    };
+  }
+
+  // git clone <url>
+  static clone(state: GitState, url: string): { newState: GitState; output: string; success: boolean } {
+    if (!url) {
+      return {
+        newState: state,
+        output: 'fatal: Debes especificar un repositorio para clonar.\nUso: git clone <url>',
+        success: false,
+      };
+    }
+
+    const cleanUrl = url.trim().replace(/\/$/, '');
+    const repoMatch = cleanUrl.match(/\/([^/]+?)(?:\.git)?$/);
+    const repoName = repoMatch ? repoMatch[1] : 'proyecto';
+
+    const c1Id = 'c1';
+    const c2Id = 'c2';
+
+    const commits: Record<string, GitCommit> = {
+      [c1Id]: {
+        id: c1Id,
+        hash: '6b4550a',
+        parentIds: [],
+        message: 'Initial commit (README.md)',
+        author: 'Lead Developer <lead@empresa.com>',
+        timestamp: Date.now() - 7200000,
+      },
+      [c2Id]: {
+        id: c2Id,
+        hash: '37d1a4e',
+        parentIds: [c1Id],
+        message: 'feat: setup initial architecture',
+        author: 'Lead Developer <lead@empresa.com>',
+        timestamp: Date.now() - 3600000,
+      },
+    };
+
+    const branches: Record<string, GitBranch> = {
+      main: { name: 'main', commitId: c2Id },
+      'origin/main': { name: 'origin/main', commitId: c2Id, isRemote: true },
+    };
+
+    const newState: GitState = {
+      commits,
+      branches,
+      tags: {},
+      head: { type: 'branch', target: 'main' },
+      staging: [],
+      workingDir: [],
+      stash: [],
+      remotes: { origin: cleanUrl },
+    };
+
+    const output = [
+      `Clonando en '${repoName}'...`,
+      `remote: Enumerando objetos: 8, listo.`,
+      `remote: Contando objetos: 100% (8/8), listo.`,
+      `remote: Comprimiendo objetos: 100% (6/6), listo.`,
+      `remote: Total 8 (delta 2), reusados 8 (delta 2)`,
+      `Recibiendo objetos: 100% (8/8), listo.`,
+      `Resolviendo deltas: 100% (2/2), listo.`,
+      `Configurado remoto 'origin' -> ${cleanUrl}`,
+      `Rama 'main' configurada para rastrear la rama remota 'main' de 'origin'.`,
+      `Cambiado a nueva rama 'main'`,
+    ].join('\n');
+
+    return {
+      newState,
+      output,
+      success: true,
+    };
+  }
+
+  // git push [remote] [branch]
+  static push(state: GitState, args: string[]): { newState: GitState; output: string; success: boolean } {
+    if (state.head.type === 'detached') {
+      return {
+        newState: state,
+        output: 'fatal: Estás actualmente en un estado de HEAD desacoplado. No puedes hacer push sin una rama.',
+        success: false,
+      };
+    }
+
+    const currentBranch = state.head.target;
+    let targetBranch = currentBranch;
+
+    // Detectar argumentos opcionales como `origin mi-rama` o `-u origin mi-rama`
+    const nonFlags = args.filter((a) => !a.startsWith('-'));
+    if (nonFlags.length >= 2) {
+      targetBranch = nonFlags[1];
+    }
+
+    const localBranch = state.branches[targetBranch];
+    if (!localBranch) {
+      return {
+        newState: state,
+        output: `error: src refspec ${targetBranch} no coincide con ninguna rama local existente.`,
+        success: false,
+      };
+    }
+
+    const remoteBranchName = `origin/${targetBranch}`;
+    const remoteBranch = state.branches[remoteBranchName];
+    const remoteUrl = state.remotes?.origin || 'https://github.com/estudiante/proyecto.git';
+
+    if (remoteBranch && remoteBranch.commitId === localBranch.commitId) {
+      return {
+        newState: state,
+        output: 'Everything up-to-date (Todo está actualizado en el remoto).',
+        success: true,
+      };
+    }
+
+    const fromHash = remoteBranch ? getCommitHash(remoteBranch.commitId) : '[nueva rama]';
+    const toHash = getCommitHash(localBranch.commitId);
+
+    const updatedBranches = {
+      ...state.branches,
+      [remoteBranchName]: {
+        name: remoteBranchName,
+        commitId: localBranch.commitId,
+        isRemote: true,
+      },
+    };
+
+    const output = [
+      `Enumerando objetos: 5, hecho.`,
+      `Contando objetos: 100% (5/5), listo.`,
+      `Comprimiendo objetos: 100% (3/3), listo.`,
+      `Escribiendo objetos: 100% (3/3), listo.`,
+      `Total 3 (delta 1), reusados 0 (delta 0)`,
+      `A ${remoteUrl}`,
+      remoteBranch
+        ? `   ${fromHash}..${toHash}  ${targetBranch} -> ${targetBranch}`
+        : ` * [nueva rama]      ${targetBranch} -> ${targetBranch}`,
+      `Rama '${targetBranch}' configurada para rastrear 'origin/${targetBranch}'.`,
+    ].join('\n');
+
+    return {
+      newState: {
+        ...state,
+        branches: updatedBranches,
+      },
+      output,
+      success: true,
+    };
+  }
+
+  // git pull [remote] [branch]
+  static pull(state: GitState, _args: string[]): { newState: GitState; output: string; success: boolean } {
+    if (state.head.type === 'detached') {
+      return {
+        newState: state,
+        output: 'fatal: Estás actualmente en un estado de HEAD desacoplado. No puedes hacer pull sin una rama.',
+        success: false,
+      };
+    }
+
+    const currentBranch = state.head.target;
+    const remoteBranchName = `origin/${currentBranch}`;
+    const remoteBranch = state.branches[remoteBranchName];
+    const localBranch = state.branches[currentBranch];
+
+    if (!remoteBranch) {
+      return {
+        newState: state,
+        output: `No hay información de seguimiento para la rama actual '${currentBranch}'.\nEspecifica qué rama remota deseas fusionar:\n    git pull <remoto> <rama>`,
+        success: false,
+      };
+    }
+
+    if (remoteBranch.commitId === localBranch.commitId) {
+      return {
+        newState: state,
+        output: 'Ya está actualizado (Already up to date).',
+        success: true,
+      };
+    }
+
+    const fromHash = getCommitHash(localBranch.commitId);
+    const toHash = getCommitHash(remoteBranch.commitId);
+
+    const updatedBranches = {
+      ...state.branches,
+      [currentBranch]: {
+        ...localBranch,
+        commitId: remoteBranch.commitId,
+      },
+    };
+
+    const output = [
+      `Actualizando ${fromHash}..${toHash}`,
+      `Fast-forward`,
+      ` app.ts | 15 +++++++++++++++`,
+      ` 1 archivo cambiado, 15 inserciones(+)`,
+    ].join('\n');
+
+    return {
+      newState: {
+        ...state,
+        branches: updatedBranches,
+      },
+      output,
       success: true,
     };
   }

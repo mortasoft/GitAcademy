@@ -36,6 +36,7 @@ export interface GitState {
   staging: string[]; // staged simulated files
   workingDir: string[]; // modified simulated files
   stash: GitStashItem[];
+  remotes?: Record<string, string>; // e.g. { origin: 'https://github.com/estudiante/proyecto.git' }
 }
 
 export interface CommandResult {

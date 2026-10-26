@@ -399,20 +399,31 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSel
                     }
 
                     node.branches.forEach((bName) => {
-                      const w = Math.max(bName.length * 7.5 + 16, 44);
+                      const isRemote = bName.startsWith('origin/') || bName.includes('/');
+                      const displayLabel = isRemote ? `☁ ${bName}` : bName;
+                      const w = Math.max(displayLabel.length * 7.5 + 16, 48);
+
                       badges.push(
                         <g key={`branch-${bName}`} transform={`translate(${node.x + badgeOffset}, ${node.y - 10})`}>
-                          <rect width={w} height={20} rx={4} fill="#0f172a" stroke={node.color} strokeWidth={1.5} />
+                          <rect
+                            width={w}
+                            height={20}
+                            rx={4}
+                            fill={isRemote ? '#1e1b4b' : '#0f172a'}
+                            stroke={isRemote ? '#818cf8' : node.color}
+                            strokeWidth={1.5}
+                            strokeDasharray={isRemote ? '3 2' : undefined}
+                          />
                           <text
                             x={w / 2}
                             y={13.5}
                             textAnchor="middle"
-                            fill="#e2e8f0"
+                            fill={isRemote ? '#c7d2fe' : '#e2e8f0'}
                             fontSize={9.5}
                             fontWeight="600"
                             fontFamily="monospace"
                           >
-                            {bName}
+                            {displayLabel}
                           </text>
                         </g>
                       );
