@@ -7,6 +7,7 @@ import { ZoomIn, ZoomOut, Maximize2, GitBranch as GitBranchIcon } from 'lucide-r
 interface GitGraphProps {
   state: GitState;
   onSelectCommit?: (commitId: string) => void;
+  onSelectBranch?: (branchName: string) => void;
 }
 
 const getCommitDisplayInfo = (commit: GitCommit | string, fallbackIndex: number) => {
@@ -22,7 +23,7 @@ const getCommitDisplayInfo = (commit: GitCommit | string, fallbackIndex: number)
   };
 };
 
-export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => {
+export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSelectBranch }) => {
   const [zoom, setZoom] = useState<number>(1);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
 
@@ -98,6 +99,70 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                 <stop offset="100%" stopColor="#94a3b8" stopOpacity="0.8" />
               </linearGradient>
             </defs>
+
+            {/* Rieles Guía Verticales para cada Rama */}
+            {layout.branchLanes.map((lane) => (
+              <g key={`rail-${lane.name}`}>
+                <line
+                  x1={lane.x}
+                  y1={52}
+                  x2={lane.x}
+                  y2={layout.railBottomY}
+                  stroke={lane.color}
+                  strokeWidth={lane.isCurrent ? 2 : 1.5}
+                  strokeOpacity={lane.isCurrent ? 0.35 : 0.18}
+                  strokeDasharray="5 4"
+                />
+              </g>
+            ))}
+
+            {/* Conectores hacia ramas que aún no tienen commits propios */}
+            {layout.branchLanes.map((lane) => {
+              if (lane.hasOwnCommits || !lane.originPos) return null;
+              const startX = lane.originPos.x;
+              const startY = lane.originPos.y;
+              const endX = lane.x;
+              const endY = lane.originPos.y + 40;
+              const dy = endY - startY;
+
+              return (
+                <g key={`sprout-${lane.name}`}>
+                  <path
+                    d={`M ${startX} ${startY} C ${startX} ${startY + dy * 0.5}, ${endX} ${endY - dy * 0.5}, ${endX} ${endY}`}
+                    fill="none"
+                    stroke={lane.color}
+                    strokeWidth={2}
+                    strokeDasharray="4 3"
+                    className="transition-all duration-300"
+                  />
+                  {/* Badge en el carril indicando rama creada lista */}
+                  <g transform={`translate(${endX}, ${endY})`}>
+                    <rect
+                      x={-60}
+                      y={-12}
+                      width={120}
+                      height={24}
+                      rx={12}
+                      fill="#0f172a"
+                      stroke={lane.color}
+                      strokeWidth={1.5}
+                      strokeDasharray="3 3"
+                    />
+                    <circle cx={-44} cy={0} r={3.5} fill={lane.color} />
+                    <text
+                      x={-32}
+                      y={3.5}
+                      fill={lane.color}
+                      fontSize={9.5}
+                      fontWeight="600"
+                      fontFamily="monospace"
+                    >
+                      (rama lista)
+                    </text>
+                  </g>
+                </g>
+              );
+            })}
 
             {/* Dibujar Conexiones / Aristas Verticales */}
             {layout.edges.map((edge, index) => {
@@ -399,6 +464,106 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                 </g>
               );
             })()}
+
+            {/* Encabezados de Columna Interactivos de las Ramas */}
+            {layout.branchLanes.map((lane) => {
+              const headerW = Math.max(lane.name.length * 8 + 66, 120);
+              const headerH = 30;
+              const headerX = lane.x - headerW / 2;
+              const headerY = 18;
+
+              return (
+                <g
+                  key={`header-${lane.name}`}
+                  className="cursor-pointer group select-none transition-transform"
+                  onClick={() => {
+                    if (onSelectBranch) onSelectBranch(lane.name);
+                  }}
+                >
+                  {/* Fondo y borde del encabezado */}
+                  <rect
+                    x={headerX}
+                    y={headerY}
+                    width={headerW}
+                    height={headerH}
+                    rx={15}
+                    fill="#0f172a"
+                    stroke={lane.color}
+                    strokeWidth={lane.isCurrent ? 2.5 : 1.5}
+                    className="transition-all duration-150 group-hover:stroke-white shadow-md"
+                  />
+
+                  {/* Halo sutil si es la rama ACTIVA */}
+                  {lane.isCurrent && (
+                    <rect
+                      x={headerX - 3}
+                      y={headerY - 3}
+                      width={headerW + 6}
+                      height={headerH + 6}
+                      rx={18}
+                      fill="none"
+                      stroke={lane.color}
+                      strokeWidth={1}
+                      strokeOpacity={0.5}
+                      strokeDasharray="3 2"
+                    />
+                  )}
+
+                  {/* Indicador de color de rama */}
+                  <circle
+                    cx={headerX + 16}
+                    cy={headerY + 15}
+                    r={5}
+                    fill={lane.color}
+                  />
+
+                  {/* Nombre de la rama */}
+                  <text
+                    x={headerX + 28}
+                    y={headerY + 18.5}
+                    fill="#f8fafc"
+                    fontSize={10.5}
+                    fontWeight="bold"
+                    fontFamily="monospace"
+                  >
+                    {lane.name}
+                  </text>
+
+                  {/* Badge HEAD si es la rama actual */}
+                  {lane.isCurrent && (
+                    <g transform={`translate(${headerX + headerW - 38}, ${headerY + 7.5})`}>
+                      <rect
+                        x={0}
+                        y={0}
+                        width={32}
+                        height={15}
+                        rx={3}
+                        fill="#ea580c"
+                      />
+                      <text
+                        x={16}
+                        y={10.5}
+                        textAnchor="middle"
+                        fill="#ffffff"
+                        fontSize={8}
+                        fontWeight="bold"
+                        fontFamily="monospace"
+                      >
+                        HEAD
+                      </text>
+                    </g>
+                  )}
+
+                  {/* Conector indicador hacia abajo hacia el riel */}
+                  <path
+                    d={`M ${lane.x - 3} ${headerY + headerH + 1} L ${lane.x} ${headerY + headerH + 4} L ${lane.x + 3} ${headerY + headerH + 1}`}
+                    fill="none"
+                    stroke={lane.color}
+                    strokeWidth={1.5}
+                  />
+                </g>
+              );
+            })}
           </svg>
         </div>
       </div>

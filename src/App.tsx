@@ -153,7 +153,17 @@ export const App: React.FC = () => {
             <div className="flex-1 min-w-0 min-h-0 flex flex-col p-3 lg:p-4 gap-3 lg:gap-4 overflow-hidden bg-slate-950">
               {/* Mitad Superior: Visualizador del Grafo de Git */}
               <div className="flex-1 min-h-0">
-                <GitGraph state={gitState} />
+                <GitGraph
+                  state={gitState}
+                  onSelectBranch={(branchName) => {
+                    if (gitState.head.type === 'branch' && gitState.head.target === branchName) {
+                      showToast(`Ya te encuentras en la rama "${branchName}".`);
+                    } else {
+                      handleApplySolutionCommand(`git switch ${branchName}`);
+                      showToast(`Comando preparado: git switch ${branchName}`);
+                    }
+                  }}
+                />
               </div>
 
               {/* Mitad Inferior: Terminal Interactiva */}

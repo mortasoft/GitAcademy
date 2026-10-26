@@ -57,3 +57,15 @@ export interface GraphNode {
   isHead: boolean;
   childrenIds: string[];
 }
+
+export interface BranchLaneLayout {
+  name: string;
+  laneIndex: number;
+  color: string;
+  x: number;
+  isCurrent: boolean;
+  commitId: string;
+  hasOwnCommits: boolean;
+  originCommitId?: string;
+  originPos?: { x: number; y: number };
+}
