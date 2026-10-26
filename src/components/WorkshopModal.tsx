@@ -3,15 +3,11 @@ import { Lesson, WhenToUseExample } from '../types/lesson';
 import { GitState } from '../types/git';
 import { GitGraph } from './GitGraph';
 import { 
-  Play, 
-  Pause, 
-  RotateCcw, 
   ChevronLeft, 
   ChevronRight, 
   X, 
   Eye, 
   EyeOff, 
-  Timer, 
   Presentation,
   Lightbulb
 } from 'lucide-react';
@@ -43,8 +39,6 @@ export const WorkshopModal: React.FC<WorkshopModalProps> = ({
 }) => {
   const [slideIndex, setSlideIndex] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
-  const [timerSeconds, setTimerSeconds] = useState(300); // 5 minutos por defecto
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
 
   // Slides dinámicas de la lección para presentación
   const slides: Slide[] = [
@@ -74,19 +68,6 @@ export const WorkshopModal: React.FC<WorkshopModalProps> = ({
     },
   ];
 
-  // Manejo del cronómetro
-  useEffect(() => {
-    let interval: any = null;
-    if (isTimerRunning && timerSeconds > 0) {
-      interval = setInterval(() => {
-        setTimerSeconds((prev) => prev - 1);
-      }, 1000);
-    } else if (timerSeconds === 0) {
-      setIsTimerRunning(false);
-    }
-    return () => clearInterval(interval);
-  }, [isTimerRunning, timerSeconds]);
-
   // Controles de teclado para el presentador
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -106,9 +87,6 @@ export const WorkshopModal: React.FC<WorkshopModalProps> = ({
   if (!isOpen) return null;
 
   const currentSlide = slides[slideIndex];
-  const minutes = Math.floor(timerSeconds / 60);
-  const seconds = timerSeconds % 60;
-  const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950 flex flex-col text-white animate-in fade-in duration-200">
@@ -121,31 +99,6 @@ export const WorkshopModal: React.FC<WorkshopModalProps> = ({
           <div>
             <h1 className="font-bold text-sm tracking-wide text-white">MODO TALLER / PRESENTADOR</h1>
             <p className="text-xs text-slate-400">{lesson.title}</p>
-          </div>
-        </div>
-
-        {/* Cronómetro del Taller */}
-        <div className="flex items-center gap-3 bg-slate-950 px-4 py-1.5 rounded-xl border border-slate-800">
-          <Timer className="w-4 h-4 text-orange-400" />
-          <span className="font-mono text-base font-bold text-slate-200">{formattedTime}</span>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setIsTimerRunning(!isTimerRunning)}
-              className="p-1 hover:text-orange-400 transition"
-              title={isTimerRunning ? 'Pausar tiempo' : 'Iniciar tiempo'}
-            >
-              {isTimerRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 text-emerald-400" />}
-            </button>
-            <button
-              onClick={() => {
-                setIsTimerRunning(false);
-                setTimerSeconds(300);
-              }}
-              className="p-1 hover:text-rose-400 transition"
-              title="Reiniciar a 5 minutos"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
-            </button>
           </div>
         </div>
 

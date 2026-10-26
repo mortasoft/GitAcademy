@@ -42,15 +42,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           <GitPullRequest className="w-5 h-5" />
         </div>
         <div>
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-base tracking-tight text-white group-hover:text-orange-400 transition">
-              GitAcademy
-            </span>
-            <span className="text-[10px] font-mono uppercase px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700">
-              Training
-            </span>
-          </div>
-          <p className="text-xs text-slate-400 hidden sm:block">Capacitación y referencia técnica de Git & GitHub</p>
+          <span className="font-semibold text-base tracking-tight text-white group-hover:text-orange-400 transition">
+            GitAcademy
+          </span>
         </div>
       </button>
 

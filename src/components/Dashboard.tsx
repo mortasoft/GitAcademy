@@ -45,6 +45,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const totalLessons = allLessons.length;
   const completedCount = completedLessonIds.length;
   const progressPercent = Math.round((completedCount / totalLessons) * 100) || 0;
+  const isCourseCompleted = completedCount >= totalLessons && totalLessons > 0;
 
   // Encontrar la primera lección pendiente
   const nextPendingLesson = allLessons.find((l) => !completedLessonIds.includes(l.id)) || allLessons[0];
@@ -58,7 +59,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2 max-w-2xl">
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono border border-slate-700">
-                <span>Programa de Capacitación Técnica</span>
+                <span>{isCourseCompleted ? 'Curso Finalizado' : 'Programa de Capacitación Técnica'}</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
                 Git & GitHub: Fundamentos, GUI y Línea de Comandos
@@ -68,18 +69,39 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </p>
             </div>
 
-            {/* Botón de acción principal */}
-            <div className="shrink-0 flex flex-col sm:flex-row md:flex-col gap-3">
-              <button
-                onClick={() => onStartLesson(nextPendingLesson)}
-                className="px-6 py-3 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-semibold text-sm transition flex items-center justify-center gap-2 shadow-sm"
-              >
-                <span>{completedCount === 0 ? 'Comenzar curso' : 'Continuar lección'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-              <div className="text-[11px] text-slate-400 text-center font-mono">
-                Siguiente: {nextPendingLesson.title}
-              </div>
+            {/* Estado del curso / Acción principal */}
+            <div className="shrink-0 flex flex-col gap-3 min-w-[220px]">
+              {isCourseCompleted ? (
+                <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/40 flex flex-col items-center sm:items-start text-center sm:text-left gap-2 shadow-sm">
+                  <div className="flex items-center gap-2 text-emerald-400 font-semibold text-sm">
+                    <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />
+                    <span>¡Curso completado!</span>
+                  </div>
+                  <p className="text-xs text-slate-300">
+                    Has finalizado con éxito todas las lecciones y ejercicios del programa.
+                  </p>
+                  <button
+                    onClick={() => onStartLesson(allLessons[0])}
+                    className="mt-1 text-xs text-orange-400 hover:text-orange-300 font-medium inline-flex items-center gap-1 transition"
+                  >
+                    <span>Repasar desde el inicio</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={() => onStartLesson(nextPendingLesson)}
+                    className="px-6 py-3 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-semibold text-sm transition flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    <span>{completedCount === 0 ? 'Comenzar curso' : 'Continuar lección'}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                  <div className="text-[11px] text-slate-400 text-center font-mono">
+                    Siguiente: {nextPendingLesson.title}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -92,12 +114,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </div>
               <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-orange-500 transition-all duration-300" 
+                  className={`h-full transition-all duration-300 ${isCourseCompleted ? 'bg-emerald-500' : 'bg-orange-500'}`} 
                   style={{ width: `${progressPercent}%` }} 
                 />
               </div>
               <div className="text-[11px] text-slate-400">
-                {completedCount} de {totalLessons} lecciones completadas
+                {completedCount} de {totalLessons} lecciones completadas {isCourseCompleted && '🎉'}
               </div>
             </div>
 
