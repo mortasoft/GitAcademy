@@ -35,6 +35,8 @@ export interface Lesson {
       details: string;
       commandOrUrl?: string;
       tip?: string;
+      imageUrl?: string;
+      imageCaption?: string;
     }[];
   };
 }

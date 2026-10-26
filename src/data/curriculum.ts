@@ -63,10 +63,14 @@ export const CURRICULUM: CurriculumLevel[] = [
               action: '2. Crea un nuevo repositorio',
               details: 'Haz clic en el botón "+" en la barra superior o en el botón verde "New" (o "Create repository").',
               commandOrUrl: 'https://github.com/new',
+              imageUrl: '/images/github/repo-create-nav.png',
+              imageCaption: 'Menú oficial en la barra superior de GitHub para crear un nuevo repositorio.',
             },
             {
               action: '3. Asigna nombre y visibilidad',
               details: 'En "Repository name" escribe por ejemplo "mi-primer-proyecto". Elige "Public" para compartirlo o "Private" para que solo tú tengas acceso.',
+              imageUrl: '/images/github/repo-create-form.png',
+              imageCaption: 'Formulario oficial de configuración de repositorio en GitHub.',
             },
             {
               action: '4. Agrega un archivo README inicial',
@@ -103,15 +107,21 @@ export const CURRICULUM: CurriculumLevel[] = [
               action: '1. Descarga la aplicación',
               details: 'Ingresa al sitio oficial y descarga el instalador correspondiente a tu sistema operativo (Windows o macOS):',
               commandOrUrl: 'https://desktop.github.com/',
+              imageUrl: '/images/desktop/lets-get-started.png',
+              imageCaption: 'Pantalla oficial de bienvenida de GitHub Desktop para vincular tu cuenta o clonar.',
             },
             {
               action: '2. Inicia sesión con tu cuenta de GitHub',
               details: 'Abre GitHub Desktop, haz clic en "Sign in to GitHub.com" y autoriza la vinculación en tu navegador web.',
+              imageUrl: '/images/desktop/sign-in-github.png',
+              imageCaption: 'Diálogo oficial de inicio de sesión de GitHub Desktop con GitHub.com.',
             },
             {
               action: '3. Clona tu repositorio a tu computadora',
               details: 'En la pantalla de bienvenida o en "File" > "Clone Repository...", selecciona la pestaña "GitHub.com", busca tu repositorio recién creado ("mi-primer-proyecto") y selecciona la ruta donde se guardará en tu disco.',
               tip: 'Clonar significa descargar una copia idéntica del repositorio de la nube a tu máquina local.',
+              imageUrl: '/images/desktop/clone-repository.png',
+              imageCaption: 'Ventana oficial de clonado de repositorios en GitHub Desktop.',
             },
             {
               action: '4. Haz clic en "Clone"',
@@ -147,10 +157,14 @@ export const CURRICULUM: CurriculumLevel[] = [
             {
               action: '2. Observa la detección automática de cambios',
               details: 'Vuelve a la ventana de GitHub Desktop. En el panel izquierdo ("Changes") verás el archivo modificado con un cuadro de selección verde indicando las líneas añadidas.',
+              imageUrl: '/images/desktop/viewing-changes.png',
+              imageCaption: 'Detección visual oficial de cambios (diff) en GitHub Desktop.',
             },
             {
               action: '3. Escribe el mensaje del Commit',
               details: 'En la esquina inferior izquierda, completa el campo obligatorio "Summary" (ej: "feat: actualizar información en README"). Opcionalmente puedes agregar una descripción más detallada.',
+              imageUrl: '/images/desktop/commit-message.png',
+              imageCaption: 'Campo de resumen del commit y botón oficial "Commit to main" en GitHub Desktop.',
             },
             {
               action: '4. Presiona el botón azul "Commit to main"',
@@ -160,6 +174,8 @@ export const CURRICULUM: CurriculumLevel[] = [
               action: '5. Presiona el botón "Push origin"',
               details: 'En la barra superior verás un botón que dice "Push origin" (con una flecha hacia arriba). Haz clic en él para subir tu commit a GitHub.com.',
               tip: 'Recarga la página de tu repositorio en github.com: ¡verás tus cambios publicados inmediatamente!',
+              imageUrl: '/images/desktop/push-to-origin.png',
+              imageCaption: 'Botón oficial "Push origin" para subir los cambios a GitHub en la nube.',
             },
           ],
         },
@@ -627,6 +643,8 @@ export const CURRICULUM: CurriculumLevel[] = [
             {
               action: '3. Abre el Pull Request en la web de GitHub',
               details: 'Al entrar a tu repositorio en GitHub, verás un cartel amarillo que dice "Compare & pull request". Haz clic en él, escribe un título conciso y describe los cambios.',
+              imageUrl: '/images/github/pull-requests-tab.png',
+              imageCaption: 'Pestaña oficial de Pull Requests en el repositorio de GitHub.',
             },
             {
               action: '4. Proceso de Code Review',
@@ -661,6 +679,8 @@ export const CURRICULUM: CurriculumLevel[] = [
             {
               action: '1. Haz clic en "Fork" en el repositorio ajeno',
               details: 'En la esquina superior derecha del proyecto en GitHub, haz clic en "Fork". Esto creará una copia en tu perfil: github.com/TU_USUARIO/proyecto.',
+              imageUrl: '/images/github/fork-button.png',
+              imageCaption: 'Botón oficial de Fork en GitHub para crear una copia personal.',
             },
             {
               action: '2. Clona tu fork a tu computadora',
