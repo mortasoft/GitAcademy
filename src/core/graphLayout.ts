@@ -108,10 +108,11 @@ export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
     }
   });
 
-  const X_SPACING = 140;
-  const Y_SPACING = 90;
-  const PADDING_X = 90;
-  const PADDING_Y = 80;
+  const NODE_HALF_WIDTH = 63;
+  const X_SPACING = 180;
+  const Y_SPACING = 95;
+  const PADDING_X = 100;
+  const PADDING_Y = 85;
 
   const headCommitId = getHeadCommitId(state);
 
@@ -149,15 +150,15 @@ export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
   const nodePosMap = new Map<string, { x: number; y: number }>();
   nodes.forEach((n) => nodePosMap.set(n.commit.id, { x: n.x, y: n.y }));
 
-  // Generar aristas entre padres e hijos
+  // Generar aristas entre padres e hijos conectando los bordes de las cápsulas
   const edges: GraphLayoutResult['edges'] = [];
   nodes.forEach((node) => {
     node.commit.parentIds.forEach((parentId, pIndex) => {
       const parentPos = nodePosMap.get(parentId);
       if (parentPos) {
         edges.push({
-          from: { x: parentPos.x, y: parentPos.y, id: parentId },
-          to: { x: node.x, y: node.y, id: node.commit.id },
+          from: { x: parentPos.x + NODE_HALF_WIDTH, y: parentPos.y, id: parentId },
+          to: { x: node.x - NODE_HALF_WIDTH, y: node.y, id: node.commit.id },
           isMerge: pIndex > 0,
           color: node.color,
         });

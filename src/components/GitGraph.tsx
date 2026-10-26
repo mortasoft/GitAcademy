@@ -8,6 +8,16 @@ interface GitGraphProps {
   onSelectCommit?: (commitId: string) => void;
 }
 
+const getCommitDisplayInfo = (commitId: string, fallbackIndex: number) => {
+  const match = commitId.match(/^c(\d+)$/i);
+  const num = match ? match[1] : (fallbackIndex + 1);
+  return {
+    title: `Commit #${num}`,
+    id: commitId,
+    full: `Commit #${num} (${commitId})`,
+  };
+};
+
 export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => {
   const [zoom, setZoom] = useState<number>(1);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -108,8 +118,10 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
             {layout.ghostNode && (() => {
               const headNode = layout.nodes.find((n) => n.commit.id === layout.ghostNode?.headCommitId);
               if (!headNode) return null;
-              const dx = layout.ghostNode.x - headNode.x;
-              const ghostPath = `M ${headNode.x} ${headNode.y} C ${headNode.x + dx * 0.5} ${headNode.y}, ${layout.ghostNode.x - dx * 0.5} ${layout.ghostNode.y}, ${layout.ghostNode.x} ${layout.ghostNode.y}`;
+              const startX = headNode.x + 63;
+              const endX = layout.ghostNode.x - 63;
+              const dx = endX - startX;
+              const ghostPath = `M ${startX} ${headNode.y} C ${startX + dx * 0.5} ${headNode.y}, ${endX - dx * 0.5} ${layout.ghostNode.y}, ${endX} ${layout.ghostNode.y}`;
               const strokeColor = layout.ghostNode.hasStaged ? '#10b981' : '#f59e0b';
 
               return (
@@ -125,8 +137,9 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
             })()}
 
             {/* Nodos de Commits */}
-            {layout.nodes.map((node) => {
+            {layout.nodes.map((node, nodeIdx) => {
               const isSelected = selectedNodeId === node.commit.id;
+              const info = getCommitDisplayInfo(node.commit.id, nodeIdx);
 
               return (
                 <g
@@ -137,12 +150,14 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                     if (onSelectCommit) onSelectCommit(node.commit.id);
                   }}
                 >
-                  {/* Anillo de enfoque en HEAD */}
+                  {/* Halo de enfoque en HEAD */}
                   {node.isHead && (
-                    <circle
-                      cx={node.x}
-                      cy={node.y}
-                      r={21}
+                    <rect
+                      x={node.x - 67}
+                      y={node.y - 17}
+                      width={134}
+                      height={34}
+                      rx={17}
                       fill="none"
                       stroke="#ea580c"
                       strokeWidth={1.5}
@@ -150,29 +165,39 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                     />
                   )}
 
-                  {/* Círculo Principal del Commit */}
-                  <circle
-                    cx={node.x}
-                    cy={node.y}
-                    r={isSelected ? 17 : 14}
-                    fill={node.color}
-                    stroke={isSelected ? '#ffffff' : '#0f172a'}
-                    strokeWidth={isSelected ? 3 : 2}
-                    className="transition-transform duration-150 group-hover:scale-105"
+                  {/* Cápsula Principal del Commit */}
+                  <rect
+                    x={node.x - 63}
+                    y={node.y - 13}
+                    width={126}
+                    height={26}
+                    rx={13}
+                    fill={isSelected ? '#1e293b' : '#0f172a'}
+                    stroke={isSelected ? '#ffffff' : node.color}
+                    strokeWidth={isSelected ? 2.5 : 1.5}
+                    className="transition-all duration-150 group-hover:stroke-white shadow-sm"
                   />
 
-                  {/* Hash del Commit en el centro */}
+                  {/* Punto indicador del carril / color de rama */}
+                  <circle
+                    cx={node.x - 47}
+                    cy={node.y}
+                    r={5}
+                    fill={node.color}
+                  />
+
+                  {/* Texto: Commit #1 (c1) */}
                   <text
-                    x={node.x}
+                    x={node.x - 34}
                     y={node.y + 3.5}
-                    textAnchor="middle"
                     fill="#ffffff"
-                    fontSize={10}
+                    fontSize={10.5}
                     fontWeight="bold"
                     fontFamily="monospace"
                     className="pointer-events-none select-none"
                   >
-                    {node.commit.id}
+                    {info.title}
+                    <tspan fill="#94a3b8" fontWeight="normal"> ({info.id})</tspan>
                   </text>
 
                   {/* Etiquetas de Ramas y HEAD (Arriba) */}
@@ -303,27 +328,34 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                     </text>
                   </g>
 
-                  {/* Círculo punteado del nodo fantasma */}
-                  <circle
-                    cx={g.x}
-                    cy={g.y}
-                    r={14}
+                  {/* Cápsula punteada del nodo fantasma */}
+                  <rect
+                    x={g.x - 63}
+                    y={g.y - 13}
+                    width={126}
+                    height={26}
+                    rx={13}
                     fill={bgColor}
                     fillOpacity={0.6}
                     stroke={mainColor}
-                    strokeWidth={2}
+                    strokeWidth={1.5}
                     strokeDasharray="4 3"
                   />
-                  <text
-                    x={g.x}
-                    y={g.y + 4}
-                    textAnchor="middle"
+                  <circle
+                    cx={g.x - 47}
+                    cy={g.y}
+                    r={4.5}
                     fill={mainColor}
-                    fontSize={11}
+                  />
+                  <text
+                    x={g.x - 34}
+                    y={g.y + 3.5}
+                    fill={mainColor}
+                    fontSize={10}
                     fontWeight="bold"
                     fontFamily="monospace"
                   >
-                    {isStaged ? '✓' : '...'}
+                    {isStaged ? '✓ Staged' : '... Modificado'}
                   </text>
 
                   {/* Etiquetas flotantes con los nombres de los archivos */}
@@ -372,10 +404,10 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
         <div className="absolute bottom-3 left-4 right-4 bg-slate-900/95 border border-slate-700/80 p-3.5 rounded-xl shadow-2xl backdrop-blur-md flex items-center justify-between z-10 text-xs">
           <div className="flex items-center gap-3">
             <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center font-mono font-bold text-white shadow"
+              className="px-2.5 py-1 rounded-lg flex items-center justify-center font-mono font-bold text-xs text-white shadow shrink-0"
               style={{ backgroundColor: selectedNode.color }}
             >
-              {selectedNode.commit.id}
+              {getCommitDisplayInfo(selectedNode.commit.id, 0).full}
             </div>
             <div>
               <div className="flex items-center gap-2">
