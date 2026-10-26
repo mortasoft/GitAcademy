@@ -22,6 +22,13 @@ export interface GhostNodeLayout {
   workingFiles: string[];
 }
 
+export interface CherryPickEdge {
+  from: { x: number; y: number; id: string };
+  to: { x: number; y: number; id: string };
+  sourceCommitId: string;
+  targetCommitId: string;
+}
+
 export interface GraphLayoutResult {
   nodes: GraphNode[];
   edges: {
@@ -30,6 +37,7 @@ export interface GraphLayoutResult {
     isMerge?: boolean;
     color: string;
   }[];
+  cherryPickEdges: CherryPickEdge[];
   width: number;
   height: number;
   ghostNode?: GhostNodeLayout | null;
@@ -68,7 +76,7 @@ export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
       commitId: '',
       hasOwnCommits: false,
     }));
-    return { nodes: [], edges: [], width: 750, height: 350, branchLanes, railBottomY: 350 };
+    return { nodes: [], edges: [], cherryPickEdges: [], width: 750, height: 350, branchLanes, railBottomY: 350 };
   }
 
   // 2. Mapear hijos de cada commit
@@ -216,6 +224,22 @@ export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
     });
   });
 
+  // 6.b. Generar aristas de cherry-pick si algún commit proviene de otro commit copiado
+  const cherryPickEdges: CherryPickEdge[] = [];
+  nodes.forEach((node) => {
+    if (node.commit.cherryPickFrom) {
+      const sourcePos = nodePosMap.get(node.commit.cherryPickFrom);
+      if (sourcePos) {
+        cherryPickEdges.push({
+          from: { x: sourcePos.x, y: sourcePos.y, id: node.commit.cherryPickFrom },
+          to: { x: node.x, y: node.y, id: node.commit.id },
+          sourceCommitId: node.commit.cherryPickFrom,
+          targetCommitId: node.commit.id,
+        });
+      }
+    }
+  });
+
   // 7. Calcular nodo fantasma si existen cambios de trabajo / staging
   let ghostNode: GhostNodeLayout | null = null;
   const hasChanges = (state.workingDir && state.workingDir.length > 0) || (state.staging && state.staging.length > 0);
@@ -273,6 +297,7 @@ export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
   return {
     nodes,
     edges,
+    cherryPickEdges,
     width: Math.max(maxX, 750),
     height: Math.max(maxY, 350),
     ghostNode,

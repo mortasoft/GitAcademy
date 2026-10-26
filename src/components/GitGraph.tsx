@@ -185,6 +185,83 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSel
               );
             })}
 
+            {/* Arcos Conectores Especiales de Cherry-Pick */}
+            {layout.cherryPickEdges.map((cpEdge, cpIdx) => {
+              const isRelated = selectedNodeId === cpEdge.sourceCommitId || selectedNodeId === cpEdge.targetCommitId;
+              const isFromLeft = cpEdge.from.x <= cpEdge.to.x;
+              const startX = isFromLeft ? cpEdge.from.x + 80 : cpEdge.from.x - 80;
+              const startY = cpEdge.from.y;
+              const endX = isFromLeft ? cpEdge.to.x - 80 : cpEdge.to.x + 80;
+              const endY = cpEdge.to.y;
+
+              const dx = endX - startX;
+              const dy = endY - startY;
+              const midX = (startX + endX) / 2;
+              const midY = (startY + endY) / 2;
+              const pathD = `M ${startX} ${startY} C ${startX + dx * 0.4} ${startY + dy * 0.1}, ${endX - dx * 0.4} ${endY - dy * 0.1}, ${endX} ${endY}`;
+
+              return (
+                <g key={`cp-arc-${cpIdx}`} className="transition-all duration-300">
+                  {/* Halo grueso de resalte si está seleccionado */}
+                  {isRelated && (
+                    <path
+                      d={pathD}
+                      fill="none"
+                      stroke="#f43f5e"
+                      strokeWidth={7}
+                      strokeOpacity={0.25}
+                    />
+                  )}
+
+                  {/* Línea punteada de cherry-pick */}
+                  <path
+                    d={pathD}
+                    fill="none"
+                    stroke="#f43f5e"
+                    strokeWidth={isRelated ? 3 : 2}
+                    strokeDasharray="5 3"
+                    strokeOpacity={isRelated ? 1 : 0.75}
+                  />
+
+                  {/* Puntos de anclaje en origen y destino */}
+                  <circle cx={startX} cy={startY} r={3.5} fill="#f43f5e" />
+                  <circle cx={endX} cy={endY} r={3.5} fill="#f43f5e" />
+
+                  {/* Chip central indicador interactivo: 🍒 cherry-pick */}
+                  <g
+                    transform={`translate(${midX}, ${midY})`}
+                    className="cursor-pointer hover:scale-105 transition-transform"
+                    onClick={() => {
+                      setSelectedNodeId(cpEdge.targetCommitId);
+                    }}
+                  >
+                    <rect
+                      x={-46}
+                      y={-10}
+                      width={92}
+                      height={20}
+                      rx={10}
+                      fill="#4c0519"
+                      stroke="#f43f5e"
+                      strokeWidth={1.5}
+                      className="shadow-lg"
+                    />
+                    <text
+                      x={0}
+                      y={3.5}
+                      textAnchor="middle"
+                      fill="#fecdd3"
+                      fontSize={8.5}
+                      fontWeight="bold"
+                      fontFamily="monospace"
+                    >
+                      🍒 cherry-pick
+                    </text>
+                  </g>
+                </g>
+              );
+            })}
+
             {/* Conexión discontinua hacia el nodo fantasma de cambios pendientes */}
             {layout.ghostNode && (() => {
               const headNode = layout.nodes.find((n) => n.commit.id === layout.ghostNode?.headCommitId);
@@ -217,6 +294,10 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSel
               const isSelected = selectedNodeId === node.commit.id;
               const info = getCommitDisplayInfo(node.commit, nodeIdx);
 
+              const isCherryPickSource = selectedNode?.commit.cherryPickFrom === node.commit.id;
+              const isCherryPickTarget = node.commit.cherryPickFrom && selectedNodeId === node.commit.cherryPickFrom;
+              const isCherryHighlighted = isCherryPickSource || isCherryPickTarget;
+
               return (
                 <g
                   key={`node-${node.commit.id}`}
@@ -238,6 +319,21 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSel
                       stroke="#ea580c"
                       strokeWidth={1.5}
                       strokeDasharray="3 3"
+                    />
+                  )}
+
+                  {/* Halo reactivo para Cherry-Pick bidireccional */}
+                  {isCherryHighlighted && (
+                    <rect
+                      x={node.x - 86}
+                      y={node.y - 20}
+                      width={172}
+                      height={40}
+                      rx={20}
+                      fill="none"
+                      stroke="#f43f5e"
+                      strokeWidth={2}
+                      strokeDasharray="4 2"
                     />
                   )}
 
@@ -322,6 +418,38 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSel
                       );
                       badgeOffset += w + 6;
                     });
+
+                    {/* Badge especial de Cherry-Pick con hash de origen */}
+                    if (node.commit.cherryPickFrom) {
+                      const originHash = getCommitHash(node.commit.cherryPickFrom);
+                      const w = 92;
+                      badges.push(
+                        <g
+                          key="cherry-badge"
+                          transform={`translate(${node.x + badgeOffset}, ${node.y - 10})`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedNodeId(node.commit.cherryPickFrom!);
+                          }}
+                          className="cursor-pointer hover:opacity-90 transition"
+                        >
+                          <title>{`Copiado de ${originHash}. Clic para inspeccionar origen.`}</title>
+                          <rect width={w} height={20} rx={4} fill="#4c0519" stroke="#f43f5e" strokeWidth={1.5} />
+                          <text
+                            x={w / 2}
+                            y={13.5}
+                            textAnchor="middle"
+                            fill="#fecdd3"
+                            fontSize={9}
+                            fontWeight="bold"
+                            fontFamily="monospace"
+                          >
+                            🍒 {originHash}
+                          </text>
+                        </g>
+                      );
+                      badgeOffset += w + 6;
+                    }
 
                     node.tags.forEach((tName) => {
                       const w = Math.max(tName.length * 7.5 + 16, 40);
@@ -584,6 +712,18 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit, onSel
                 {selectedNode.isHead && (
                   <span className="px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 font-mono text-[10px]">
                     HEAD actual
+                  </span>
+                )}
+                {selectedNode.commit.cherryPickFrom && (
+                  <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono text-[10px] border border-rose-500/30 flex items-center gap-1">
+                    <span>🍒 Copiado de:</span>
+                    <button
+                      onClick={() => setSelectedNodeId(selectedNode.commit.cherryPickFrom!)}
+                      className="underline font-bold hover:text-white"
+                      title="Inspeccionar commit original"
+                    >
+                      {getCommitDisplayInfo(selectedNode.commit.cherryPickFrom, 0).full}
+                    </button>
                   </span>
                 )}
               </div>

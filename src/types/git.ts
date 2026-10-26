@@ -5,6 +5,7 @@ export interface GitCommit {
   message: string;
   author: string;
   timestamp: number;
+  cherryPickFrom?: string; // ID o hash del commit de origen si fue creado por cherry-pick
 }
 
 export interface GitBranch {

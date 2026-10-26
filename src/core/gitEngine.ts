@@ -561,6 +561,7 @@ export class GitEngine {
       message: `${sourceCommit.message} (cherry-picked)`,
       author: sourceCommit.author,
       timestamp: Date.now(),
+      cherryPickFrom: sourceCommit.id,
     };
 
     const newCommits = {
