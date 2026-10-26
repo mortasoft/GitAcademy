@@ -4,7 +4,7 @@ const PROGRESS_STORAGE_KEY = 'gitacademy_user_progress';
 
 const DEFAULT_PROGRESS: UserProgress = {
   completedLessons: [],
-  currentLessonId: 'intro-init',
+  currentLessonId: 'github-repo-create',
   notes: {},
   commandHistory: []
 };
