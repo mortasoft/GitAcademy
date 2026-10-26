@@ -40,8 +40,9 @@ export const GitHubGuideModal: React.FC<GitHubGuideModalProps> = ({
   };
 
   return (
-    <div className="flex-1 bg-slate-950 p-4 lg:p-8 overflow-y-auto space-y-6">
-      {/* Cabecera Principal */}
+    <div className="flex-1 min-w-0 bg-slate-950 p-4 lg:p-8 overflow-y-auto">
+      <div className="max-w-4xl mx-auto w-full space-y-6 pb-8">
+        {/* Cabecera Principal */}
       <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800 border border-slate-700/80 shadow-xl space-y-3">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center shadow-md">
@@ -254,5 +255,6 @@ export const GitHubGuideModal: React.FC<GitHubGuideModalProps> = ({
         </button>
       </div>
     </div>
+  </div>
   );
 };

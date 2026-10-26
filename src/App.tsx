@@ -104,7 +104,7 @@ export const App: React.FC = () => {
       )}
 
       {/* Contenido Principal */}
-      <div className="flex-1 flex overflow-hidden">
+      <main className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 min-w-0">
         {/* Panel Izquierdo: Sidebar de Lecciones (solo en modo student) */}
         {mode === 'student' && (
           <LessonSidebar
@@ -120,20 +120,22 @@ export const App: React.FC = () => {
 
         {/* Panel Central/Derecho: Si es una guía de GitHub real, renderiza la guía; si no, el Grafo + Terminal */}
         {currentLesson.isGitHubGuide && mode === 'student' ? (
-          <GitHubGuideModal
-            lesson={currentLesson}
-            onComplete={() => handleCompleteLesson(currentLesson.id)}
-            isCompleted={completedLessonIds.includes(currentLesson.id)}
-          />
+          <div className="flex-1 min-w-0 min-h-0 flex flex-col overflow-hidden bg-slate-950">
+            <GitHubGuideModal
+              lesson={currentLesson}
+              onComplete={() => handleCompleteLesson(currentLesson.id)}
+              isCompleted={completedLessonIds.includes(currentLesson.id)}
+            />
+          </div>
         ) : (
-          <div className="flex-1 flex flex-col p-3 lg:p-4 gap-3 lg:gap-4 overflow-hidden bg-slate-950">
+          <div className="flex-1 min-w-0 min-h-0 flex flex-col p-3 lg:p-4 gap-3 lg:gap-4 overflow-hidden bg-slate-950">
             {/* Mitad Superior: Visualizador del Grafo de Git */}
-            <div className="flex-1 min-h-[45%] max-h-[60%]">
+            <div className="flex-1 min-h-0">
               <GitGraph state={gitState} />
             </div>
 
             {/* Mitad Inferior: Terminal Interactiva */}
-            <div className="flex-1 min-h-[40%]">
+            <div className="flex-1 min-h-0">
               <Terminal
                 state={gitState}
                 onStateChange={handleStateChange}
@@ -142,7 +144,7 @@ export const App: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
+      </main>
 
       {/* Modal Modo Taller / Presentador */}
       <WorkshopModal
