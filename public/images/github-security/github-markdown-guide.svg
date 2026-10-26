@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0d1117; }
+      .card { fill: #161b22; stroke: #30363d; stroke-width: 1; rx: 8; }
+      .header-bg { fill: #0d1117; stroke: #21262d; stroke-width: 1; }
+      .text-title { fill: #f0f6fc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 600; }
+      .text-desc { fill: #8b949e; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 12px; }
+      .text-code { fill: #58a6ff; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; }
+      .code-box { fill: #010409; stroke: #30363d; stroke-width: 1; rx: 6; }
+      .rendered-box { fill: #0d1117; stroke: #30363d; stroke-width: 1; rx: 6; }
+      .alert-tip { fill: #04211a; stroke: #238636; stroke-width: 1; rx: 6; }
+      .alert-warn { fill: #241604; stroke: #d29922; stroke-width: 1; rx: 6; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="640" class="bg" rx="12"/>
+
+  <!-- Top GitHub Breadcrumb Bar -->
+  <rect x="0" y="0" width="1000" height="56" class="header-bg" rx="12"/>
+  <circle cx="30" cy="28" r="6" fill="#f85149"/>
+  <circle cx="50" cy="28" r="6" fill="#d29922"/>
+  <circle cx="70" cy="28" r="6" fill="#2ea043"/>
+
+  <text x="105" y="33" fill="#8b949e" font-family="-apple-system, sans-serif" font-size="13">mi-primer-proyecto</text>
+  <text x="245" y="33" fill="#6e7681" font-family="-apple-system, sans-serif" font-size="13">/</text>
+  <text x="260" y="33" fill="#58a6ff" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">README.md</text>
+  <text x="345" y="33" fill="#6e7681" font-family="-apple-system, sans-serif" font-size="13">/</text>
+  <text x="360" y="33" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="13">GitHub Flavored Markdown (GFM)</text>
+
+  <!-- Title -->
+  <text x="40" y="95" class="text-title" font-size="20">GitHub Markdown (GFM): De Sintaxis Cruda a Documentacion Profesional</text>
+  <text x="40" y="118" class="text-desc">Domina tablas, alertas especiales de GitHub, listas de tareas interactivas y resaltado de codigo en tus archivos .md.</text>
+
+  <!-- Left: Raw Markdown -->
+  <rect x="40" y="140" width="440" height="470" class="code-box"/>
+  <rect x="40" y="140" width="440" height="34" fill="#161b22" rx="6"/>
+  <text x="55" y="162" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="12" font-weight="700">Raw Markdown (Archivo .md)</text>
+
+  <g transform="translate(60, 200)">
+    <text x="0" y="0" fill="#79c0ff" font-family="ui-monospace, monospace" font-size="12"># Mi Proyecto API</text>
+    <text x="0" y="24" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12">Sistema de autenticacion y gestion de tareas.</text>
+
+    <!-- Alert raw -->
+    <text x="0" y="58" fill="#7ee787" font-family="ui-monospace, monospace" font-size="12">&gt; [!TIP]</text>
+    <text x="0" y="78" fill="#7ee787" font-family="ui-monospace, monospace" font-size="12">&gt; Configura las variables en el archivo .env</text>
+
+    <!-- Task list raw -->
+    <text x="0" y="112" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12">### Roadmap</text>
+    <text x="0" y="132" fill="#ffa657" font-family="ui-monospace, monospace" font-size="12">- [x] Base de datos PostgreSQL</text>
+    <text x="0" y="152" fill="#ffa657" font-family="ui-monospace, monospace" font-size="12">- [ ] Despliegue en produccion</text>
+
+    <!-- Table raw -->
+    <text x="0" y="186" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12">### Endpoints</text>
+    <text x="0" y="206" fill="#ff7b72" font-family="ui-monospace, monospace" font-size="11">| Metodo | Ruta | Descripcion |</text>
+    <text x="0" y="224" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">|--------|------|-------------|</text>
+    <text x="0" y="242" fill="#ff7b72" font-family="ui-monospace, monospace" font-size="11">| GET    | /api | Estado salud |</text>
+    <text x="0" y="260" fill="#ff7b72" font-family="ui-monospace, monospace" font-size="11">| POST   | /auth| Iniciar sesion |</text>
+
+    <!-- Code raw -->
+    <text x="0" y="294" fill="#79c0ff" font-family="ui-monospace, monospace" font-size="12">```bash</text>
+    <text x="0" y="314" fill="#c9d1d9" font-family="ui-monospace, monospace" font-size="12">npm install &amp;&amp; npm run dev</text>
+    <text x="0" y="334" fill="#79c0ff" font-family="ui-monospace, monospace" font-size="12">```</text>
+    <text x="0" y="364" fill="#8b949e" font-family="ui-monospace, monospace" font-size="11">&lt;details&gt;&lt;summary&gt;Ver mas&lt;/summary&gt;...&lt;/details&gt;</text>
+  </g>
+
+  <!-- Right: Rendered Markdown -->
+  <rect x="520" y="140" width="440" height="470" class="rendered-box"/>
+  <rect x="520" y="140" width="440" height="34" fill="#161b22" rx="6"/>
+  <text x="535" y="162" fill="#3fb950" font-family="-apple-system, sans-serif" font-size="12" font-weight="700">&#10003; Preview Renderizado en GitHub</text>
+
+  <g transform="translate(540, 195)">
+    <!-- Header -->
+    <text x="0" y="15" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="18" font-weight="700">Mi Proyecto API</text>
+    <line x1="0" y1="26" x2="400" y2="26" stroke="#21262d" stroke-width="1"/>
+    <text x="0" y="46" fill="#c9d1d9" font-family="-apple-system, sans-serif" font-size="12">Sistema de autenticacion y gestion de tareas.</text>
+
+    <!-- Rendered Alert Tip -->
+    <g transform="translate(0, 60)">
+      <rect x="0" y="0" width="400" height="46" class="alert-tip"/>
+      <line x1="0" y1="0" x2="0" y2="46" stroke="#238636" stroke-width="4"/>
+      <text x="12" y="18" fill="#3fb950" font-family="-apple-system, sans-serif" font-size="11" font-weight="700">&#128161; Tip</text>
+      <text x="12" y="35" fill="#c9d1d9" font-family="-apple-system, sans-serif" font-size="11">Configura las variables en el archivo <tspan font-family="ui-monospace, monospace" fill="#58a6ff">.env</tspan></text>
+    </g>
+
+    <!-- Rendered Task list -->
+    <text x="0" y="130" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Roadmap</text>
+    <g transform="translate(0, 142)">
+      <!-- Item 1 (checked) -->
+      <rect x="0" y="0" width="14" height="14" fill="#1f6feb" rx="3"/>
+      <path d="M3 7 L6 10 L11 4" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <text x="22" y="11" fill="#8b949e" font-family="-apple-system, sans-serif" font-size="12" text-decoration="line-through">Base de datos PostgreSQL</text>
+
+      <!-- Item 2 (unchecked) -->
+      <rect x="0" y="24" width="14" height="14" fill="#010409" stroke="#30363d" stroke-width="1" rx="3"/>
+      <text x="22" y="35" fill="#c9d1d9" font-family="-apple-system, sans-serif" font-size="12">Despliegue en produccion</text>
+    </g>
+
+    <!-- Rendered Table -->
+    <text x="0" y="210" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Endpoints</text>
+    <g transform="translate(0, 222)">
+      <rect x="0" y="0" width="400" height="24" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+      <text x="10" y="16" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="11" font-weight="700">Metodo</text>
+      <text x="80" y="16" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="11" font-weight="700">Ruta</text>
+      <text x="170" y="16" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="11" font-weight="700">Descripcion</text>
+
+      <rect x="0" y="24" width="400" height="24" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <rect x="10" y="28" width="36" height="16" fill="#1f6feb" rx="3"/>
+      <text x="16" y="40" fill="#ffffff" font-family="ui-monospace, monospace" font-size="10" font-weight="700">GET</text>
+      <text x="80" y="40" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">/api</text>
+      <text x="170" y="40" fill="#8b949e" font-family="-apple-system, sans-serif" font-size="11">Estado salud</text>
+
+      <rect x="0" y="48" width="400" height="24" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+      <rect x="10" y="52" width="42" height="16" fill="#238636" rx="3"/>
+      <text x="14" y="64" fill="#ffffff" font-family="ui-monospace, monospace" font-size="10" font-weight="700">POST</text>
+      <text x="80" y="64" fill="#58a6ff" font-family="ui-monospace, monospace" font-size="11">/auth</text>
+      <text x="170" y="64" fill="#8b949e" font-family="-apple-system, sans-serif" font-size="11">Iniciar sesion</text>
+    </g>
+
+    <!-- Rendered Code Block -->
+    <g transform="translate(0, 315)">
+      <rect x="0" y="0" width="400" height="34" fill="#161b22" stroke="#30363d" stroke-width="1" rx="4"/>
+      <text x="15" y="22" fill="#7ee787" font-family="ui-monospace, monospace" font-size="11">$ npm install &amp;&amp; npm run dev</text>
+    </g>
+
+    <!-- Collapsible -->
+    <g transform="translate(0, 370)">
+      <text x="0" y="15" fill="#58a6ff" font-family="-apple-system, sans-serif" font-size="11" font-weight="600">&#9654; Ver documentacion detallada de instalacion</text>
+    </g>
+  </g>
+</svg>

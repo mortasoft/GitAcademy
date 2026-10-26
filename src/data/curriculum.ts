@@ -457,6 +457,79 @@ export const CURRICULUM: CurriculumLevel[] = [
           ],
         },
       },
+      {
+        id: 'github-markdown-gfm',
+        levelId: 'nivel-1',
+        title: '1.8 Dominio de GitHub Flavored Markdown (GFM) para README.md',
+        category: 'Documentación y Markdown',
+        difficulty: 'Principiante',
+        timeEstimate: '7 min',
+        summary: 'Aprende a redactar archivos README.md atractivos y profesionales utilizando GitHub Flavored Markdown: tablas, GitHub Alerts oficiales, task lists y bloques de código.',
+        isGitHubGuide: true,
+        initialState: createBaseState(),
+        steps: [],
+        goalDescription: 'Aprende la sintaxis de GitHub Flavored Markdown (GFM) para documentar proyectos, crear alertas, tablas y listas interactivas en README.md.',
+        solutionCommands: [],
+        tips: [
+          'GitHub Flavored Markdown (GFM) es una extensión del Markdown estándar con soporte para tablas, listas de tareas, menciones y alertas visuales.',
+          'El archivo README.md es la carta de presentación de tu repositorio: un buen README aumenta en un 80% el interés de reclutadores y colaboradores.',
+        ],
+        whenToUse: [
+          {
+            title: 'Utilizar Alertas oficiales de GitHub',
+            scenario: 'Destacar notas importantes, advertencias de seguridad o tips con los banners nativos (> [!NOTE], > [!TIP], > [!WARNING]) en lugar de emojis planos.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Listas de tareas interactivas en README y PRs',
+            scenario: 'Crear checklists (- [x], - [ ]) que los colaboradores pueden marcar directamente en la web de GitHub para seguir el roadmap.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Bloques de código con etiqueta de lenguaje',
+            scenario: 'Especificar siempre el identificador del lenguaje (```typescript, ```bash, ```python) para habilitar el coloreado de sintaxis.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Incrustar HTML complejo o estilos CSS inline',
+            scenario: 'Intentar maquetar con etiquetas <style> o propiedades style="..." que GitHub sanitiza y bloquea por razones de seguridad.',
+            recommendation: 'evitar',
+          },
+        ],
+        gitHubGuideContent: {
+          overview: 'El archivo README.md es lo primero que ve cualquier persona al visitar tu proyecto en GitHub. Dominar GitHub Flavored Markdown (GFM) te permite transformar texto plano en documentación interactiva, limpia y visualmente atractiva con tablas, alertas, diagramas y listas de tareas.',
+          steps: [
+            {
+              action: '1. Estructura y Jerarquía de Encabezados (#, ##, ###)',
+              details: 'Usa "# Título Principal" una sola vez para el nombre del proyecto. Emplea "## Secciones" para Características o Instalación, y "### Subsecciones" para detalles específicos. GitHub genera enlaces ancla automáticos para cada encabezado.',
+              commandOrUrl: '# Titulo del Proyecto\n## Descripcion',
+              imageUrl: '/images/github-security/github-markdown-guide.svg',
+              imageCaption: 'Comparativa entre sintaxis Markdown cruda y resultado renderizado en GitHub.',
+            },
+            {
+              action: '2. Alertas visuales oficiales de GitHub (> [!NOTE], > [!TIP])',
+              details: 'GitHub ofrece 5 tipos de alertas visuales con iconos y colores nativos: [!NOTE] (azul), [!TIP] (verde), [!IMPORTANT] (morado), [!WARNING] (amarillo) y [!CAUTION] (rojo). Escríbelas usando el prefijo de cita "> [!TIPO]".',
+              commandOrUrl: '> [!TIP]\n> Revisa las variables de entorno antes de desplegar.',
+              tip: 'Las alertas sustituyen a los emojis manuales y dan un acabado profesional estandarizado por GitHub.',
+            },
+            {
+              action: '3. Listas de tareas interactivas (Checklists)',
+              details: 'Para crear tareas marcables en README, Pull Requests o Issues, escribe "- [ ] Tarea pendiente" o "- [x] Tarea completada". En la interfaz web de GitHub puedes hacer clic directamente en la casilla para marcarla.',
+              commandOrUrl: '- [x] Base de datos conectada\n- [ ] Despliegue en AWS',
+            },
+            {
+              action: '4. Tablas de datos formateadas',
+              details: 'Crea tablas usando barras verticales "|" y guiones. Puedes alinear el texto agregando dos puntos: ":---" a la izquierda, ":---:" al centro y "---:" a la derecha.',
+              commandOrUrl: '| Metodo | Ruta | Descripcion |\n|:---|:---:|:---|\n| GET | /api | Salud |',
+            },
+            {
+              action: '5. Secciones desplegables (<details><summary>)',
+              details: 'Si tienes registros de consola extensos o instrucciones complementarias, enciérralos en <details><summary>Título desplegable</summary>Contenido oculto</details> para mantener el README limpio.',
+              commandOrUrl: '<details><summary>Ver instrucciones</summary>\n\nContenido\n</details>',
+            },
+          ],
+        },
+      },
     ],
   },
   {

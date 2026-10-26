@@ -60,7 +60,7 @@ export interface CurriculumLevel {
 
 export interface CheatsheetItem {
   id: string;
-  category: 'Comandos Frecuentes' | 'Solución de Problemas' | 'Flujos de Ramas' | 'GitHub Real';
+  category: 'Comandos Frecuentes' | 'Solución de Problemas' | 'Flujos de Ramas' | 'GitHub Real' | 'GitHub Markdown (GFM)';
   title: string;
   problem: string;
   solutionCommand: string;

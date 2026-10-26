@@ -33,7 +33,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   if (!isOpen) return null;
 
-  const categories = ['Todos', 'Solución de Problemas', 'Comandos Frecuentes', 'Flujos de Ramas', 'GitHub Real'];
+  const categories = ['Todos', 'GitHub Markdown (GFM)', 'Solución de Problemas', 'Comandos Frecuentes', 'Flujos de Ramas', 'GitHub Real'];
 
   const filteredItems = CHEATSHEET_DATABASE.filter((item) => {
     const matchesCategory = selectedCategory === 'Todos' || item.category === selectedCategory;
@@ -139,11 +139,11 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   <strong className="text-slate-300">Problema común:</strong> {item.problem}
                 </p>
 
-                {/* Comando de solución */}
-                <div className="flex items-center justify-between bg-slate-900 px-3 py-2 rounded-lg border border-slate-800 font-mono text-xs">
-                  <code className="text-emerald-400 font-bold">{item.solutionCommand}</code>
-                  <div className="flex items-center gap-1">
-                    {onInsertCommand && (
+                {/* Comando o Snippet de solución */}
+                <div className="flex items-start justify-between bg-slate-900 px-3 py-2 rounded-lg border border-slate-800 font-mono text-xs gap-3">
+                  <code className="text-emerald-400 font-bold whitespace-pre-wrap break-words overflow-x-auto max-h-48 flex-1">{item.solutionCommand}</code>
+                  <div className="flex items-center gap-1 shrink-0 mt-0.5">
+                    {onInsertCommand && !item.category.includes('Markdown') && (
                       <button
                         onClick={() => {
                           onInsertCommand(item.solutionCommand);
@@ -159,7 +159,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     <button
                       onClick={() => handleCopy(item.id, item.solutionCommand)}
                       className="p-1 text-slate-400 hover:text-white transition"
-                      title="Copiar comando"
+                      title="Copiar contenido"
                     >
                       {copiedId === item.id ? (
                         <Check className="w-3.5 h-3.5 text-emerald-400" />
