@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CurriculumLevel, Lesson } from '../types/lesson';
 import { GitState } from '../types/git';
+import { calculateTotalMinutes, formatTotalTime } from '../utils/time';
 import { 
   ChevronRight, 
   ChevronDown, 
@@ -20,7 +21,8 @@ import {
   ListTree,
   BookOpen,
   Check,
-  Lightbulb
+  Lightbulb,
+  Clock
 } from 'lucide-react';
 
 interface LessonSidebarProps {
@@ -155,9 +157,14 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
       <div className="px-4 py-2.5 border-b border-slate-800/80 bg-slate-900/60 flex items-center justify-between text-xs gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <span className="w-2 h-2 rounded-full bg-orange-400 shrink-0" />
-          <span className="font-semibold text-slate-300 leading-tight">
+          <span className="font-semibold text-slate-300 leading-tight truncate">
             {currentLevel?.title || 'GitAcademy'}
           </span>
+          {currentLevel && (
+            <span className="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded shrink-0">
+              {formatTotalTime(calculateTotalMinutes(currentLevel.lessons))}
+            </span>
+          )}
         </div>
         <button
           onClick={() => {
@@ -178,6 +185,7 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
             const isOpen = openLevelId === level.id;
             const completedInLevel = level.lessons.filter((l) => completedLessonIds.includes(l.id)).length;
             const totalInLevel = level.lessons.length;
+            const levelTotalFormatted = formatTotalTime(calculateTotalMinutes(level.lessons));
 
             return (
               <div 
@@ -201,6 +209,10 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
                     </span>
                   </div>
                   <div className="flex items-center gap-2 shrink-0 ml-1">
+                    <span className="text-[10px] font-mono text-slate-400 bg-slate-800/90 px-2 py-0.5 rounded-md flex items-center gap-1 border border-slate-700/60">
+                      <Clock className="w-2.5 h-2.5 text-slate-500" />
+                      {levelTotalFormatted}
+                    </span>
                     <span className="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md">
                       {completedInLevel}/{totalInLevel}
                     </span>

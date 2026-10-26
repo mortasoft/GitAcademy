@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Lesson, CurriculumLevel, WhenToUseExample } from '../types/lesson';
 import { GitState } from '../types/git';
+import { calculateTotalMinutes, formatTotalTime } from '../utils/time';
 import { GitGraph } from './GitGraph';
 import { 
   ChevronLeft, 
@@ -150,7 +151,11 @@ export const WorkshopModal: React.FC<WorkshopModalProps> = ({
                 title="Cambiar lección a presentar"
               >
                 {curriculum.map((lvl) => (
-                  <optgroup key={lvl.id} label={lvl.title} className="bg-slate-900 text-slate-300">
+                  <optgroup 
+                    key={lvl.id} 
+                    label={`${lvl.title} (${formatTotalTime(calculateTotalMinutes(lvl.lessons))})`} 
+                    className="bg-slate-900 text-slate-300"
+                  >
                     {lvl.lessons.map((l) => (
                       <option key={l.id} value={l.id} className="bg-slate-950 text-white">
                         {l.title}

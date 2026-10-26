@@ -1,5 +1,6 @@
 import React from 'react';
 import { CurriculumLevel, Lesson } from '../types/lesson';
+import { calculateTotalMinutes, formatTotalTime } from '../utils/time';
 import { 
   Terminal, 
   GitBranch, 
@@ -48,6 +49,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 }) => {
   const allLessons = curriculum.flatMap((l) => l.lessons);
   const totalLessons = allLessons.length;
+  const totalCourseMinutes = calculateTotalMinutes(allLessons);
   const completedCount = completedLessonIds.length;
   const progressPercent = Math.round((completedCount / totalLessons) * 100) || 0;
   const isCourseCompleted = completedCount >= totalLessons && totalLessons > 0;
@@ -130,8 +132,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
             <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
               <div className="text-xs text-slate-400 font-mono">Estructura del Programa</div>
-              <div className="text-xl font-bold text-white">{curriculum.length} Niveles</div>
-              <div className="text-[11px] text-slate-400">Desde nivel inicial hasta rescate avanzado</div>
+              <div className="text-xl font-bold text-white">{curriculum.length} Módulos</div>
+              <div className="text-[11px] text-slate-400">{formatTotalTime(totalCourseMinutes)} de contenido guiado</div>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
@@ -216,15 +218,23 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <h2 className="text-xl font-bold text-white">Módulos del Curso</h2>
               <p className="text-xs text-slate-400 mt-0.5">Explora el temario completo y accede a cualquier lección.</p>
             </div>
-            <span className="text-xs font-mono text-slate-400 bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">
-              {curriculum.length} Módulos
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono text-slate-400 bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">
+                {curriculum.length} Módulos
+              </span>
+              <span className="text-xs font-mono text-slate-400 bg-slate-900 px-3 py-1 rounded-lg border border-slate-800 inline-flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-slate-500" />
+                {formatTotalTime(totalCourseMinutes)}
+              </span>
+            </div>
           </div>
 
           <div className="space-y-6">
             {curriculum.map((level, levelIdx) => {
               const completedInLevel = level.lessons.filter((l) => completedLessonIds.includes(l.id)).length;
               const isLevelDone = completedInLevel === level.lessons.length;
+              const levelTotalMinutes = calculateTotalMinutes(level.lessons);
+              const levelTotalTimeFormatted = formatTotalTime(levelTotalMinutes);
 
               return (
                 <div
@@ -238,9 +248,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         {LEVEL_ICONS[level.icon] || <Terminal className="w-5 h-5 text-slate-400" />}
                       </div>
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-[11px] font-mono text-orange-400 uppercase font-semibold">
                             Módulo 0{levelIdx + 1}
+                          </span>
+                          <span className="inline-flex items-center gap-1 text-[10px] font-mono bg-slate-950 text-slate-300 border border-slate-800 px-2 py-0.5 rounded">
+                            <Clock className="w-3 h-3 text-slate-400" />
+                            {levelTotalTimeFormatted}
                           </span>
                           {isLevelDone && (
                             <span className="inline-flex items-center gap-1 text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.2 rounded">
@@ -260,7 +274,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         <div className="text-xs font-bold text-white font-mono">
                           {completedInLevel} / {level.lessons.length}
                         </div>
-                        <div className="text-[10px] text-slate-400">lecciones</div>
+                        <div className="text-[10px] text-slate-400 font-mono">{levelTotalTimeFormatted}</div>
                       </div>
                       <div className="w-12 h-1.5 bg-slate-800 rounded-full overflow-hidden">
                         <div
