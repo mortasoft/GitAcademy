@@ -104,6 +104,26 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
               );
             })}
 
+            {/* Conexión discontinua hacia el nodo fantasma de cambios pendientes */}
+            {layout.ghostNode && (() => {
+              const headNode = layout.nodes.find((n) => n.commit.id === layout.ghostNode?.headCommitId);
+              if (!headNode) return null;
+              const dx = layout.ghostNode.x - headNode.x;
+              const ghostPath = `M ${headNode.x} ${headNode.y} C ${headNode.x + dx * 0.5} ${headNode.y}, ${layout.ghostNode.x - dx * 0.5} ${layout.ghostNode.y}, ${layout.ghostNode.x} ${layout.ghostNode.y}`;
+              const strokeColor = layout.ghostNode.hasStaged ? '#10b981' : '#f59e0b';
+
+              return (
+                <path
+                  d={ghostPath}
+                  fill="none"
+                  stroke={strokeColor}
+                  strokeWidth={2}
+                  strokeDasharray="4 4"
+                  className="transition-all duration-300"
+                />
+              );
+            })()}
+
             {/* Nodos de Commits */}
             {layout.nodes.map((node) => {
               const isSelected = selectedNodeId === node.commit.id;
@@ -243,6 +263,106 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                 </g>
               );
             })}
+
+            {/* Nodo fantasma de cambios no confirmados (Working Tree / Staging) */}
+            {layout.ghostNode && (() => {
+              const g = layout.ghostNode;
+              const isStaged = g.hasStaged;
+              const mainColor = isStaged ? '#10b981' : '#f59e0b';
+              const bgColor = isStaged ? '#064e3b' : '#451a03';
+              const badgeText = isStaged ? 'STAGED' : 'MODIFICADO';
+              const badgeTextColor = isStaged ? '#a7f3d0' : '#fde68a';
+
+              const allChangedFiles = Array.from(new Set([...g.stagedFiles, ...g.workingFiles]));
+
+              return (
+                <g key="ghost-node" className="select-none">
+                  {/* Badge superior de estado */}
+                  <g transform={`translate(${g.x}, ${g.y - 28})`}>
+                    <rect
+                      x={-45}
+                      y={-9}
+                      width={90}
+                      height={18}
+                      rx={4}
+                      fill={bgColor}
+                      stroke={mainColor}
+                      strokeWidth={1.5}
+                      strokeDasharray="2 2"
+                    />
+                    <text
+                      x={0}
+                      y={3.5}
+                      textAnchor="middle"
+                      fill={badgeTextColor}
+                      fontSize={8.5}
+                      fontWeight="bold"
+                      fontFamily="monospace"
+                    >
+                      {badgeText}
+                    </text>
+                  </g>
+
+                  {/* Círculo punteado del nodo fantasma */}
+                  <circle
+                    cx={g.x}
+                    cy={g.y}
+                    r={14}
+                    fill={bgColor}
+                    fillOpacity={0.6}
+                    stroke={mainColor}
+                    strokeWidth={2}
+                    strokeDasharray="4 3"
+                  />
+                  <text
+                    x={g.x}
+                    y={g.y + 4}
+                    textAnchor="middle"
+                    fill={mainColor}
+                    fontSize={11}
+                    fontWeight="bold"
+                    fontFamily="monospace"
+                  >
+                    {isStaged ? '✓' : '...'}
+                  </text>
+
+                  {/* Etiquetas flotantes con los nombres de los archivos */}
+                  <g transform={`translate(${g.x}, ${g.y + 28})`}>
+                    {allChangedFiles.map((file, fIdx) => {
+                      const fileIsStaged = g.stagedFiles.includes(file);
+                      const fileColor = fileIsStaged ? '#10b981' : '#f59e0b';
+                      const labelWidth = file.length * 7 + 24;
+                      return (
+                        <g key={file} transform={`translate(0, ${fIdx * 20})`}>
+                          <rect
+                            x={-labelWidth / 2}
+                            y={-8}
+                            width={labelWidth}
+                            height={17}
+                            rx={4}
+                            fill="#0f172a"
+                            stroke={fileColor}
+                            strokeWidth={1}
+                          />
+                          <circle cx={-labelWidth / 2 + 8} cy={0.5} r={2.5} fill={fileColor} />
+                          <text
+                            x={4}
+                            y={3.5}
+                            textAnchor="middle"
+                            fill="#f1f5f9"
+                            fontSize={9.5}
+                            fontWeight="bold"
+                            fontFamily="monospace"
+                          >
+                            {file}
+                          </text>
+                        </g>
+                      );
+                    })}
+                  </g>
+                </g>
+              );
+            })()}
           </svg>
         </div>
       </div>

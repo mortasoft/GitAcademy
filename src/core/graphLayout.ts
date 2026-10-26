@@ -10,6 +10,16 @@ const BRANCH_COLORS = [
   '#06B6D4', // Cyan
 ];
 
+export interface GhostNodeLayout {
+  x: number;
+  y: number;
+  headCommitId: string;
+  hasStaged: boolean;
+  hasWorking: boolean;
+  stagedFiles: string[];
+  workingFiles: string[];
+}
+
 export interface GraphLayoutResult {
   nodes: GraphNode[];
   edges: {
@@ -20,6 +30,7 @@ export interface GraphLayoutResult {
   }[];
   width: number;
   height: number;
+  ghostNode?: GhostNodeLayout | null;
 }
 
 export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
@@ -154,7 +165,26 @@ export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
     });
   });
 
-  const maxX = Math.max(...nodes.map((n) => n.x), 500) + PADDING_X;
+  // Calcular nodo fantasma si existen archivos modificados o preparados en staging
+  let ghostNode: GhostNodeLayout | null = null;
+  const hasChanges = (state.workingDir && state.workingDir.length > 0) || (state.staging && state.staging.length > 0);
+  if (hasChanges && headCommitId && nodePosMap.has(headCommitId)) {
+    const headPos = nodePosMap.get(headCommitId)!;
+    ghostNode = {
+      x: headPos.x + X_SPACING,
+      y: headPos.y,
+      headCommitId,
+      hasStaged: state.staging.length > 0,
+      hasWorking: state.workingDir.length > 0,
+      stagedFiles: state.staging,
+      workingFiles: state.workingDir,
+    };
+  }
+
+  const allX = nodes.map((n) => n.x);
+  if (ghostNode) allX.push(ghostNode.x + 140);
+
+  const maxX = Math.max(...allX, 500) + PADDING_X;
   const maxY = Math.max(...nodes.map((n) => n.y), 200) + PADDING_Y + 40;
 
   return {
@@ -162,5 +192,6 @@ export const computeGraphLayout = (state: GitState): GraphLayoutResult => {
     edges,
     width: Math.max(maxX, 700),
     height: Math.max(maxY, 320),
+    ghostNode,
   };
 };
