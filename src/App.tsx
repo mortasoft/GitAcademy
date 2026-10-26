@@ -186,6 +186,8 @@ export const App: React.FC = () => {
         isOpen={mode === 'workshop'}
         onClose={() => setMode(prevMode)}
         lesson={currentLesson}
+        curriculum={CURRICULUM}
+        onSelectLesson={handleSelectLesson}
         state={gitState}
         onExecuteSolution={(cmd) => handleApplySolutionCommand(cmd)}
       />
