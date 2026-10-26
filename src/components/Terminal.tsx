@@ -10,6 +10,65 @@ interface TerminalLine {
   branchName?: string;
 }
 
+// Analizador de secuencias de color ANSI para renderizar colores de terminal reales en React
+const renderAnsi = (text: string): React.ReactNode => {
+  if (!text) return text;
+  const ansiRegex = /(?:\x1b|\u001b)?\[([0-9;]+)m/g;
+  if (!text.match(ansiRegex)) {
+    return text;
+  }
+
+  const parts = text.split(/(?:\x1b|\u001b)?\[[0-9;]+m/g);
+  const codes: string[] = [];
+  let match: RegExpExecArray | null;
+  while ((match = ansiRegex.exec(text)) !== null) {
+    codes.push(match[1]);
+  }
+
+  let currentColor = '';
+  let isBold = false;
+  const elements: React.ReactNode[] = [];
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (part) {
+      if (currentColor || isBold) {
+        elements.push(
+          <span key={i} className={`${currentColor} ${isBold ? 'font-bold' : ''}`}>
+            {part}
+          </span>
+        );
+      } else {
+        elements.push(part);
+      }
+    }
+
+    if (i < codes.length) {
+      const code = codes[i];
+      if (code === '0' || code === '') {
+        currentColor = '';
+        isBold = false;
+      } else if (code === '1') {
+        isBold = true;
+      } else if (code === '31' || code === '91') {
+        currentColor = 'text-rose-400';
+      } else if (code === '32' || code === '92') {
+        currentColor = 'text-emerald-400';
+      } else if (code === '33' || code === '93') {
+        currentColor = 'text-amber-400';
+      } else if (code === '34' || code === '94') {
+        currentColor = 'text-blue-400';
+      } else if (code === '35' || code === '95') {
+        currentColor = 'text-purple-400';
+      } else if (code === '36' || code === '96') {
+        currentColor = 'text-cyan-400';
+      }
+    }
+  }
+
+  return elements;
+};
+
 interface TerminalProps {
   state: GitState;
   onStateChange: (newState: GitState, result: CommandResult) => void;
@@ -142,7 +201,8 @@ export const Terminal: React.FC<TerminalProps> = ({
   const handleCopyHistory = () => {
     const textToCopy = lines
       .map((l) => (l.type === 'command' ? `$ ${l.text}` : l.text))
-      .join('\n');
+      .join('\n')
+      .replace(/(?:\x1b|\u001b)?\[[0-9;]*m/g, '');
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -225,7 +285,7 @@ export const Terminal: React.FC<TerminalProps> = ({
           if (line.type === 'error') {
             return (
               <div key={line.id} className="text-rose-400 whitespace-pre-wrap pl-2 border-l-2 border-rose-500/50 bg-rose-500/5 py-0.5">
-                {line.text}
+                {renderAnsi(line.text)}
               </div>
             );
           }
@@ -233,7 +293,7 @@ export const Terminal: React.FC<TerminalProps> = ({
           if (line.type === 'system') {
             return (
               <div key={line.id} className="text-slate-400 whitespace-pre-wrap pl-2 border-l-2 border-slate-700 bg-slate-900/40 py-0.5">
-                {line.text}
+                {renderAnsi(line.text)}
               </div>
             );
           }
@@ -241,7 +301,7 @@ export const Terminal: React.FC<TerminalProps> = ({
           // output normal
           return (
             <div key={line.id} className="text-slate-300 whitespace-pre-wrap pl-2 font-mono">
-              {line.text}
+              {renderAnsi(line.text)}
             </div>
           );
         })}

@@ -79,14 +79,14 @@ export class CommandParser {
       if (currentState.staging.length > 0) {
         body += `Cambios para hacer commit:\n  (usa "git restore --staged <archivo>..." para desmarcar)\n`;
         currentState.staging.forEach((file) => {
-          body += `\tmodificado:   \x1b[32m${file}\x1b[0m\n`;
+          body += `    modificado:   \x1b[32m${file}\x1b[0m\n`;
         });
       }
 
       if (currentState.workingDir.length > 0) {
         body += `Archivos sin seguimiento / modificados:\n  (usa "git add <archivo>..." para incluir al commit)\n`;
         currentState.workingDir.forEach((file) => {
-          body += `\tmodificado:   \x1b[31m${file}\x1b[0m\n`;
+          body += `    modificado:   \x1b[31m${file}\x1b[0m\n`;
         });
       }
 
