@@ -79,6 +79,8 @@ export const WorkshopModal: React.FC<WorkshopModalProps> = ({
       title: `Paso ${idx + 1}: ${s.title}`,
       subtitle: s.explanation,
       command: s.commandSuggestion,
+      imageUrl: s.imageUrl,
+      imageCaption: s.imageCaption,
       type: 'step',
     }))),
     ...(lesson.whenToUse && lesson.whenToUse.length > 0 ? [{

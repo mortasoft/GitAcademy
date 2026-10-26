@@ -83,6 +83,8 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
 
     if (currentLesson.id === 'intro-init') {
       success = Object.keys(gitState.commits).length >= 2;
+    } else if (currentLesson.id === 'gitignore-fundamentals') {
+      success = Object.keys(gitState.commits).length >= 2;
     } else if (currentLesson.id === 'intro-history') {
       success = true;
     } else if (currentLesson.id === 'clone-remote') {
@@ -316,6 +318,21 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
                         )}
                         <span>{insertedCmd === step.commandSuggestion ? 'Insertado' : 'Insertar'}</span>
                       </button>
+                    </div>
+                  )}
+
+                  {step.imageUrl && (
+                    <div className="mt-2 rounded-lg overflow-hidden border border-slate-800 bg-slate-900/60 p-2 space-y-1">
+                      <img 
+                        src={step.imageUrl} 
+                        alt={step.imageCaption || step.title} 
+                        className="w-full h-auto rounded border border-slate-800 object-cover"
+                      />
+                      {step.imageCaption && (
+                        <p className="text-[10.5px] text-slate-400 italic text-center">
+                          {step.imageCaption}
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>

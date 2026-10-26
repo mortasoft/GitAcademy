@@ -98,8 +98,26 @@ export class CommandParser {
       const filename = trimmed.split(/\s+/)[1]?.replace(/["']/g, '');
       if (!filename) return { success: false, output: 'cat: falta nombre de archivo' };
       if (filename === 'README.md') return { success: true, output: '# Mi Proyecto Git\nRepositorio inicial.' };
+      if (filename === '.gitignore') return { success: true, output: '# Dependencias\nnode_modules/\n\n# Variables de entorno y secretos\n.env\n*.key\n\n# Registros y temporales\n*.log\n*.tmp\n\n# Carpetas de compilación\ndist/\nbuild/' };
       if (filename.endsWith('.html')) return { success: true, output: '<!DOCTYPE html>\n<html>\n  <body>Hola Mundo</body>\n</html>' };
       return { success: true, output: `// Contenido de ${filename}` };
+    }
+
+    // rm <archivo>
+    if (trimmed.startsWith('rm ') || trimmed === 'rm') {
+      const parts = trimmed.split(/\s+/).slice(1).map((p) => p.replace(/["']/g, '')).filter((p) => !p.startsWith('-'));
+      if (parts.length === 0) {
+        return { success: false, output: 'rm: falta operando' };
+      }
+      const newWorking = currentState.workingDir.filter((f) => !parts.includes(f));
+      return {
+        success: true,
+        output: '',
+        newState: {
+          ...currentState,
+          workingDir: newWorking,
+        },
+      };
     }
 
     // pwd
@@ -255,6 +273,42 @@ export class CommandParser {
         };
       }
       return { success: false, output: 'Uso: git restore --staged <archivo>...' };
+    }
+
+    // git rm
+    if (subCommand === 'rm') {
+      const isCached = args.includes('--cached');
+      const target = args[args.length - 1];
+      if (!target || target === 'rm' || target === '--cached') {
+        return { success: false, output: 'fatal: No se especificó ninguna ruta' };
+      }
+      if (isCached) {
+        const fileToRemove = target === '.' ? currentState.staging : [target];
+        const newStaging = currentState.staging.filter((f) => !fileToRemove.includes(f));
+        const newWorking = Array.from(new Set([...currentState.workingDir, ...fileToRemove]));
+        return {
+          success: true,
+          output: fileToRemove.map((f) => `rm '${f}'`).join('\n'),
+          newState: {
+            ...currentState,
+            staging: newStaging,
+            workingDir: newWorking,
+          },
+        };
+      } else {
+        const fileToRemove = target;
+        const newStaging = currentState.staging.filter((f) => f !== fileToRemove);
+        const newWorking = currentState.workingDir.filter((f) => f !== fileToRemove);
+        return {
+          success: true,
+          output: `rm '${fileToRemove}'`,
+          newState: {
+            ...currentState,
+            staging: newStaging,
+            workingDir: newWorking,
+          },
+        };
+      }
     }
 
     // git commit

@@ -12,6 +12,8 @@ export interface LessonStep {
   explanation: string;
   commandSuggestion?: string;
   codeBlock?: string;
+  imageUrl?: string;
+  imageCaption?: string;
 }
 
 export interface WhenToUseExample {

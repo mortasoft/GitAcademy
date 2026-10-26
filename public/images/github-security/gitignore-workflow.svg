@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0d1117; }
+      .card { fill: #161b22; stroke: #30363d; stroke-width: 1; rx: 8; }
+      .card-rule { fill: #0d1117; stroke: #21262d; stroke-width: 1; rx: 6; }
+      .header-bg { fill: #0d1117; stroke: #21262d; stroke-width: 1; }
+      .text-title { fill: #f0f6fc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 600; }
+      .text-desc { fill: #8b949e; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 12px; }
+      .text-code { fill: #58a6ff; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; }
+      .text-file-ok { fill: #3fb950; font-family: ui-monospace, monospace; font-size: 11.5px; font-weight: 600; }
+      .text-file-ignored { fill: #f85149; font-family: ui-monospace, monospace; font-size: 11.5px; font-weight: 600; }
+      .badge-pass { fill: #238636; rx: 4; }
+      .badge-ignore { fill: #4c1d24; stroke: #f85149; stroke-width: 1; rx: 4; }
+      .terminal-box { fill: #010409; stroke: #30363d; stroke-width: 1; rx: 8; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="640" class="bg" rx="12"/>
+
+  <!-- Top GitHub Breadcrumb Bar -->
+  <rect x="0" y="0" width="1000" height="56" class="header-bg" rx="12"/>
+  <circle cx="30" cy="28" r="6" fill="#f85149"/>
+  <circle cx="50" cy="28" r="6" fill="#d29922"/>
+  <circle cx="70" cy="28" r="6" fill="#2ea043"/>
+
+  <text x="105" y="33" fill="#8b949e" font-family="-apple-system, sans-serif" font-size="13">git-core</text>
+  <text x="165" y="33" fill="#6e7681" font-family="-apple-system, sans-serif" font-size="13">/</text>
+  <text x="180" y="33" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">.gitignore</text>
+  <text x="245" y="33" fill="#6e7681" font-family="-apple-system, sans-serif" font-size="13">/</text>
+  <text x="260" y="33" fill="#58a6ff" font-family="-apple-system, sans-serif" font-size="13">Arquitectura y Reglas de Exclusión</text>
+
+  <!-- Title Section -->
+  <text x="40" y="92" class="text-title" font-size="20">Flujo de Filtrado y Exclusión con .gitignore</text>
+  <text x="40" y="114" class="text-desc">Evita que credenciales, dependencias pesadas y archivos compilados contaminen tu repositorio o generen fugas de seguridad.</text>
+
+  <!-- Diagram Column 1: Working Tree vs Staging -->
+  <rect x="40" y="135" width="445" height="475" class="card"/>
+  <text x="60" y="165" class="text-title" font-size="15">Filtro de Estado: Working Tree &#8594; Git Add</text>
+  <text x="60" y="185" class="text-desc">Git evalúa cada archivo del directorio contra los patrones de <tspan class="text-code">.gitignore</tspan>:</text>
+
+  <!-- Group A: Allowed Files -->
+  <rect x="60" y="200" width="405" height="95" class="card-rule" stroke="#238636"/>
+  <text x="75" y="222" class="text-file-ok">&#10003; Archivos RASTREADOS (Código Fuente)</text>
+  <text x="75" y="242" class="text-desc">&#8226; <tspan fill="#f0f6fc">src/app.js</tspan> &#8212; Lógica de la aplicación</text>
+  <text x="75" y="260" class="text-desc">&#8226; <tspan fill="#f0f6fc">README.md, package.json</tspan> &#8212; Metadatos y documentación</text>
+  <text x="75" y="278" class="text-code" fill="#3fb950">&#8594; git status los muestra en verde/rojo y git add . los incluye</text>
+
+  <!-- Group B: Ignored Files -->
+  <rect x="60" y="310" width="405" height="135" class="card-rule" stroke="#da3633"/>
+  <text x="75" y="332" class="text-file-ignored">&#10007; Archivos IGNORADOS (Filtrados por .gitignore)</text>
+  <text x="75" y="352" class="text-desc">&#8226; <tspan fill="#f85149">.env, id_rsa, *.pem</tspan> &#8212; Secretos y credenciales</text>
+  <text x="75" y="370" class="text-desc">&#8226; <tspan fill="#f85149">node_modules/, vendor/, .venv/</tspan> &#8212; Dependencias descargables</text>
+  <text x="75" y="388" class="text-desc">&#8226; <tspan fill="#f85149">dist/, build/, *.exe, *.log</tspan> &#8212; Binarios y logs temporales</text>
+  <text x="75" y="412" class="text-code" fill="#f85149">&#8594; git status NO los lista y git add . los ignora silenciosamente</text>
+
+  <!-- Tip on cached files -->
+  <rect x="60" y="460" width="405" height="130" class="terminal-box"/>
+  <text x="75" y="485" class="text-title" font-size="13" fill="#d29922">&#9888; Regla de Oro: Archivos ya rastreados</text>
+  <text x="75" y="505" class="text-desc">Si un archivo ya fue añadido con commit previo, .gitignore NO lo ignora.</text>
+  <text x="75" y="525" class="text-desc">Debes desmarcarlo del índice sin borrar el archivo de tu disco:</text>
+  <text x="75" y="552" class="text-code" fill="#58a6ff">$ git rm --cached .env</text>
+  <text x="75" y="572" class="text-code" fill="#3fb950">$ git commit -m "chore: dejar de rastrear .env"</text>
+
+  <!-- Diagram Column 2: Patterns and Syntax in .gitignore -->
+  <rect x="515" y="135" width="445" height="475" class="card"/>
+  <text x="535" y="165" class="text-title" font-size="15">Sintaxis Oficial y Patrones Comunes</text>
+  <text x="535" y="185" class="text-desc">Reglas estándar interpretadas por Git línea por línea:</text>
+
+  <!-- Pattern 1: Directory -->
+  <rect x="535" y="200" width="405" height="60" class="card-rule"/>
+  <text x="550" y="222" class="text-code">node_modules/</text>
+  <text x="550" y="244" class="text-desc">La barra final (<tspan class="text-code">/</tspan>) indica que se ignora la carpeta completa y todo su contenido.</text>
+
+  <!-- Pattern 2: Extension glob -->
+  <rect x="535" y="270" width="405" height="60" class="card-rule"/>
+  <text x="550" y="292" class="text-code">*.log</text>
+  <text x="550" y="314" class="text-desc">El asterisco (<tspan class="text-code">*</tspan>) actúa como comodín para cualquier archivo con terminación .log.</text>
+
+  <!-- Pattern 3: Specific root files -->
+  <rect x="535" y="340" width="405" height="60" class="card-rule"/>
+  <text x="550" y="362" class="text-code">/.env</text>
+  <text x="550" y="384" class="text-desc">La barra inicial (<tspan class="text-code">/</tspan>) ancla la regla exclusivamente a la raíz del repositorio.</text>
+
+  <!-- Pattern 4: Negation / Exception -->
+  <rect x="535" y="410" width="405" height="60" class="card-rule"/>
+  <text x="550" y="432" class="text-code">!importante.log</text>
+  <text x="550" y="454" class="text-desc">El signo de exclamación (<tspan class="text-code">!</tspan>) crea una excepción para rastrear un archivo específico.</text>
+
+  <!-- Pattern 5: OS and Editors -->
+  <rect x="535" y="480" width="405" height="110" class="card-rule"/>
+  <text x="550" y="502" class="text-code">.DS_Store | Thumbs.db | .vscode/</text>
+  <text x="550" y="524" class="text-desc">Archivos del sistema operativo y configuración local del editor.</text>
+  <text x="550" y="546" class="text-desc" fill="#8b949e">Buenas prácticas: Mantener un .gitignore compartido en la raíz y un</text>
+  <text x="550" y="566" class="text-desc" fill="#58a6ff"><tspan class="text-code">core.excludesfile</tspan> global para preferencias personales del desarrollador.</text>
+</svg>
