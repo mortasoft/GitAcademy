@@ -26,15 +26,15 @@ export const CHEATSHEET_DATABASE: CheatsheetItem[] = [
   {
     id: 'undo-last-commit-hard',
     category: 'Solución de Problemas',
-    title: 'Eliminar el último commit por completo (descartar todo)',
-    problem: 'Hice un commit basura con código que no sirve para nada y quiero borrarlo sin dejar rastro.',
+    title: 'Descartar el último commit y sus modificaciones',
+    problem: 'Necesito deshacer el último commit local y descartar por completo las modificaciones en el área de trabajo.',
     solutionCommand: 'git reset --hard HEAD~1',
-    explanation: 'PELIGRO: Mueve el puntero de la rama atrás y borra de forma destructiva cualquier cambio no guardado en tus archivos.',
-    tags: ['reset', 'hard', 'eliminar', 'descartar', 'peligro'],
+    explanation: 'Advertencia: Mueve el puntero de la rama al commit previo y descarta permanentemente cualquier cambio no confirmado.',
+    tags: ['reset', 'hard', 'eliminar', 'descartar'],
     presetScenario: (): GitState => ({
       commits: {
-        c1: { id: 'c1', parentIds: [], message: 'Código bueno', author: 'Dev <dev@test.com>', timestamp: Date.now() - 3600000 },
-        c2: { id: 'c2', parentIds: ['c1'], message: 'Código roto accidental', author: 'Dev <dev@test.com>', timestamp: Date.now() },
+        c1: { id: 'c1', parentIds: [], message: 'Versión estable', author: 'Dev <dev@test.com>', timestamp: Date.now() - 3600000 },
+        c2: { id: 'c2', parentIds: ['c1'], message: 'Commit con errores no deseados', author: 'Dev <dev@test.com>', timestamp: Date.now() },
       },
       branches: { main: { name: 'main', commitId: 'c2' } },
       tags: {},

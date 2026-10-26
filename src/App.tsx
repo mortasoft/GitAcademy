@@ -67,13 +67,13 @@ export const App: React.FC = () => {
   const handleCompleteLesson = (lessonId: string) => {
     const updated = markLessonCompleted(lessonId);
     setCompletedLessonIds(updated.completedLessons);
-    showToast('🎉 ¡Felicitaciones! Has completado el objetivo de esta lección.');
+    showToast('Objetivo de la lección completado.');
   };
 
   const handleLoadScenario = (scenarioState: GitState, title: string) => {
     resetCommitCounter(Object.keys(scenarioState.commits).length + 1);
     setGitState(scenarioState);
-    showToast(`Escenario cargado: "${title}". ¡Pruébalo en la terminal!`);
+    showToast(`Escenario cargado: "${title}".`);
   };
 
   const handleApplySolutionCommand = (cmd: string) => {
@@ -98,7 +98,8 @@ export const App: React.FC = () => {
 
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 right-6 z-50 bg-orange-600 text-white px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 text-xs font-semibold animate-in slide-in-from-top-4 duration-200">
+        <div className="fixed top-20 right-6 z-50 bg-slate-900 border border-slate-700 text-slate-100 px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2 text-xs font-medium animate-in slide-in-from-top-4 duration-200">
+          <span className="w-2 h-2 rounded-full bg-emerald-400" />
           <span>{toastMessage}</span>
         </div>
       )}

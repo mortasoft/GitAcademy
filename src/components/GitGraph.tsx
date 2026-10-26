@@ -83,9 +83,6 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                 <stop offset="0%" stopColor="#475569" stopOpacity="0.4" />
                 <stop offset="100%" stopColor="#94a3b8" stopOpacity="0.8" />
               </linearGradient>
-              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#f97316" floodOpacity="0.4" />
-              </filter>
             </defs>
 
             {/* Dibujar Conexiones / Aristas */}
@@ -120,18 +117,16 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                     if (onSelectCommit) onSelectCommit(node.commit.id);
                   }}
                 >
-                  {/* Círculo de Resplandor en HEAD */}
+                  {/* Anillo de enfoque en HEAD */}
                   {node.isHead && (
                     <circle
                       cx={node.x}
                       cy={node.y}
-                      r={24}
+                      r={21}
                       fill="none"
-                      stroke="#f97316"
-                      strokeWidth={2}
-                      strokeDasharray="4 3"
-                      className="animate-spin origin-center"
-                      style={{ transformOrigin: `${node.x}px ${node.y}px` }}
+                      stroke="#ea580c"
+                      strokeWidth={1.5}
+                      strokeDasharray="3 3"
                     />
                   )}
 
@@ -139,19 +134,17 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                   <circle
                     cx={node.x}
                     cy={node.y}
-                    r={isSelected ? 18 : 15}
+                    r={isSelected ? 17 : 14}
                     fill={node.color}
                     stroke={isSelected ? '#ffffff' : '#0f172a'}
-                    strokeWidth={isSelected ? 4 : 3}
-                    filter={node.isHead ? 'url(#glow)' : undefined}
-                    className="transition-all duration-200 group-hover:scale-110"
-                    style={{ transformOrigin: `${node.x}px ${node.y}px` }}
+                    strokeWidth={isSelected ? 3 : 2}
+                    className="transition-transform duration-150 group-hover:scale-105"
                   />
 
                   {/* Hash del Commit en el centro */}
                   <text
                     x={node.x}
-                    y={node.y + 4}
+                    y={node.y + 3.5}
                     textAnchor="middle"
                     fill="#ffffff"
                     fontSize={10}
@@ -169,25 +162,25 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                       {node.isHead && (
                         <g transform="translate(0, -22)">
                           <rect
-                            x={-28}
-                            y={-10}
-                            width={56}
-                            height={18}
-                            rx={4}
+                            x={-24}
+                            y={-9}
+                            width={48}
+                            height={17}
+                            rx={3}
                             fill="#ea580c"
                             stroke="#fdba74"
                             strokeWidth={1}
                           />
                           <text
                             x={0}
-                            y={2}
+                            y={3}
                             textAnchor="middle"
                             fill="#ffffff"
                             fontSize={9}
                             fontWeight="bold"
                             fontFamily="monospace"
                           >
-                            HEAD ★
+                            HEAD
                           </text>
                         </g>
                       )}
@@ -243,7 +236,7 @@ export const GitGraph: React.FC<GitGraphProps> = ({ state, onSelectCommit }) => 
                         fontWeight="600"
                         fontFamily="monospace"
                       >
-                        🏷 {tName}
+                        {tName}
                       </text>
                     </g>
                   ))}

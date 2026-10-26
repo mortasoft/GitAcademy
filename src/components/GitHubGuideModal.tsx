@@ -36,7 +36,7 @@ export const GitHubGuideModal: React.FC<GitHubGuideModalProps> = ({
     <div className="flex-1 min-w-0 bg-slate-950 p-4 lg:p-8 overflow-y-auto">
       <div className="max-w-4xl mx-auto w-full space-y-6 pb-8">
         {/* Cabecera Principal */}
-        <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800 border border-slate-700/80 shadow-xl space-y-3">
+        <div className="p-6 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center shadow-md">
               {lesson.id.includes('desktop') ? (
@@ -145,8 +145,8 @@ export const GitHubGuideModal: React.FC<GitHubGuideModalProps> = ({
               )}
 
               {step.tip && (
-                <p className="text-[11.5px] text-amber-400/90 bg-amber-500/5 border-l-2 border-amber-500/40 p-2 rounded-r">
-                  💡 {step.tip}
+                <p className="text-[11.5px] text-slate-300 bg-slate-950 border-l-2 border-orange-500/80 p-2.5 rounded-r font-sans leading-relaxed">
+                  <span className="font-semibold text-orange-400">Nota:</span> {step.tip}
                 </p>
               )}
             </div>

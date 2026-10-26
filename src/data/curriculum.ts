@@ -79,7 +79,7 @@ export const CURRICULUM: CurriculumLevel[] = [
             },
             {
               action: '5. Haz clic en "Create repository"',
-              details: '¡Listo! Tu repositorio en la nube está creado y listo para sincronizarse con tu computadora.',
+              details: 'El repositorio remoto ha sido creado en GitHub y está listo para ser clonado localmente.',
             },
           ],
         },
@@ -125,7 +125,7 @@ export const CURRICULUM: CurriculumLevel[] = [
             },
             {
               action: '4. Haz clic en "Clone"',
-              details: 'GitHub Desktop descargará todos los archivos. ¡Ya tienes tu copia local lista para editar!',
+              details: 'GitHub Desktop descargará el repositorio. Los archivos quedarán almacenados en la carpeta seleccionada en tu disco.',
             },
           ],
         },
@@ -173,7 +173,7 @@ export const CURRICULUM: CurriculumLevel[] = [
             {
               action: '5. Presiona el botón "Push origin"',
               details: 'En la barra superior verás un botón que dice "Push origin" (con una flecha hacia arriba). Haz clic en él para subir tu commit a GitHub.com.',
-              tip: 'Recarga la página de tu repositorio en github.com: ¡verás tus cambios publicados inmediatamente!',
+              tip: 'Al actualizar la página del repositorio en github.com se reflejarán los nuevos commits en la rama remota.',
               imageUrl: '/images/desktop/push-to-origin.png',
               imageCaption: 'Botón oficial "Push origin" para subir los cambios a GitHub en la nube.',
             },

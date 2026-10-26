@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GitState, CommandResult } from '../types/git';
 import { CommandParser } from '../core/commandParser';
-import { Terminal as TerminalIcon, CornerDownLeft, Sparkles, Trash2, Copy, Check } from 'lucide-react';
+import { Terminal as TerminalIcon, CornerDownLeft, Play, Trash2, Copy, Check } from 'lucide-react';
 
 interface TerminalLine {
   id: string;
@@ -28,7 +28,7 @@ export const Terminal: React.FC<TerminalProps> = ({
     {
       id: 'init-1',
       type: 'system',
-      text: '¡Bienvenido a la terminal interactiva de GitAcademy!\nEscribe "ayuda" o "git --help" para ver los comandos soportados.',
+      text: 'Terminal de comandos Git.\nEscribe "ayuda" o "git --help" para consultar los comandos disponibles.',
     },
   ]);
   const [copied, setCopied] = useState(false);
@@ -107,7 +107,6 @@ export const Terminal: React.FC<TerminalProps> = ({
       }
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      // Autocompletado básico
       const candidates = [
         'git status', 'git add .', 'git commit -m ""', 'git branch', 
         'git checkout', 'git switch', 'git merge', 'git rebase', 
@@ -135,24 +134,17 @@ export const Terminal: React.FC<TerminalProps> = ({
 
   return (
     <div 
-      className="flex flex-col h-full bg-slate-950 font-mono text-xs border border-slate-800 rounded-2xl overflow-hidden shadow-2xl"
+      className="flex flex-col h-full bg-slate-950 font-mono text-xs border border-slate-800 rounded-xl overflow-hidden shadow-sm"
       onClick={() => inputRef.current?.focus()}
     >
       {/* Barra superior de la ventana de la terminal */}
-      <div className="h-10 bg-slate-900 border-b border-slate-800 px-4 flex items-center justify-between select-none">
-        <div className="flex items-center gap-2">
-          <div className="flex gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-rose-500/80" />
-            <div className="w-3 h-3 rounded-full bg-amber-500/80" />
-            <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
-          </div>
-          <div className="flex items-center gap-2 ml-3 text-slate-400">
-            <TerminalIcon className="w-3.5 h-3.5 text-orange-400" />
-            <span className="text-[11px] font-semibold text-slate-300">bash — GitAcademy Shell</span>
-          </div>
+      <div className="h-9 bg-slate-900 border-b border-slate-800 px-3.5 flex items-center justify-between select-none">
+        <div className="flex items-center gap-2 text-slate-400">
+          <TerminalIcon className="w-3.5 h-3.5 text-slate-400" />
+          <span className="text-[11px] font-medium text-slate-300">Terminal (git shell)</span>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           {/* Chip de comando sugerido */}
           {suggestedCommand && (
             <button
@@ -161,11 +153,11 @@ export const Terminal: React.FC<TerminalProps> = ({
                 setInput(suggestedCommand);
                 inputRef.current?.focus();
               }}
-              className="flex items-center gap-1.5 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/30 px-2 py-0.5 rounded text-[11px] transition"
-              title="Cargar comando sugerido de la lección actual"
+              className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 px-2 py-0.5 rounded text-[11px] transition"
+              title="Cargar comando de la lección en la terminal"
             >
-              <Sparkles className="w-3 h-3 text-orange-400" />
-              <span>Sugerencia: {suggestedCommand}</span>
+              <Play className="w-2.5 h-2.5 text-orange-400" />
+              <span>Sugerencia: <code className="text-orange-300">{suggestedCommand}</code></span>
             </button>
           )}
 
@@ -174,8 +166,8 @@ export const Terminal: React.FC<TerminalProps> = ({
               e.stopPropagation();
               handleCopyHistory();
             }}
-            className="p-1.5 text-slate-400 hover:text-slate-200 transition"
-            title="Copiar historial de la terminal"
+            className="p-1 text-slate-400 hover:text-slate-200 transition"
+            title="Copiar historial"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
@@ -185,8 +177,8 @@ export const Terminal: React.FC<TerminalProps> = ({
               e.stopPropagation();
               handleClear();
             }}
-            className="p-1.5 text-slate-400 hover:text-slate-200 transition"
-            title="Limpiar terminal (clear)"
+            className="p-1 text-slate-400 hover:text-slate-200 transition"
+            title="Limpiar pantalla"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -194,23 +186,23 @@ export const Terminal: React.FC<TerminalProps> = ({
       </div>
 
       {/* Salida de la Terminal */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-2 selection:bg-orange-500/40">
+      <div className="flex-1 p-3.5 overflow-y-auto space-y-2 selection:bg-slate-800">
         {lines.map((line) => {
           if (line.type === 'command') {
             return (
               <div key={line.id} className="flex items-start gap-2">
-                <span className="text-emerald-400 font-semibold select-none">estudiante@gitacademy:~$</span>
-                <span className="text-slate-400 text-[11px] select-none font-sans bg-slate-800/80 px-1.5 py-0.2 rounded text-cyan-300">
-                  git:({line.branchName || 'main'})
+                <span className="text-emerald-400 font-medium select-none">$</span>
+                <span className="text-slate-400 text-[11px] select-none font-sans bg-slate-900 px-1.5 py-0.2 rounded text-cyan-300 border border-slate-800">
+                  {line.branchName || 'main'}
                 </span>
-                <span className="text-white font-bold">{line.text}</span>
+                <span className="text-white font-medium">{line.text}</span>
               </div>
             );
           }
 
           if (line.type === 'error') {
             return (
-              <div key={line.id} className="text-rose-400 whitespace-pre-wrap pl-2 border-l-2 border-rose-500/60 bg-rose-500/5 py-1">
+              <div key={line.id} className="text-rose-400 whitespace-pre-wrap pl-2 border-l-2 border-rose-500/50 bg-rose-500/5 py-0.5">
                 {line.text}
               </div>
             );
@@ -218,7 +210,7 @@ export const Terminal: React.FC<TerminalProps> = ({
 
           if (line.type === 'system') {
             return (
-              <div key={line.id} className="text-amber-400/90 whitespace-pre-wrap pl-2 border-l-2 border-amber-500/60 bg-amber-500/5 py-1">
+              <div key={line.id} className="text-slate-400 whitespace-pre-wrap pl-2 border-l-2 border-slate-700 bg-slate-900/40 py-0.5">
                 {line.text}
               </div>
             );
@@ -234,9 +226,9 @@ export const Terminal: React.FC<TerminalProps> = ({
 
         {/* Input actual */}
         <div className="flex items-center gap-2 pt-1">
-          <span className="text-emerald-400 font-semibold select-none shrink-0">estudiante@gitacademy:~$</span>
-          <span className="text-slate-400 text-[11px] select-none font-sans bg-slate-800/80 px-1.5 py-0.2 rounded text-cyan-300 shrink-0">
-            git:({currentBranch})
+          <span className="text-emerald-400 font-medium select-none shrink-0">$</span>
+          <span className="text-slate-400 text-[11px] select-none font-sans bg-slate-900 px-1.5 py-0.2 rounded text-cyan-300 shrink-0 border border-slate-800">
+            {currentBranch}
           </span>
           <div className="relative flex-1 flex items-center">
             <input
@@ -249,11 +241,11 @@ export const Terminal: React.FC<TerminalProps> = ({
               spellCheck={false}
               autoComplete="off"
               className="w-full bg-transparent border-none outline-none text-white font-mono placeholder:text-slate-600 focus:ring-0 p-0"
-              placeholder="escribe un comando de git..."
+              placeholder="escribe un comando git..."
             />
             <button
               onClick={() => handleExecute()}
-              className="text-slate-500 hover:text-orange-400 p-1"
+              className="text-slate-500 hover:text-slate-200 p-1"
               title="Ejecutar"
             >
               <CornerDownLeft className="w-3.5 h-3.5" />

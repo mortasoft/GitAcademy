@@ -153,8 +153,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   </button>
                 </div>
 
-                <p className="text-[11.5px] text-slate-400 leading-relaxed font-sans">
-                  💡 {item.explanation}
+                <p className="text-[11.5px] text-slate-300 leading-relaxed font-sans">
+                  {item.explanation}
                 </p>
 
                 {/* Etiquetas */}
@@ -172,7 +172,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
         {/* Footer */}
         <div className="p-3 border-t border-slate-800 bg-slate-950 text-xs text-slate-500 flex items-center justify-between">
-          <span>Consejo: Puedes abrir este centro en cualquier momento pulsando <kbd className="bg-slate-800 px-1.5 py-0.5 rounded text-slate-300">Ctrl+K</kbd></span>
+          <span>Abrir referencia con <kbd className="bg-slate-800 px-1.5 py-0.5 rounded text-slate-300">Ctrl+K</kbd></span>
           <span>{filteredItems.length} temas disponibles</span>
         </div>
       </div>

@@ -33,19 +33,19 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="h-16 border-b border-slate-800 bg-slate-900/90 backdrop-blur-md px-4 lg:px-6 flex items-center justify-between z-30 sticky top-0">
       {/* Logo & Marca */}
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/20">
-          <GitPullRequest className="w-6 h-6 text-white" />
+        <div className="w-9 h-9 rounded-lg bg-orange-600 flex items-center justify-center text-white">
+          <GitPullRequest className="w-5 h-5" />
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-orange-400 bg-clip-text text-transparent">
+            <span className="font-semibold text-base tracking-tight text-white">
               GitAcademy
             </span>
-            <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20">
-              v1.0
+            <span className="text-[10px] font-mono uppercase px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700">
+              Training
             </span>
           </div>
-          <p className="text-xs text-slate-400 hidden sm:block">Aprende & Domina Git y GitHub</p>
+          <p className="text-xs text-slate-400 hidden sm:block">Capacitación y referencia técnica de Git & GitHub</p>
         </div>
       </div>
 
