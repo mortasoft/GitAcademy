@@ -45,6 +45,7 @@ export interface Lesson {
       tip?: string;
       imageUrl?: string;
       imageCaption?: string;
+      mockupType?: 'branch-selector' | 'pull-request' | 'history-stash' | 'conflict-resolver' | 'branches-dialog';
     }[];
   };
 }

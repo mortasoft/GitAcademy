@@ -48,12 +48,17 @@ export const WorkshopModal: React.FC<WorkshopModalProps> = ({
       content: lesson.summary,
       type: 'intro',
     },
-    ...lesson.steps.map((s, idx) => ({
+    ...(lesson.isGitHubGuide && lesson.gitHubGuideContent ? lesson.gitHubGuideContent.steps.map((s) => ({
+      title: s.action,
+      subtitle: s.details,
+      command: s.commandOrUrl,
+      type: 'step',
+    })) : lesson.steps.map((s, idx) => ({
       title: `Paso ${idx + 1}: ${s.title}`,
       subtitle: s.explanation,
       command: s.commandSuggestion,
       type: 'step',
-    })),
+    }))),
     ...(lesson.whenToUse && lesson.whenToUse.length > 0 ? [{
       title: '¿En qué momento usar este comando?',
       subtitle: 'Casos reales de uso práctico y cuándo evitarlo',

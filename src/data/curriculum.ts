@@ -180,6 +180,283 @@ export const CURRICULUM: CurriculumLevel[] = [
           ],
         },
       },
+      {
+        id: 'github-desktop-branches',
+        levelId: 'nivel-1',
+        title: '1.4 Gestión y Publicación de Ramas en GitHub Desktop',
+        category: 'Herramientas GUI',
+        difficulty: 'Principiante',
+        timeEstimate: '6 min',
+        summary: 'Aprende a crear ramas de trabajo aisladas, alternar entre ellas con un clic y publicarlas en GitHub con "Publish branch".',
+        isGitHubGuide: true,
+        initialState: createBaseState(),
+        steps: [],
+        goalDescription: 'Sigue la guía para crear una nueva rama local y publicarla en GitHub desde GitHub Desktop.',
+        solutionCommands: [],
+        tips: [
+          'Las ramas te permiten probar cambios y desarrollar nuevas funciones sin alterar la rama principal (main).',
+          'Una rama no es visible en GitHub.com hasta que presionas "Publish branch".',
+        ],
+        whenToUse: [
+          {
+            title: 'Creación visual de ramas de trabajo',
+            scenario: 'Cuando comienzas una tarea nueva y quieres crear una rama a partir de main rápidamente sin memorizar sintaxis ni nombres de remotos.',
+            recommendation: 'recomendado',
+            command: 'git checkout -b feature/nueva-interfaz',
+          },
+          {
+            title: 'Alternar entre ramas (Checkout) con un clic',
+            scenario: 'Cuando necesitas cambiar frecuentemente entre la rama en desarrollo y main para verificar código sin teclear comandos en terminal.',
+            recommendation: 'recomendado',
+            command: 'git checkout main',
+          },
+          {
+            title: 'Publicar rama en GitHub remoto',
+            scenario: 'Cuando creas una rama local y quieres que quede respaldada en la nube y visible para tu equipo de trabajo.',
+            recommendation: 'recomendado',
+            command: 'git push -u origin feature/nueva-interfaz',
+          },
+          {
+            title: 'Ramas huérfanas o rebase interactivo complejo',
+            scenario: 'Para crear ramas completamente vacías sin historial (--orphan) o manipular commits previos con rebase interactivo.',
+            recommendation: 'evitar',
+            command: 'git checkout --orphan docs-branch',
+          },
+        ],
+        gitHubGuideContent: {
+          overview: 'Las ramas son el pilar de la colaboración en Git. GitHub Desktop elimina el miedo a crear o cambiar de ramas, ofreciendo un selector visual instantáneo y publicación en la nube con un solo clic.',
+          steps: [
+            {
+              action: '1. Ubica el selector "Current Branch" en la barra superior',
+              details: 'En la parte central superior de GitHub Desktop verás el botón "Current Branch" que indica en qué rama te encuentras actualmente (por defecto "main").',
+              mockupType: 'branch-selector',
+            },
+            {
+              action: '2. Abre el menú y presiona "New Branch"',
+              details: 'Haz clic en "Current Branch" para desplegar la lista de ramas y presiona el botón azul "New Branch".',
+              tip: 'GitHub Desktop te preguntará en qué rama basar la nueva rama. Selecciona siempre "main" a menos que continúes el trabajo de otra feature.',
+            },
+            {
+              action: '3. Asigna un nombre claro a tu rama',
+              details: 'Escribe un nombre descriptivo utilizando guiones y prefijos como "feature/nueva-interfaz" o "fix/login-boton". Haz clic en "Create Branch".',
+            },
+            {
+              action: '4. Publica la rama en GitHub con "Publish branch"',
+              details: 'Verás que en la barra superior el botón de sincronización ahora dice "Publish branch". Haz clic en él para subir la rama a GitHub.com.',
+              tip: 'Al publicarla, cualquier compañero podrá descargarla para colaborar contigo o revisarla en GitHub.',
+            },
+          ],
+        },
+      },
+      {
+        id: 'github-desktop-pull-requests',
+        levelId: 'nivel-1',
+        title: '1.5 Sincronización Remota y Pull Requests en GitHub Desktop',
+        category: 'Herramientas GUI',
+        difficulty: 'Principiante',
+        timeEstimate: '7 min',
+        summary: 'Descubre cómo GitHub Desktop automatiza el Fetch, te avisa de commits entrantes/salientes y abre Pull Requests con un solo clic.',
+        isGitHubGuide: true,
+        initialState: createBaseState(),
+        steps: [],
+        goalDescription: 'Aprende a sincronizar cambios remotos con Fetch/Pull y cómo solicitar revisión con Create Pull Request.',
+        solutionCommands: [],
+        tips: [
+          'GitHub Desktop realiza un "Fetch origin" automáticamente en segundo plano cada 8 minutos para verificar si hay cambios.',
+          'Si alguien del equipo subió código a tu rama, el botón mostrará "Pull origin (X)" con el número de commits disponibles.',
+        ],
+        whenToUse: [
+          {
+            title: 'Abrir Pull Request con un clic',
+            scenario: 'Cuando terminas los commits de tu funcionalidad y quieres solicitar revisión formal a tu equipo en GitHub sin buscar la URL manualmente.',
+            recommendation: 'recomendado',
+            command: 'gh pr create --web',
+          },
+          {
+            title: 'Sincronizar novedades del equipo (Pull)',
+            scenario: 'Cuando el botón de sincronización indica números pendientes: descargar los commits que tus compañeros subieron a la nube.',
+            recommendation: 'recomendado',
+            command: 'git pull origin main',
+          },
+          {
+            title: 'Probar Pull Requests de compañeros',
+            scenario: 'GitHub Desktop muestra la pestaña "Pull Requests" en el selector de ramas para descargar con 1 clic el código de una PR en revisión.',
+            recommendation: 'recomendado',
+            command: 'git fetch origin pull/12/head:pr-12',
+          },
+          {
+            title: 'Integraciones complejas de múltiples remotos/forks de código abierto',
+            scenario: 'Cuando colaboras en repositorios upstream con bifurcaciones complejas que requieren configurar remotos personalizados.',
+            recommendation: 'evitar',
+            command: 'git remote add upstream https://github.com/...',
+          },
+        ],
+        gitHubGuideContent: {
+          overview: 'El trabajo profesional en equipo se basa en la sincronización continua y en proponer cambios mediante Pull Requests para que el código sea revisado y probado antes de llegar a producción.',
+          steps: [
+            {
+              action: '1. Consulta el estado del repositorio remoto con "Fetch origin"',
+              details: 'En la esquina superior derecha, haz clic en "Fetch origin". GitHub Desktop consultará GitHub.com para saber si hay commits nuevos sin modificar tus archivos locales.',
+            },
+            {
+              action: '2. Descarga cambios del equipo con "Pull origin"',
+              details: 'Si existen commits en la nube que no tienes localmente, el botón cambiará automáticamente a "Pull origin" indicando el número de commits pendientes (ej. "Pull origin 2"). Haz clic para actualizar tu copia.',
+              tip: 'Hacer Pull regularmente evita que acumules diferencias grandes con el trabajo del resto del equipo.',
+            },
+            {
+              action: '3. Solicita revisión de código con "Create Pull Request"',
+              details: 'Una vez que hayas subido los commits de tu rama de trabajo con "Push origin", aparecerá el banner central "Create a Pull Request".',
+              mockupType: 'pull-request',
+            },
+            {
+              action: '4. Completa la descripción del Pull Request en GitHub',
+              details: 'Al presionar el botón azul, se abrirá tu navegador predeterminado directamente en GitHub.com con la comparación entre tu rama y main lista para redactar el resumen y asignar revisores.',
+            },
+          ],
+        },
+      },
+      {
+        id: 'github-desktop-history-stash',
+        levelId: 'nivel-1',
+        title: '1.6 Historial Visual, Deshacer Cambios y Stash en GitHub Desktop',
+        category: 'Herramientas GUI',
+        difficulty: 'Principiante',
+        timeEstimate: '7 min',
+        summary: 'Inspecciona commits pasados con diffs coloreados, descarta cambios no deseados, revierte commits con seguridad y guarda cambios en Stash al cambiar de rama.',
+        isGitHubGuide: true,
+        initialState: createBaseState(),
+        steps: [],
+        goalDescription: 'Domina la pestaña History, el descarte de modificaciones indeseadas y el diálogo de Stash inteligente.',
+        solutionCommands: [],
+        tips: [
+          'En la pestaña "History" puedes seleccionar cualquier commit para ver exactamente qué archivos y líneas de código fueron modificadas.',
+          'Si intentas cambiar de rama con cambios sin commitear, GitHub Desktop te preguntará si deseas guardarlos en Stash o llevarlos a la otra rama.',
+        ],
+        whenToUse: [
+          {
+            title: 'Auditoría visual de diferencias (Diff)',
+            scenario: 'Revisar qué líneas exactas añadiste (verde) o borraste (rojo) antes de confirmar el commit o durante una revisión de código.',
+            recommendation: 'recomendado',
+            command: 'git diff HEAD~1',
+          },
+          {
+            title: 'Descartar cambios experimentales (Discard)',
+            scenario: 'Hiciste pruebas en un archivo que no funcionaron y quieres volver al último estado limpio guardado con clic derecho -> Discard changes.',
+            recommendation: 'recomendado',
+            command: 'git restore archivo.js',
+          },
+          {
+            title: 'Revertir un commit previo de forma segura',
+            scenario: 'Un commit subido causó un fallo. Clic derecho en History -> "Revert changes in commit" crea un contra-commit seguro sin alterar el historial.',
+            recommendation: 'recomendado',
+            command: 'git revert <commit-id>',
+          },
+          {
+            title: 'Limpieza profunda de archivos no rastreados ignorados',
+            scenario: 'Cuando necesitas purgar archivos generados por compiladores o carpetas enteras de caché no controladas por gitignore.',
+            recommendation: 'evitar',
+            command: 'git clean -fdx',
+          },
+        ],
+        gitHubGuideContent: {
+          overview: 'GitHub Desktop ofrece herramientas visuales sumamente intuitivas para inspeccionar el pasado de un proyecto, solucionar equivocaciones sin perder trabajo y aislar tareas con el sistema de Stash.',
+          steps: [
+            {
+              action: '1. Explora el historial en la pestaña "History"',
+              details: 'En el panel lateral izquierdo, haz clic en la pestaña "History". Verás la lista cronológica de todos los commits, con el autor, la fecha y el identificador SHA.',
+              mockupType: 'history-stash',
+            },
+            {
+              action: '2. Inspecciona los archivos y líneas modificadas',
+              details: 'Haz clic en cualquier commit del historial. En el panel derecho verás la lista de archivos afectados y el diff visual: las líneas agregadas se resaltan en verde (+) y las eliminadas en rojo (-).',
+            },
+            {
+              action: '3. Descartar cambios locales no deseados (Discard changes)',
+              details: 'Si estás editando y deseas borrar los cambios de un archivo para devolverlo a su estado anterior, haz clic derecho sobre él en la lista "Changes" y selecciona "Discard changes...".',
+              tip: '¡Cuidado! Descartar cambios sin commitear es irreversible ya que no han sido guardados en el historial de Git.',
+            },
+            {
+              action: '4. Revertir un commit previo con "Revert changes in commit"',
+              details: 'Si un commit anterior contiene un error, ve a la pestaña "History", haz clic derecho sobre el commit erróneo y selecciona "Revert changes in commit". GitHub Desktop creará un nuevo commit que deshace exactamente esos cambios.',
+            },
+            {
+              action: '5. Utiliza el Stash automático al cambiar de rama',
+              details: 'Si tienes modificaciones sin commitear y necesitas cambiar de rama urgentemente, GitHub Desktop mostrará un diálogo preguntándote: selecciona "Leave my changes on [rama]" para guardarlos en un Stash seguro.',
+            },
+          ],
+        },
+      },
+      {
+        id: 'github-desktop-merge-conflicts',
+        levelId: 'nivel-1',
+        title: '1.7 Fusión de Ramas y Resolución Visual de Conflictos',
+        category: 'Herramientas GUI',
+        difficulty: 'Intermedio',
+        timeEstimate: '8 min',
+        summary: 'Fusiona ramas con el menú "Merge into current branch" y aprende cómo GitHub Desktop detecta y te asiste para resolver conflictos visualmente.',
+        isGitHubGuide: true,
+        initialState: createBaseState(),
+        steps: [],
+        goalDescription: 'Aprende a integrar ramas en GitHub Desktop y a resolver los conflictos visuales paso a paso.',
+        solutionCommands: [],
+        tips: [
+          'Antes de hacer merge, asegúrate de estar parado en la rama receptora (por ejemplo "main").',
+          'Los conflictos ocurren cuando dos personas modifican la misma línea de un mismo archivo en ramas distintas.',
+        ],
+        whenToUse: [
+          {
+            title: 'Fusión de ramas con asistencia visual',
+            scenario: 'Cuando vas a incorporar los cambios terminados de una feature a main y quieres ver una vista previa de cuántos commits se van a integrar.',
+            recommendation: 'recomendado',
+            command: 'git merge feature/nueva-interfaz',
+          },
+          {
+            title: 'Detección guiada de conflictos',
+            scenario: 'GitHub Desktop enumera exactamente cuántos archivos tienen conflicto y te permite abrirlos en tu editor (VS Code) con un solo clic.',
+            recommendation: 'recomendado',
+            command: 'git status',
+          },
+          {
+            title: 'Rebase interactivo con squash y reword de múltiples commits',
+            scenario: 'Reorganizar, combinar o editar mensajes de los últimos 5 commits antes de enviarlos a producción.',
+            recommendation: 'evitar',
+            command: 'git rebase -i HEAD~5',
+          },
+          {
+            title: 'Abortar una fusión conflictiva en segundos',
+            scenario: 'Si un merge presenta demasiados conflictos imprevistos y prefieres cancelar la operación por completo para consultar con tu compañero.',
+            recommendation: 'recomendado',
+            command: 'git merge --abort',
+          },
+        ],
+        gitHubGuideContent: {
+          overview: 'Integrar ramas es el momento culmine del desarrollo. GitHub Desktop previene accidentes avisándote antes de confirmar y guiándote paso a paso en caso de conflictos.',
+          steps: [
+            {
+              action: '1. Sitúate en la rama receptora (main)',
+              details: 'En el selector de rama superior, asegúrate de que "Current Branch" sea "main" (la rama que recibirá los cambios). Haz un "Fetch origin" y "Pull" previo para asegurar que esté al día.',
+            },
+            {
+              action: '2. Inicia la fusión desde el menú "Branch"',
+              details: 'En la barra superior de menús de la aplicación, haz clic en "Branch" y luego en "Merge into current branch...".',
+            },
+            {
+              action: '3. Selecciona la rama a integrar y revisa la vista previa',
+              details: 'En la ventana emergente, selecciona la rama que deseas fusionar (ej: "feature/nueva-interfaz"). En la parte inferior verás cuántos commits serán integrados.',
+            },
+            {
+              action: '4. Identifica conflictos con el asistente de GitHub Desktop',
+              details: 'Si no hay conflicto, el botón azul dirá "Create a merge commit". Si hay líneas en disputa, aparecerá una advertencia amarilla indicando "Conflicts encountered".',
+              mockupType: 'conflict-resolver',
+            },
+            {
+              action: '5. Resuelve los conflictos en Visual Studio Code y finaliza el merge',
+              details: 'Haz clic en el botón "Open in Visual Studio Code". Corrige los marcadores de conflicto, guarda el archivo y vuelve a GitHub Desktop. El botón cambiará a "Commit merge". Haz clic y luego presiona "Push origin" para subirlo.',
+              tip: 'También puedes hacer clic en el menú desplegable junto al archivo para elegir "Use modified version" o "Use current version" si deseas descartar un lado por completo.',
+            },
+          ],
+        },
+      },
     ],
   },
   {
