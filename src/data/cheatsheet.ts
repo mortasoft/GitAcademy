@@ -206,4 +206,13 @@ export const CHEATSHEET_DATABASE: CheatsheetItem[] = [
     explanation: 'El parámetro -split divide la aplicación en páginas individuales (.sql) y componentes compartidos, mientras que -skipExportDate suprime marcas de tiempo para mantener limpio el historial de Git.',
     tags: ['oracle', 'apex', 'sqlcl', 'export', 'split', 'database', 'ci'],
   },
+  {
+    id: 'antigravity-slash-commands',
+    category: 'GitHub Real',
+    title: 'Comandos Slash de Google Antigravity (/plan y /grill-me)',
+    problem: 'Quiero que el agente de IA planifique paso a paso o me entreviste sobre decisiones de arquitectura antes de tocar código.',
+    solutionCommand: '/plan <especificacion de la tarea>\n/grill-me <requerimiento o diseño a validar>',
+    explanation: 'Los comandos slash de Antigravity activan modos de pensamiento deliberados: /plan genera un checklist atomico y /grill-me realiza un cuestionario secuencial para clarificar requerimientos ambiguos.',
+    tags: ['antigravity', 'ia', 'agent', 'plan', 'grill-me', 'slash', 'google'],
+  },
 ];

@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0d1117; }
+      .card { fill: #161b22; stroke: #30363d; stroke-width: 1; rx: 8; }
+      .card-active { fill: #0d1117; stroke: #388bfd; stroke-width: 1.5; rx: 8; }
+      .header-bg { fill: #0d1117; stroke: #21262d; stroke-width: 1; }
+      .text-title { fill: #f0f6fc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 600; }
+      .text-desc { fill: #8b949e; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 12px; }
+      .text-code { fill: #58a6ff; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; }
+      .text-cmd { fill: #d2a8ff; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 11.5px; font-weight: 600; }
+      .badge-agent { fill: #1f6feb; rx: 4; }
+      .badge-text { fill: #ffffff; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px; font-weight: 600; }
+      .badge-success { fill: #238636; rx: 4; }
+      .terminal-box { fill: #010409; stroke: #30363d; stroke-width: 1; rx: 8; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="640" class="bg" rx="12"/>
+
+  <!-- Top Breadcrumb Bar -->
+  <rect x="0" y="0" width="1000" height="56" class="header-bg" rx="12"/>
+  <circle cx="30" cy="28" r="6" fill="#f85149"/>
+  <circle cx="50" cy="28" r="6" fill="#d29922"/>
+  <circle cx="70" cy="28" r="6" fill="#2ea043"/>
+
+  <text x="105" y="33" fill="#8b949e" font-family="-apple-system, sans-serif" font-size="13">Google Deepmind</text>
+  <text x="235" y="33" fill="#6e7681" font-family="-apple-system, sans-serif" font-size="13">/</text>
+  <text x="250" y="33" fill="#f0f6fc" font-family="-apple-system, sans-serif" font-size="13" font-weight="600">Antigravity</text>
+  <text x="330" y="33" fill="#6e7681" font-family="-apple-system, sans-serif" font-size="13">/</text>
+  <text x="345" y="33" fill="#58a6ff" font-family="-apple-system, sans-serif" font-size="13">Arquitectura Agéntica y Flujo Git</text>
+
+  <!-- Title Section -->
+  <text x="40" y="92" class="text-title" font-size="20">Arquitectura de Google Antigravity y Ciclo de Trabajo en Git</text>
+  <text x="40" y="114" class="text-desc">Desarrollo autónomo en pareja: planificación deliberada, ejecución con herramientas en terminal y verificación antes de confirmar en el repositorio.</text>
+
+  <!-- Column 1: Directiva y Comandos Slash (Width: 290) -->
+  <rect x="40" y="135" width="285" height="475" class="card"/>
+  <text x="55" y="165" class="text-title" font-size="14">1. Directiva y Planificación</text>
+  <text x="55" y="185" class="text-desc">Comandos que activan modos de razonamiento:</text>
+
+  <!-- Command 1: /plan -->
+  <rect x="55" y="200" width="255" height="65" class="terminal-box" stroke="#8957e5"/>
+  <text x="68" y="222" class="text-cmd">/plan</text>
+  <text x="68" y="242" class="text-desc">Diseña una lista atómica de pasos y arquitectura previa antes de tocar código.</text>
+
+  <!-- Command 2: /grill-me -->
+  <rect x="55" y="275" width="255" height="65" class="terminal-box" stroke="#388bfd"/>
+  <text x="68" y="297" class="text-cmd" fill="#58a6ff">/grill-me</text>
+  <text x="68" y="317" class="text-desc">Entrevista interactiva al usuario para despejar dudas de diseño y requisitos.</text>
+
+  <!-- Command 3: /goal -->
+  <rect x="55" y="350" width="255" height="65" class="terminal-box" stroke="#3fb950"/>
+  <text x="68" y="372" class="text-cmd" fill="#3fb950">/goal</text>
+  <text x="68" y="392" class="text-desc">Modo autónomo de largo aliento: no se detiene hasta verificar el éxito total.</text>
+
+  <!-- Command 4: /boost & /teamwork -->
+  <rect x="55" y="425" width="255" height="70" class="terminal-box"/>
+  <text x="68" y="447" class="text-cmd" fill="#d29922">/boost | /teamwork</text>
+  <text x="68" y="467" class="text-desc">Razonamiento profundo multitarea y delegación a subagentes paralelos.</text>
+
+  <rect x="55" y="505" width="255" height="90" class="card" stroke="#21262d"/>
+  <text x="68" y="527" class="text-title" font-size="12" fill="#58a6ff">Entrada del Desarrollador</text>
+  <text x="68" y="547" class="text-desc">Prompt claro + Requerimiento</text>
+  <text x="68" y="565" class="text-desc">&#8594; Rama aislada en Git</text>
+  <text x="68" y="583" class="text-code" fill="#a5d6ff">$ git switch -c feature/...</text>
+
+  <!-- Column 2: Bucle del Agente (Width: 320) -->
+  <rect x="340" y="135" width="320" height="475" class="card-active"/>
+  <text x="355" y="165" class="text-title" font-size="14" fill="#58a6ff">2. Motor Agéntico (Loop Autónomo)</text>
+  <text x="355" y="185" class="text-desc">Razonamiento + Llamadas a Herramientas:</text>
+
+  <!-- Tool 1: Context & Search -->
+  <rect x="355" y="200" width="290" height="68" class="card"/>
+  <text x="370" y="222" class="text-code">read_file &amp; search</text>
+  <text x="370" y="244" class="text-desc">Inspecciona el código, dependencias, tipos y contexto completo del repositorio.</text>
+
+  <!-- Tool 2: Execution & Editing -->
+  <rect x="355" y="280" width="290" height="78" class="card"/>
+  <text x="370" y="302" class="text-code">edit_file &amp; write_file</text>
+  <text x="370" y="324" class="text-desc">Modifica el código fuente de forma quirúrgica, preservando comentarios y arquitectura.</text>
+
+  <!-- Tool 3: Terminal & Commands -->
+  <rect x="355" y="370" width="290" height="80" class="card"/>
+  <text x="370" y="392" class="text-code">run_command (Terminal)</text>
+  <text x="370" y="414" class="text-desc">Ejecuta compiladores, linters, migraciones y suites de tests en el sistema operativo real.</text>
+
+  <!-- Agent Self-Correction Feedback Loop -->
+  <rect x="355" y="462" width="290" height="132" class="terminal-box" stroke="#f85149"/>
+  <text x="370" y="485" class="text-title" font-size="13" fill="#f85149">&#8635; Ciclo de Auto-corrección</text>
+  <text x="370" y="505" class="text-desc">1. El comando arroja un error de compilación.</text>
+  <text x="370" y="525" class="text-desc">2. Antigravity analiza el stacktrace en la salida.</text>
+  <text x="370" y="545" class="text-desc">3. Aplica la corrección quirúrgica necesaria.</text>
+  <text x="370" y="565" class="text-code" fill="#3fb950">&#10003; Re-ejecuta build hasta lograr código verde.</text>
+
+  <!-- Column 3: Espacio de Trabajo Git y Entrega (Width: 285) -->
+  <rect x="675" y="135" width="285" height="475" class="card"/>
+  <text x="690" y="165" class="text-title" font-size="14">3. Entorno Git y Entrega</text>
+  <text x="690" y="185" class="text-desc">Criterios de calidad profesional:</text>
+
+  <!-- Stage A: Verification -->
+  <rect x="690" y="200" width="255" height="75" class="terminal-box" stroke="#238636"/>
+  <text x="705" y="224" class="text-title" font-size="12" fill="#3fb950">&#10003; Verificación Exitosa</text>
+  <text x="705" y="244" class="text-code" fill="#f0f6fc">npm run build &#8594; exit code 0</text>
+  <text x="705" y="260" class="text-desc">Cero errores de TypeScript o tests rotos.</text>
+
+  <!-- Stage B: Atomic Commit -->
+  <rect x="690" y="285" width="255" height="85" class="card"/>
+  <text x="705" y="307" class="text-title" font-size="12">Commit Atómico</text>
+  <text x="705" y="327" class="text-desc">Mensaje Conventional Commits:</text>
+  <text x="705" y="347" class="text-code" fill="#58a6ff">feat: agregar modulo...</text>
+
+  <!-- Stage C: Pull Request -->
+  <rect x="690" y="380" width="255" height="100" class="card" stroke="#1f6feb"/>
+  <text x="705" y="402" class="text-title" font-size="12" fill="#58a6ff">Pull Request en GitHub</text>
+  <text x="705" y="422" class="text-desc">Resumen claro de cambios generados.</text>
+  <text x="705" y="440" class="text-desc">&#8226; Diff limpio y trazable.</text>
+  <text x="705" y="458" class="text-desc">&#8226; Revisión y aprobación humana.</text>
+
+  <!-- Summary Card -->
+  <rect x="690" y="490" width="255" height="105" class="card-rule" stroke="#21262d"/>
+  <text x="705" y="514" class="text-title" font-size="12" fill="#d29922">Gobernanza y Control</text>
+  <text x="705" y="534" class="text-desc">El desarrollador siempre mantiene el control final mediante Git:</text>
+  <text x="705" y="556" class="text-code" fill="#f85149">git reset / git revert</text>
+  <text x="705" y="576" class="text-desc">si algún cambio no cumple el estándar.</text>
+</svg>

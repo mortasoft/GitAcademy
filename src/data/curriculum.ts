@@ -1913,6 +1913,86 @@ export const CURRICULUM: CurriculumLevel[] = [
           ],
         },
       },
+      {
+        id: 'ai-agent-antigravity',
+        levelId: 'nivel-6',
+        title: '6.7 Desarrollo Agéntico con Google Antigravity',
+        category: 'Agentes y Automatización',
+        difficulty: 'Intermedio',
+        timeEstimate: '7 min',
+        summary: 'Aprende a integrar flujos de trabajo con Google Antigravity: desarrollo en ramas autónomas, comandos slash (/plan, /grill-me), resolución iterativa y commits atómicos.',
+        isGitHubGuide: true,
+        initialState: createBaseState(),
+        steps: [],
+        goalDescription: 'Comprende el ciclo de pair programming con agentes de IA, el uso de comandos slash y la verificación continua antes de confirmar cambios.',
+        solutionCommands: [],
+        tips: [
+          'Google Antigravity no es un simple generador de texto; es un agente con acceso directo a terminal, archivos y herramientas que verifica su propio código antes de entregarlo.',
+          'Trabaja siempre en ramas de desarrollo dedicadas (feature/*) para que puedas auditar el diff de los cambios propuestos antes de integrarlos a main.',
+          'Utiliza /plan para estructurar tareas complejas y /grill-me para alinear decisiones de diseño y requisitos ambiguos.',
+          'Exige siempre pruebas automatizadas o builds locales (npm run build, pytest) para que el agente autocorrija posibles fallos antes del commit.',
+        ],
+        whenToUse: [
+          {
+            title: 'Desarrollo de nuevas funcionalidades con especificaciones claras',
+            scenario: 'Creación de componentes, endpoints o módulos guiados por planes atómicos y suites de pruebas automatizadas.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Refactorización y modernización de código legado',
+            scenario: 'Actualizar dependencias o mejorar estructuras de código garantizando que las pruebas existentes continúen en verde.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Diagnóstico autónomo de bugs con reproducción de errores',
+            scenario: 'Cuando un build falla o un test se rompe, el agente lee la traza en la terminal, localiza la línea exacta y aplica el fix.',
+            recommendation: 'recomendado',
+          },
+          {
+            title: 'Pedir cambios masivos sin aislar en una rama de trabajo (feature)',
+            scenario: 'Permitir que un agente modifique archivos directamente sobre main sin posibilidad de auditar un Pull Request.',
+            recommendation: 'evitar',
+          },
+          {
+            title: 'Compartir credenciales o API keys en texto plano en las instrucciones',
+            scenario: 'Incluir contraseñas en los prompts del agente en lugar de usar variables de entorno seguras o GitHub Secrets.',
+            recommendation: 'evitar',
+          },
+        ],
+        gitHubGuideContent: {
+          overview: 'Google Antigravity es un entorno de desarrollo agéntico avanzado diseñado para programar en pareja con ingenieros de software. Combina modelos de lenguaje de última generación con acceso directo a la terminal del sistema operativo, manipulación quirúrgica de archivos, ejecución de compilaciones y orquestación de subagentes.',
+          steps: [
+            {
+              action: '1. Diferencia entre un Chatbot y un Agente Autónomo',
+              details: 'Un chatbot convencional solo produce texto que el usuario debe copiar y pegar a mano. Google Antigravity ejecuta un ciclo de acción continua: lee el árbol del proyecto, planifica tareas, ejecuta comandos en la terminal, edita archivos y corre compiladores para validar sus propias modificaciones.',
+              imageUrl: '/images/github-security/antigravity-agent-workflow.svg',
+              imageCaption: 'Arquitectura de Google Antigravity: directiva, loop de herramientas y espacio de trabajo Git.',
+            },
+            {
+              action: '2. Inicializa siempre una rama de trabajo dedicada (Feature Branch)',
+              details: 'La mejor práctica al colaborar con agentes de IA es mantener main protegida y crear una rama específica para cada tarea. Esto permite auditar cada línea en un diff visual antes de fusionar:',
+              commandOrUrl: 'git switch -c feature/asistente-ia-tarea',
+              tip: 'El aislamiento en ramas garantiza que cualquier experimento fallido pueda ser descartado o revertido sin afectar la versión estable.',
+            },
+            {
+              action: '3. Dirige el comportamiento cognitivo con Comandos Slash',
+              details: 'Antigravity cuenta con comandos slash que adaptan la profundidad de razonamiento:\n• /plan: Elabora un checklist atómico de implementación antes de modificar código.\n• /grill-me: Entrevista al desarrollador con preguntas dirigidas para resolver dudas de diseño.\n• /goal: Modo autónomo que persigue un objetivo complejo sin detenerse hasta verificar su cumplimiento.\n• /boost: Razonamiento reforzado para optimizaciones de rendimiento y arquitectura crítica.',
+              commandOrUrl: '/plan o /grill-me',
+            },
+            {
+              action: '4. Bucle de Compilación y Auto-corrección (Self-Correction)',
+              details: 'A diferencia de los enfoques basados en suposiciones, Antigravity ejecuta el comando de build o pruebas del proyecto (ej: npm run build, pytest, cargo check) tras cada cambio. Si la terminal reporta un error de tipos o sintaxis, el agente analiza la traza y corrige el código automáticamente.',
+              commandOrUrl: 'npm run build',
+              tip: 'Nunca aceptes código generado sin que la suite de pruebas o el compilador hayan arrojado código de salida 0 (éxito).',
+            },
+            {
+              action: '5. Confirmación con Conventional Commits y Pull Request',
+              details: 'Una vez validada la solución, se registran commits limpios y atómicos (feat:, fix:, refactor:). Finalmente, se publica la rama en GitHub y se abre un Pull Request para la revisión y aprobación por pares del equipo.',
+              commandOrUrl: 'git add . && git commit -m "feat: implementar componente verificado" && git push -u origin feature/asistente-ia-tarea',
+            },
+          ],
+        },
+      },
     ],
   },
 ];
