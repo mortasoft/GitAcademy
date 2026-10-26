@@ -23,7 +23,7 @@ const createBaseState = (): GitState => ({
     target: 'main',
   },
   staging: [],
-  workingDir: ['index.html'],
+  workingDir: [],
   stash: [],
 });
 
@@ -195,30 +195,41 @@ export const CURRICULUM: CurriculumLevel[] = [
         category: 'Fundamentos Terminal',
         difficulty: 'Principiante',
         timeEstimate: '4 min',
-        summary: 'Aprende qué comandos equivalen a lo que GitHub Desktop hace: inspeccionar con git status, pasar archivos a staging con git add y guardar el commit.',
+        summary: 'Aprende el ciclo fundamental de trabajo en Git: crear o modificar un archivo, inspeccionar el estado con git status, prepararlo con git add y guardar el commit.',
         initialState: createBaseState(),
         steps: [
           {
-            title: '1. Inspecciona el estado de trabajo',
-            explanation: 'Git monitorea los archivos en tu carpeta. Ejecuta `git status` para ver qué archivos han cambiado (equivalente al panel Changes de Desktop).',
+            title: '1. Crea un nuevo archivo en tu proyecto',
+            explanation: 'Todo cambio en Git comienza en tu directorio de trabajo. En la terminal puedes crear un archivo nuevo ejecutando `touch index.html`.',
+            commandSuggestion: 'touch index.html',
+          },
+          {
+            title: '2. Inspecciona el estado de trabajo',
+            explanation: 'Ejecuta `git status` para comprobar cómo Git detecta inmediatamente el nuevo archivo sin seguimiento (*untracked*) en color rojo.',
             commandSuggestion: 'git status',
           },
           {
-            title: '2. Agrega los cambios al Staging',
-            explanation: 'Antes de guardar una foto de tu código (commit), debes preparar los archivos con `git add` (marcar los checkboxes en Desktop).',
+            title: '3. Agrega los cambios al Staging Area',
+            explanation: 'Antes de registrar el commit, prepara los archivos que deseas incluir con `git add .` (verás que pasa al área de preparación en color verde).',
             commandSuggestion: 'git add .',
           },
           {
-            title: '3. Guarda tu commit',
-            explanation: 'Registra permanentemente tus cambios acompañados de un mensaje explicativo (el botón Commit to main).',
-            commandSuggestion: 'git commit -m "feat: agregar index.html"',
+            title: '4. Guarda tu commit',
+            explanation: 'Registra permanentemente la versión en el historial de la rama main con un mensaje descriptivo en presente.',
+            commandSuggestion: 'git commit -m "feat: crear index.html"',
           },
         ],
-        goalDescription: 'Crea al menos un nuevo commit en la rama main usando la terminal interactiva.',
-        solutionCommands: ['git add .', 'git commit -m "feat: agregar index.html"'],
+        goalDescription: 'Crea el archivo index.html con touch, prepáralo con git add y genera un nuevo commit en la rama main.',
+        solutionCommands: [
+          'touch index.html',
+          'git status',
+          'git add .',
+          'git commit -m "feat: crear index.html"',
+        ],
         tips: [
-          'Puedes usar "git status" en cualquier momento para saber qué está pendiente.',
-          'Usa mensajes claros en presente (por ejemplo: "feat: agregar login").',
+          'El comando "touch <archivo>" crea un archivo vacío en tu carpeta de trabajo.',
+          'Puedes usar "git status" en cualquier momento para saber en qué fase se encuentran tus archivos.',
+          'El área de preparación (staging) te permite seleccionar exactamente qué archivos incluir en el commit.',
         ],
       },
       {

@@ -17,8 +17,16 @@ export class CommandParser {
         success: true,
         output: [
           'Comandos soportados en el simulador GitAcademy:',
+          '  touch <archivo>                 Crear un archivo nuevo en el directorio',
+          '  echo "texto" > <archivo>        Crear/escribir contenido en un archivo',
+          '  ls                              Listar archivos del directorio de trabajo',
+          '  cat <archivo>                   Ver contenido de un archivo',
+          '  pwd                             Mostrar la ruta de trabajo actual',
+          '',
+          'Comandos de Git:',
           '  git status                      Ver estado del área de trabajo y staging',
-          '  git add <archivo|.' + '>           Agregar cambios al área de preparación',
+          '  git add <archivo|.>             Agregar cambios al área de preparación',
+          '  git restore --staged <archivo>  Desmarcar archivos del área de preparación',
           '  git commit -m "mensaje"         Crear un nuevo commit con los cambios',
           '  git branch [nombre]             Listar ramas o crear una nueva rama',
           '  git branch -d <nombre>          Eliminar una rama existente',
@@ -36,6 +44,67 @@ export class CommandParser {
           '  clear                           Limpiar la pantalla de la terminal',
         ].join('\n'),
       };
+    }
+
+    // Comandos de shell habituales: touch
+    if (trimmed.startsWith('touch ') || trimmed === 'touch') {
+      const parts = trimmed.split(/\s+/).slice(1).map((p) => p.replace(/["']/g, '')).filter(Boolean);
+      if (parts.length === 0) {
+        return { success: false, output: 'touch: falta el nombre del archivo operando' };
+      }
+      const newWorking = Array.from(new Set([...currentState.workingDir, ...parts]));
+      return {
+        success: true,
+        output: '',
+        newState: {
+          ...currentState,
+          workingDir: newWorking,
+        },
+      };
+    }
+
+    // echo ... > archivo
+    if (trimmed.startsWith('echo ') && trimmed.includes('>')) {
+      const redirectionParts = trimmed.split('>');
+      const filename = redirectionParts[1]?.trim().replace(/["']/g, '');
+      if (filename) {
+        return {
+          success: true,
+          output: '',
+          newState: {
+            ...currentState,
+            workingDir: Array.from(new Set([...currentState.workingDir, filename])),
+          },
+        };
+      }
+    }
+
+    // ls / dir
+    if (trimmed === 'ls' || trimmed.startsWith('ls ') || trimmed === 'dir') {
+      const allFiles = Array.from(new Set(['README.md', ...currentState.staging, ...currentState.workingDir]));
+      const formatted = allFiles.map((f) => {
+        if (currentState.staging.includes(f)) return `\x1b[32m${f}\x1b[0m`;
+        if (currentState.workingDir.includes(f)) return `\x1b[31m${f}\x1b[0m`;
+        return f;
+      }).join('  ');
+      return {
+        success: true,
+        output: formatted || '(directorio vacío)',
+      };
+    }
+
+    // cat
+    if (trimmed.startsWith('cat ') || trimmed === 'cat') {
+      const filename = trimmed.split(/\s+/)[1]?.replace(/["']/g, '');
+      if (!filename) return { success: false, output: 'cat: falta nombre de archivo' };
+      if (filename === 'README.md') return { success: true, output: '# Mi Proyecto Git\nRepositorio inicial.' };
+      if (filename.endsWith('.html')) return { success: true, output: '<!DOCTYPE html>\n<html>\n  <body>Hola Mundo</body>\n</html>' };
+      return { success: true, output: `// Contenido de ${filename}` };
+    }
+
+    // pwd
+    if (trimmed === 'pwd') {
+      return { success: true, output: '/workspace/proyecto-git' };
     }
 
     if (!trimmed.startsWith('git')) {
@@ -111,7 +180,14 @@ export class CommandParser {
       let newWorking = [...currentState.workingDir];
 
       if (target === '.' || target === '-A') {
-        newStaging = Array.from(new Set([...newStaging, ...newWorking, 'app.ts']));
+        if (newWorking.length === 0 && newStaging.length === 0) {
+          return {
+            success: true,
+            output: '',
+            newState: currentState,
+          };
+        }
+        newStaging = Array.from(new Set([...newStaging, ...newWorking]));
         newWorking = [];
       } else {
         newStaging = Array.from(new Set([...newStaging, target]));
@@ -127,6 +203,27 @@ export class CommandParser {
           workingDir: newWorking,
         },
       };
+    }
+
+    // git restore
+    if (subCommand === 'restore') {
+      const isStaged = args.includes('--staged');
+      const target = args[args.length - 1];
+      if (isStaged && target && target !== '--staged') {
+        const fileToUnstage = target === '.' ? currentState.staging : [target];
+        const newStaging = currentState.staging.filter((f) => !fileToUnstage.includes(f));
+        const newWorking = Array.from(new Set([...currentState.workingDir, ...fileToUnstage]));
+        return {
+          success: true,
+          output: '',
+          newState: {
+            ...currentState,
+            staging: newStaging,
+            workingDir: newWorking,
+          },
+        };
+      }
+      return { success: false, output: 'Uso: git restore --staged <archivo>...' };
     }
 
     // git commit

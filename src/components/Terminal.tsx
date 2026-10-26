@@ -183,9 +183,9 @@ export const Terminal: React.FC<TerminalProps> = ({
     } else if (e.key === 'Tab') {
       e.preventDefault();
       const candidates = [
-        'git status', 'git add .', 'git commit -m ""', 'git branch', 
+        'touch index.html', 'git status', 'git add .', 'git commit -m ""', 'git branch', 
         'git checkout', 'git switch', 'git merge', 'git rebase', 
-        'git log --oneline', 'git stash', 'git reset', 'git revert'
+        'git log --oneline', 'git stash', 'git reset', 'git revert', 'ls'
       ];
       const match = candidates.find((c) => c.startsWith(input));
       if (match) {
