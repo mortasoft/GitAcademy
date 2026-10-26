@@ -14,7 +14,8 @@ import {
   Presentation, 
   Code2, 
   Search,
-  Check
+  Check,
+  FolderKanban
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -24,6 +25,7 @@ interface DashboardProps {
   onOpenWorkshop: () => void;
   onOpenSandbox: () => void;
   onOpenReference: () => void;
+  onOpenPractices: () => void;
 }
 
 const LEVEL_ICONS: Record<string, React.ReactNode> = {
@@ -42,6 +44,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onOpenWorkshop,
   onOpenSandbox,
   onOpenReference,
+  onOpenPractices,
 }) => {
   const allLessons = curriculum.flatMap((l) => l.lessons);
   const totalLessons = allLessons.length;
@@ -140,7 +143,23 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </section>
 
         {/* ACCESOS DIRECTOS DE HERRAMIENTAS */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <button
+            onClick={onOpenPractices}
+            className="p-4 rounded-xl bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-blue-500/40 text-left transition space-y-2 group shadow-sm"
+          >
+            <div className="flex items-center gap-2.5 text-blue-400">
+              <FolderKanban className="w-4 h-4" />
+              <span className="text-xs font-semibold tracking-wide uppercase font-mono">Talleres Prácticos</span>
+            </div>
+            <div className="text-sm font-semibold text-white group-hover:text-blue-400 transition">
+              Casos Reales de Aplicación
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Docs-as-Code, Hotfixes en Producción, GitOps y Open Source guiados paso a paso.
+            </p>
+          </button>
+
           <button
             onClick={onOpenWorkshop}
             className="p-4 rounded-xl bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-left transition space-y-2 group"
@@ -161,7 +180,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             onClick={onOpenSandbox}
             className="p-4 rounded-xl bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-left transition space-y-2 group"
           >
-            <div className="flex items-center gap-2.5 text-blue-400">
+            <div className="flex items-center gap-2.5 text-indigo-400">
               <Code2 className="w-4 h-4" />
               <span className="text-xs font-semibold tracking-wide uppercase font-mono">Sandbox Libre</span>
             </div>
@@ -185,7 +204,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               Comandos y Resolución de Problemas
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Guías rápidas para deshacer commits, cancelar merges y resolver problemas cotidianos con Ctrl+K.
+              Guías rápidas para deshacer commits, cancelar merges y plantillas GFM con Ctrl+K.
             </p>
           </button>
         </section>

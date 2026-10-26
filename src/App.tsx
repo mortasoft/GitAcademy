@@ -13,12 +13,13 @@ import { CommandPalette } from './components/CommandPalette';
 import { WorkshopModal } from './components/WorkshopModal';
 import { GitHubGuideModal } from './components/GitHubGuideModal';
 import { Dashboard } from './components/Dashboard';
+import { PracticesView } from './components/PracticesView';
 
 export const App: React.FC = () => {
   const [currentLesson, setCurrentLesson] = useState<Lesson>(CURRICULUM[0].lessons[0]);
   const [gitState, setGitState] = useState<GitState>(CURRICULUM[0].lessons[0].initialState);
-  const [mode, setMode] = useState<'dashboard' | 'student' | 'workshop' | 'sandbox'>('dashboard');
-  const [prevMode, setPrevMode] = useState<'dashboard' | 'student' | 'sandbox'>('dashboard');
+  const [mode, setMode] = useState<'dashboard' | 'student' | 'workshop' | 'sandbox' | 'practices'>('dashboard');
+  const [prevMode, setPrevMode] = useState<'dashboard' | 'student' | 'sandbox' | 'practices'>('dashboard');
   const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([]);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [suggestedCommand, setSuggestedCommand] = useState<string | undefined>(
@@ -27,9 +28,9 @@ export const App: React.FC = () => {
   const [commandToInsert, setCommandToInsert] = useState<{ text: string; id: number } | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const switchMode = (newMode: 'dashboard' | 'student' | 'workshop' | 'sandbox') => {
+  const switchMode = (newMode: 'dashboard' | 'student' | 'workshop' | 'sandbox' | 'practices') => {
     if (mode !== 'workshop') {
-      setPrevMode(mode as 'dashboard' | 'student' | 'sandbox');
+      setPrevMode(mode as 'dashboard' | 'student' | 'sandbox' | 'practices');
     }
     setMode(newMode);
   };
@@ -125,10 +126,13 @@ export const App: React.FC = () => {
             handleSelectLesson(lesson);
             switchMode('student');
           }}
+          onOpenPractices={() => switchMode('practices')}
           onOpenWorkshop={() => switchMode('workshop')}
           onOpenSandbox={() => switchMode('sandbox')}
           onOpenReference={() => setIsCommandPaletteOpen(true)}
         />
+      ) : mode === 'practices' ? (
+        <PracticesView onBackToDashboard={() => switchMode('dashboard')} />
       ) : (
         <main className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 min-w-0">
           {/* Panel Izquierdo: Sidebar de Lecciones (solo en modo student) */}

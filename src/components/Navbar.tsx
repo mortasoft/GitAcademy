@@ -8,12 +8,13 @@ import {
   Flame,
   CheckCircle2,
   Code2,
-  LayoutGrid
+  LayoutGrid,
+  FolderKanban
 } from 'lucide-react';
 
 interface NavbarProps {
-  mode: 'dashboard' | 'student' | 'workshop' | 'sandbox';
-  setMode: (mode: 'dashboard' | 'student' | 'workshop' | 'sandbox') => void;
+  mode: 'dashboard' | 'student' | 'workshop' | 'sandbox' | 'practices';
+  setMode: (mode: 'dashboard' | 'student' | 'workshop' | 'sandbox' | 'practices') => void;
   onOpenCommandPalette: () => void;
   onResetLesson: () => void;
   completedCount: number;
@@ -100,6 +101,19 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <Code2 className="w-3.5 h-3.5" />
           <span className="hidden md:inline">Sandbox Libre</span>
+        </button>
+
+        <button
+          onClick={() => setMode('practices')}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            mode === 'practices'
+              ? 'bg-blue-600 text-white shadow-sm font-semibold'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+          title="Talleres prácticos y casos de uso del mundo real"
+        >
+          <FolderKanban className="w-3.5 h-3.5 text-blue-300" />
+          <span className="hidden md:inline">Prácticas</span>
         </button>
       </div>
 
